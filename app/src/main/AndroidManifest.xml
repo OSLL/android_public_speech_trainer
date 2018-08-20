@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddPresentationActivity"></activity>
+        <activity android:name=".AddPresentationActivity"
+            android:label="Создание новой презентации"></activity>
         <activity android:name=".GetTextForPresentation"></activity>
     </application>
 
