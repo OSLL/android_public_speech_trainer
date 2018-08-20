@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TrainingHistoryActivity"
+            android:label="История тренировок"/>
+        <activity android:name=".TrainingStatisticsActivity"
+            android:label="Статистика тренировки"/>
     </application>
 
 </manifest>
