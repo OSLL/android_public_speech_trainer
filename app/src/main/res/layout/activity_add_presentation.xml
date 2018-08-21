@@ -40,39 +40,40 @@
                     android:layout_height="match_parent"
                     android:text=""
                     android:textSize="24sp"
-                    android:padding="10dp"/>
+                    android:padding="10dp"
+                    android:background="#00ffcc"/>
 
             </ScrollView>
 
         </FrameLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="200dp"
             android:layout_weight="1"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_marginTop="-5dp">
+            android:orientation="vertical">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/editPresentationName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="Enter the Name"
-                android:textAlignment="center"
-                android:textColor="#C0C0C0"
-                android:textSize="18sp"
-                android:textStyle="italic" />
+                android:hint="Enter Presentation Name"
+                android:textAlignment="center" />
+
             <Button
                 android:id="@+id/add_presentation_btn"
-                android:layout_height="match_parent"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="ok"
+                android:text="Create Presentation"
+                android:textAllCaps="false"
+                android:textColor="#194d19"
                 android:textSize="18sp"
-                android:textColor="#008000"/>
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
