@@ -24,8 +24,7 @@
         android:label="@string/add_new_presentation_label" />
         <activity android:name=".CreatePresentationActivity" />
         <activity android:name=".PresentationActivity"
-        android:label="@string/label_activity_presentation"/>
-        
+        android:label="@string/label_activity_presentation"/>       
     </application>
 
 </manifest>
