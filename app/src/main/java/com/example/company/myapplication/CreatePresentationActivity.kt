@@ -13,11 +13,12 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
 
-class GetTextForPresentation : AppCompatActivity() {
+class CreatePresentationActivity : AppCompatActivity() {
+
+    private val REQUSETCODE = 111
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
         Log.d("file_system", path)
         val myUri = Uri.parse(path)
@@ -25,18 +26,18 @@ class GetTextForPresentation : AppCompatActivity() {
                 .setDataAndType(myUri, "*/*")
                 .addCategory(CATEGORY_OPENABLE)
 
-        startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
+        startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUSETCODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 111 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
             val selectedFile = data.data //The uri with the location of the file
 
             try {
                 val presentation_txt = readTextFromUri(selectedFile!!)
-                val i = Intent(this, AddPresentationActivity::class.java)
+                val i = Intent(this, EditPresentationActivity::class.java)
                 i.putExtra("presentation_txt", presentation_txt)
                 Log.d("file_system", presentation_txt.length.toString())
 

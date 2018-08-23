@@ -16,9 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddPresentationActivity"
-            android:label="Создание новой презентации"></activity>
-        <activity android:name=".GetTextForPresentation"></activity>
+        <activity
+            android:name=".EditPresentationActivity"
+            android:label="@string/add_new_presentation_label" />
+        <activity android:name=".CreatePresentationActivity" />
+        <activity android:name=".PresentatinActivity"></activity>
     </application>
 
 </manifest>
