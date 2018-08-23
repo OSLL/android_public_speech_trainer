@@ -16,12 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PresentationActivity"
-            android:label="Презентация"/>
-        <activity android:name=".CreatePresentationActivity"
-            android:label="Добавление презентации"/>
-        <activity android:name=".PreferenceActivity"
-            android:label="Настройки"/>
+        <activity
+            android:name=".PresentationActivity"
+            android:label="Презентация" />
+        <activity
+            android:name=".CreatePresentationActivity" />
+        <activity
+            android:name=".PreferenceActivity"
+            android:label="Настройки" />
+        <activity
+            android:name=".EditPresentationActivity"
+            android:label="@string/add_new_presentation_label" />
+
     </application>
 
 </manifest>
