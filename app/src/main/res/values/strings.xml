@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="label_activity_presentation">Презентация</string>
+    <string name="add_new_presentation_label">Добавление новой презентации</string>
+    <string name="check_text">Check Presentation Text</string>
+    <string name="add_presentation">Add Presentation</string>
+    <string name="presentation_name">Enter Presentation Name</string>
 </resources>
