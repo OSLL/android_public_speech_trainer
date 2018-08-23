@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PresentationActivity"
-            android:label="Презентация"/>
+            android:label="@string/label_activity_presentation"/>
     </application>
 
 </manifest>

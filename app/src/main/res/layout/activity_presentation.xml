@@ -13,7 +13,7 @@
         >
 
         <TextView
-            android:id="@+id/TVpresentation_name"
+            android:id="@+id/presentationName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="serif"
@@ -48,7 +48,7 @@
                     android:textColor="@android:color/black" />
 
                 <EditText
-                    android:id="@+id/edit_training_time"
+                    android:id="@+id/trainingTime"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -61,19 +61,19 @@
             </FrameLayout>
 
             <Button
-                android:id="@+id/share_btn"
+                android:id="@+id/share"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Поделиться" />
 
             <Button
-                android:id="@+id/training_history_btn"
+                android:id="@+id/trainingHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="История тренеровок" />
 
             <Button
-                android:id="@+id/training_btn"
+                android:id="@+id/training"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Тренироваться" />
