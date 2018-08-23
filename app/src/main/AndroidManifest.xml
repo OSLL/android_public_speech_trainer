@@ -2,25 +2,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.company.myapplication">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".EditPresentationActivity"
-            android:label="@string/add_new_presentation_label" />
-        <activity android:name=".CreatePresentationActivity" />
-        <activity android:name=".PresentatinActivity"></activity>
+<application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="Начальная страница"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme">
+    <activity android:name=".StartPageActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity android:name=".PresentationActivity"
+    android:label="Презентация"/>
+    <activity android:name=".CreatePresentationActivity"
+    android:label="Добавление презентации"/>
+    <activity android:name=".PreferenceActivity"
+    android:label="Настройки"/>
+    <activity android:name=".EditPresentationActivity"
+    android:label="@string/add_new_presentation_label" />
+    <activity android:name=".CreatePresentationActivity" />
+    <activity android:name=".PresentatinActivity"></activity>
     </application>
 
 </manifest>
