@@ -5,7 +5,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Начальная страница"
+        android:label="@string/activity_start_page_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -17,11 +17,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".PresentationActivity"
-            android:label="Презентация"/>
+            android:label="@string/activity_presentation_name"/>
         <activity android:name=".CreatePresentationActivity"
-            android:label="Добавление презентации"/>
+            android:label="@string/activity_create_presentation_name"/>
         <activity android:name=".PreferenceActivity"
-            android:label="Настройки"/>
+            android:label="@string/activity_preference"/>
     </application>
 
 </manifest>
