@@ -12,9 +12,8 @@
         android:layout_height="49dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:background="@drawable/oval_button"
-        android:text="+"
+        android:text="@string/add_presentation_symbol"
         android:textAppearance="@android:style/TextAppearance.Holo.Large.Inverse"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -24,7 +23,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,12 +35,12 @@
             android:id="@+id/pres1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Презентация 1" />
+            android:text="@string/first_presentation" />
 
         <Button
             android:id="@+id/pres2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Презентация 2" />
+            android:text="@string/second_presentation" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
