@@ -15,12 +15,13 @@
             android:id="@+id/training1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Тренировка 1" />
+            android:text="@string/first_training" />
 
         <Button
             android:id="@+id/training2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Тренировка 2" />
+            android:text="@string/second_training" />
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

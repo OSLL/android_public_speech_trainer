@@ -5,21 +5,30 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Начальная страница"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".StartPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PresentationActivity"
+            android:label="Презентация" />
+        <activity
+            android:name=".CreatePresentationActivity"
+            android:label="Добавление презентации" />
+        <activity
+            android:name=".PreferenceActivity"
+            android:label="Настройки" />
         <activity android:name=".TrainingHistoryActivity"
-            android:label="История тренировок"/>
+            android:label="@string/activity_training_history_name"/>
         <activity android:name=".TrainingStatisticsActivity"
-            android:label="Статистика тренировки"/>
+            android:label="@string/activity_training_statistics_name"/>
     </application>
 
 </manifest>
