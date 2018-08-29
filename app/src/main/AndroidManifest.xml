@@ -16,11 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PresentationActivity"
+        <activity 
+            android:name=".PresentationActivity"
             android:label="@string/activity_presentation_name"/>
-        <activity android:name=".CreatePresentationActivity"
+        <activity 
+            android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name"/>
-        <activity android:name=".PreferenceActivity"
+        <activity 
+            android:name=".PreferenceActivity"
             android:label="@string/activity_preference"/>
     </application>
 
