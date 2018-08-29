@@ -18,7 +18,7 @@
         </activity>
         <activity
             android:name=".PresentationActivity"
-            android:label="@string/activity_presentation_name" />
+            android:label="@string/activity_presentation_name"/>
         <activity
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name"/>
@@ -27,7 +27,7 @@
             android:label="Настройки" />
         <activity
             android:name=".EditPresentationActivity"
-            android:label="@string/activity_edit_presentation_name" />
+            android:label="@string/activity_edit_presentation_name"/>
 
     </application>
 
