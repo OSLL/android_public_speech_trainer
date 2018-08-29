@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="activity_start_page_name">Начальная страница</string>
+    <string name="activity_create_presentation_name">Добавление презентации</string>
+    <string name="activity_presentation_name">Презентация</string>
+    <string name="activity_preference">Настройки</string>
+    <string name="add_presentation_symbol">+</string>
+    <string name="first_presentation">Презентация 1</string>
+    <string name="second_presentation">Презентация 2</string>
 </resources>
