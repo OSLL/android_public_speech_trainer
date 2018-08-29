@@ -39,7 +39,7 @@ class StartPageActivity : AppCompatActivity() {
         val id = item?.itemId
         when (id) {
             R.id.action_settings -> {
-                val intent = Intent(this, PreferenceActivity::class.java)
+                val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 return true
             }
