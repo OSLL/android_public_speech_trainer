@@ -1,19 +1,18 @@
 package com.example.company.myapplication
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_edit_presentation.*
+import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class EditPresentationActivity : AppCompatActivity() {
+class TrainingActivity : AppCompatActivity() {
 
     private var renderer: PdfRenderer? = null
     private var currentPage: PdfRenderer.Page? = null
@@ -21,22 +20,14 @@ class EditPresentationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_presentation)
+        setContentView(R.layout.activity_training)
 
-
-       addPresentation.setOnClickListener{
-
-           val uri = intent.getParcelableExtra<Uri>("presentation_uri1")
-
-             if (presentationName.text.toString() == ""){
-                Toast.makeText(this, "Please Enter Presentation Name", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        next.setOnClickListener {
+            val index = currentPage?.index
+            if(renderer != null && index != null) {
+                val NIndex: Int = index
+                renderPage(NIndex + 1)
             }
-
-            val i = Intent(this, PresentationActivity::class.java)
-            i.putExtra("presentation_name",presentationName.text.toString())
-            i.putExtra("presentation_uri2", uri)
-            startActivity(i)
         }
     }
 
@@ -58,21 +49,23 @@ class EditPresentationActivity : AppCompatActivity() {
         if(width != null && height != null && index != null && pageCount != null) {
             val NWidth: Int = width
             val NHeight: Int = height
+            val NIndex: Int = index
+            val NPageCount: Int = pageCount
             val bitmap: Bitmap = Bitmap.createBitmap(NWidth, NHeight, Bitmap.Config.ARGB_8888)
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            pdf_view.setImageBitmap(bitmap)
+            slide.setImageBitmap(bitmap)
+            next.isEnabled = NIndex + 1 < NPageCount
         }
     }
 
     private fun initRenderer(){
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri1")
+        val uri = intent.getParcelableExtra<Uri>("presentation_uri3")
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
             val cr = contentResolver
             val ins = cr.openInputStream(uri)
-
 
             val buffer = ByteArray(1024)
 
@@ -90,5 +83,18 @@ class EditPresentationActivity : AppCompatActivity() {
         } catch(e: IOException){
             Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onPause() {
+        if(isFinishing){
+            currentPage?.close()
+            try{
+                parcelFileDescriptor?.close()
+            } catch (e: IOException){
+                Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
+            }
+            renderer?.close()
+        }
+        super.onPause()
     }
 }
