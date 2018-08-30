@@ -5,8 +5,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions
@@ -56,12 +55,6 @@ class ExampleInstrumentedTest {
     fun test_from_start_page_to_presentation_with_pres2(){
         onView(withId(R.id.pres2)).perform(ViewActions.click())
         intended(hasComponent(ComponentName(getTargetContext(), PresentationActivity::class.java)))
-    }
-
-    @Test
-    fun test_from_start_page_to_create_presentation(){
-        onView(withId(R.id.addBtn)).perform(ViewActions.click())
-        intended(hasComponent(ComponentName(getTargetContext(), CreatePresentationActivity::class.java)))
     }
 
     @Test
