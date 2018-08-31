@@ -35,4 +35,15 @@ dependencies {
     implementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
 }
 
+dependencies {
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+
 
