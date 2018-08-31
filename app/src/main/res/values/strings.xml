@@ -1,4 +1,8 @@
 <resources>
+    <string name="activity_training_name">Тренировка</string>
+    <string name="time_left">осталось времени</string>
+    <string name="next">Следующий</string>
+    <string name="stop">Закончить</string>
     <string name="activity_start_page_name">Начальная страница</string>
     <string name="activity_create_presentation_name">Добавление презентации</string>
     <string name="activity_edit_presentation_name">Добавление новой презентации</string>
