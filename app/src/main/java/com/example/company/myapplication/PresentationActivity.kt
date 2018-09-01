@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_presentation.*
 
-
 class PresentationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +21,10 @@ class PresentationActivity : AppCompatActivity() {
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra("presentation_uri3", uri)
             startActivity(i)
+        }
+
+        trainingHistory.setOnClickListener {
+            startActivity(Intent(this,TrainingHistoryActivity::class.java))
         }
     }
 }
