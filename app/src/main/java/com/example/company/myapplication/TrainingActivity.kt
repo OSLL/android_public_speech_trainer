@@ -27,7 +27,7 @@ class TrainingActivity : AppCompatActivity() {
     private var isCancelled = false
 
     @SuppressLint("UseSparseArrays")
-    var dictionary = HashMap <Int, Long>()
+    var TimePerSlide = HashMap <Int, Long>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class TrainingActivity : AppCompatActivity() {
                         time_left.text.indexOf("s")-1)
 
                 time -= min.toLong()*60 + sec.toLong()
-                dictionary[index+1] = time
+                TimePerSlide [index+1] = time
 
                 time = min.toLong()*60 + sec.toLong()
             }
