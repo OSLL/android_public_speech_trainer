@@ -21,11 +21,6 @@
     <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
-    <string name="activity_training_name">Тренировка</string>
-    <string name="time_left">осталось времени</string>
-    <string name="next">Следующий</string>
-    <string name="stop">Закончить</string>
-    <string name="activity_training_statistics_name">Статистика тренировки</string>
     <string name="name_of_presentation">Название презентации</string>
     <string name="min_per_sec">min:sec</string>
 </resources>
