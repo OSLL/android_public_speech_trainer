@@ -16,9 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TrainingActivity"
+            android:label="@string/activity_training_name"/>
         <activity
             android:name=".PresentationActivity"
             android:label="@string/activity_presentation_name"/>
+        <activity android:name=".TrainingHistoryActivity"
+            android:label="@string/activity_training_history_name"/>
+        <activity android:name=".TrainingStatisticsActivity"
+            android:label="@string/activity_training_statistics_name"/>
         <activity
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name"/>
