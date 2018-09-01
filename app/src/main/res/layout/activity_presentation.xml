@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="serif"
-            android:text="Название презетации"
+            android:text="@string/name_of_presentation"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="#008000"
@@ -37,7 +37,8 @@
                 android:layout_height="100dp"
                 android:gravity="center"
                 android:layout_width="match_parent"
-                android:background="@drawable/custom_rectangle">
+                android:background="@drawable/custom_rectangle"
+                android:focusableInTouchMode="true">
 
                 <TextView
                     android:paddingTop="10dp"
@@ -53,10 +54,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
+                    android:inputType="time"
                     android:textAlignment="center"
                     android:textAllCaps="true"
                     android:textColor="@android:color/black"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    android:hint="@string/min_per_sec" />
 
             </FrameLayout>
 
@@ -77,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/activity_train_name" />
+
         </LinearLayout>
     </LinearLayout>
 
