@@ -15,11 +15,11 @@ class PresentationActivity : AppCompatActivity() {
         val name = intent.getStringExtra("presentation_name")
         presentationName.text = name
 
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri2")
+        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
 
         training.setOnClickListener {
             val i = Intent(this, TrainingActivity::class.java)
-            i.putExtra("presentation_uri3", uri)
+            i.putExtra("presentation_uri", uri)
             startActivity(i)
         }
 

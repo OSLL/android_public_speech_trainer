@@ -6,6 +6,7 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
@@ -59,7 +60,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri3")
+        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
@@ -81,7 +82,8 @@ class TrainingActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch(e: IOException){
-            Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_SHORT).show()
+            Log.d("error","error in opening presentation file")
         }
     }
 
@@ -91,7 +93,8 @@ class TrainingActivity : AppCompatActivity() {
             try{
                 parcelFileDescriptor?.close()
             } catch (e: IOException){
-                Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "error in closing FileDescriptor", Toast.LENGTH_SHORT).show()
+                Log.d("error","error in closing FileDescriptor")
             }
             renderer?.close()
         }
