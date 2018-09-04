@@ -1,15 +1,22 @@
+apply plugin: 'kotlin-kapt'
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+kapt {
+    mapDiagnosticLocations = true
+    generateStubs = true
+}
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.company.myapplication"
-        minSdkVersion 21
-        targetSdkVersion 27
+        applicationId "com.example.putkovdimi.trainspeech"
+        minSdkVersion 22
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -23,10 +30,47 @@ android {
 }
 
 dependencies {
+   // Architecture Component - Room
+
+     implementation "android.arch.persistence.room:runtime:1.1.0-beta1"
+        kapt "android.arch.persistence.room:compiler:1.1.0-beta1"
+
+      // Lifecyles, LiveData and ViewModel
+    kapt 'com.android.databinding:compiler:3.1.0'
+
+
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+
+// alternatively, just ViewModel
+    implementation "android.arch.lifecycle:viewmodel:1.1.1"
+
+    // alternatively, just LiveData
+    implementation "android.arch.lifecycle:livedata:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+
+    // Room (use 1.1.0-beta1 for latest beta)
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
+
+
+// Paging
+    implementation "android.arch.paging:runtime:1.0.0-alpha7"
+
+    // Test helpers for LiveData
+    testImplementation "android.arch.core:core-testing:1.1.1"
+
+    // Test helpers for Room
+    testImplementation "android.arch.persistence.room:testing:1.0.0"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.jjoe64:graphview:4.2.2'
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0-rc01'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
