@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
@@ -32,6 +33,8 @@ class EditPresentationActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please Enter Presentation Name", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+
 
             val i = Intent(this, PresentationActivity::class.java)
             i.putExtra("presentation_name",presentationName.text.toString())
@@ -65,6 +68,7 @@ class EditPresentationActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
+
         val uri = intent.getParcelableExtra<Uri>("presentation_uri1")
 
         try{
