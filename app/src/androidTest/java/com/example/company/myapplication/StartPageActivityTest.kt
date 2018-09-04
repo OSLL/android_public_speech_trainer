@@ -14,12 +14,11 @@ import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
+import com.example.company.myapplication.R.string.*
 import android.support.test.uiautomator.UiDevice
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-
-
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -27,7 +26,7 @@ import org.junit.runner.RunWith
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class StartPageActivityTest {
 
     @Rule
     @JvmField
@@ -36,29 +35,29 @@ class ExampleInstrumentedTest {
     @Test
     fun buttonsExist() {
         onView(withId(R.id.addBtn)).check(matches(isDisplayed()))
-        onView(withText("Презентация 1")).check(matches(isDisplayed()))
+        onView(withText(first_presentation)).check(matches(isDisplayed()))
         onView(withId(R.id.pres1)).check(matches(isDisplayed()))
-        onView(withText("Презентация 2")).check(matches(isDisplayed()))
+        onView(withText(second_presentation)).check(matches(isDisplayed()))
         onView(withId(R.id.pres2)).check(matches(isDisplayed()))
-        onView(withText("+")).check(matches(isDisplayed()))
+        onView(withText(add_presentation_symbol)).check(matches(isDisplayed()))
     }
 
     @Test
     fun test_from_start_page_to_presentation_with_pres1(){
-        onView(withId(R.id.pres1)).perform(ViewActions.click())
+        onView(withId(R.id.pres1)).perform(click())
         intended(hasComponent(ComponentName(getTargetContext(), PresentationActivity::class.java)))
     }
 
     @Test
     fun test_from_start_page_to_presentation_with_pres2(){
-        onView(withId(R.id.pres2)).perform(ViewActions.click())
+        onView(withId(R.id.pres2)).perform(click())
         intended(hasComponent(ComponentName(getTargetContext(), PresentationActivity::class.java)))
     }
 
     @Test
     fun test_from_start_page_to_preference(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
-        onView(withText("Настройки")).perform(click());
+        onView(withText(activity_preference)).perform(click());
         intended(hasComponent(ComponentName(getTargetContext(), PreferenceActivity::class.java)))
     }
 
