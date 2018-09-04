@@ -11,6 +11,9 @@ class PresentationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presentation)
 
+        val name = intent.getStringExtra("presentation_name")
+        presentationName.text = name
+      
         trainingHistory.setOnClickListener {
             startActivity(Intent(this,TrainingHistoryActivity::class.java))
         }
