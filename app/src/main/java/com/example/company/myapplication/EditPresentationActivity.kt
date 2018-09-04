@@ -27,7 +27,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
        addPresentation.setOnClickListener{
 
-           val uri = intent.getParcelableExtra<Uri>("presentation_uri1")
+           val uri = intent.getParcelableExtra<Uri>("presentation_uri")
 
              if (presentationName.text.toString() == ""){
                 Toast.makeText(this, "Please Enter Presentation Name", Toast.LENGTH_SHORT).show()
@@ -38,7 +38,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
             val i = Intent(this, PresentationActivity::class.java)
             i.putExtra("presentation_name",presentationName.text.toString())
-            i.putExtra("presentation_uri2", uri)
+            i.putExtra("presentation_uri", uri)
             startActivity(i)
         }
     }
@@ -69,7 +69,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
     private fun initRenderer(){
 
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri1")
+        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
@@ -92,7 +92,8 @@ class EditPresentationActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch(e: IOException){
-            Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_SHORT).show()
+            Log.d("error","error in opening presentation file")
         }
     }
 }

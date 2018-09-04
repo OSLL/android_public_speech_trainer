@@ -23,4 +23,6 @@
     <string name="second_presentation">Презентация 2</string>
     <string name="name_of_presentation">Название презентации</string>
     <string name="min_per_sec">min:sec</string>
+    <string name="training_completed">Тренировка завершена</string>
+    <string name="training_statistics">Статистика тренировки</string>
 </resources>

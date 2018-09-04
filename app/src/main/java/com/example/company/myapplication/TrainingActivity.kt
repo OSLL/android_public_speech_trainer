@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.ParcelFileDescriptor
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
@@ -17,6 +18,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -33,7 +35,7 @@ class TrainingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
-        var time = intent.getLongExtra("TrainingTime", 0)
+        var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         next.setOnClickListener {
             val index = currentPage?.index
@@ -61,7 +63,7 @@ class TrainingActivity : AppCompatActivity() {
         super.onStart()
         initRenderer()
         renderPage(0)
-        val TrainingTime = intent.getLongExtra("TrainingTime", 0)
+        val TrainingTime = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
         timer(TrainingTime*1000,1000).start()
     }
 
@@ -71,7 +73,7 @@ class TrainingActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long){
                 val timeRemaining = timeString(millisUntilFinished)
                 if (isCancelled){
-                    time_left.text = "Тренировка завершена"
+                    time_left.setText(R.string.training_completed)
                     cancel()
                 }else{
                     time_left.text = timeRemaining
@@ -81,8 +83,8 @@ class TrainingActivity : AppCompatActivity() {
                 isCancelled = true
                 timer(1,1).cancel()
                 val builder = AlertDialog.Builder(this@TrainingActivity)
-                builder.setMessage("Тренировка завершена")
-                builder.setPositiveButton("Статистика тренировки"){_,_->
+                builder.setMessage(R.string.training_completed)
+                builder.setPositiveButton(R.string.training_statistics){_,_->
                     val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
                     startActivity(stat)
                 }
@@ -137,7 +139,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri3")
+        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
@@ -159,7 +161,8 @@ class TrainingActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch (e: IOException){
-            Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_SHORT).show()
+            Log.d("error","error in opening presentation file")
         }
     }
 
@@ -169,7 +172,8 @@ class TrainingActivity : AppCompatActivity() {
             try{
                 parcelFileDescriptor?.close()
             } catch (e: IOException){
-                Toast.makeText(this, "the exception happened", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "error in closing FileDescriptor", Toast.LENGTH_SHORT).show()
+                Log.d("error","error in closing FileDescriptor")
             }
             renderer?.close()
         }
