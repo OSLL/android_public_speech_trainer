@@ -13,6 +13,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import com.example.company.myapplication.R.string.*
+import android.support.test.uiautomator.UiDevice
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,11 +51,18 @@ class StartPageActivityTest {
         onView(withId(R.id.pres2)).perform(click())
         intended(hasComponent(ComponentName(getTargetContext(), PresentationActivity::class.java)))
     }
-    
+
     @Test
     fun test_from_start_page_to_preference(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(activity_preference)).perform(click());
         intended(hasComponent(ComponentName(getTargetContext(), PreferenceActivity::class.java)))
+    }
+
+    @Test
+    fun test_from_start_page_to_open_file_dialog(){
+        onView(withId(R.id.addBtn)).perform(ViewActions.click())
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
+        intended(hasComponent(ComponentName(getTargetContext(), CreatePresentationActivity::class.java)))
     }
 }
