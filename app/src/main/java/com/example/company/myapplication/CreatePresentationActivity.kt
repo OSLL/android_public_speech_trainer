@@ -32,7 +32,6 @@ class CreatePresentationActivity : AppCompatActivity() {
             val selectedFile = data.data //The uri with the location of the file
             try {
                 val i = Intent(this, EditPresentationActivity::class.java)
-                Log.d("file_system", selectedFile.toString())
                 i.putExtra("presentation_uri", selectedFile)
                 startActivity(i)
             } catch (e: FileNotFoundException) {
