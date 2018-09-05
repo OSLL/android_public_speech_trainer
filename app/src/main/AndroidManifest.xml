@@ -12,7 +12,7 @@
         <activity android:name=".StartPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,13 +27,15 @@
             android:label="@string/activity_training_statistics_name"/>
         <activity
             android:name=".CreatePresentationActivity"
-            android:label="@string/activity_create_presentation_name"/>
+            android:label="@string/activity_create_presentation_name" />
         <activity
             android:name=".PreferenceActivity"
             android:label="Настройки" />
         <activity
             android:name=".EditPresentationActivity"
-            android:label="@string/activity_edit_presentation_name"/>
+            android:label="@string/activity_edit_presentation_name" />
+        <activity android:name=".TrainingActivity"
+            android:label="@string/activity_training_name"/>/>
     </application>
 
 </manifest>

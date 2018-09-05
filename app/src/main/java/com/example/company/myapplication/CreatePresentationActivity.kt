@@ -18,7 +18,6 @@ class CreatePresentationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
-        Log.d("file_system", path)
         val myUri = Uri.parse(path)
         val intent = Intent(ACTION_GET_CONTENT)
                 .setDataAndType(myUri, "*/*")
@@ -33,7 +32,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             val selectedFile = data.data //The uri with the location of the file
             try {
                 val i = Intent(this, EditPresentationActivity::class.java)
-                i.putExtra("presentation_uri", selectedFile.path)
+                i.putExtra("presentation_uri", selectedFile)
                 startActivity(i)
             } catch (e: FileNotFoundException) {
                 Log.d("file_system", "file not found")
