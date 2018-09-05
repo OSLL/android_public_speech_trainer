@@ -33,9 +33,6 @@
             android:name=".EditPresentationActivity"
             android:label="@string/activity_edit_presentation_name" />
         <activity
-            android:name=".TrainingActivity"
-            android:label="@string/activity_training_name" />
-        <activity
             android:name=".TrainingStatisticsActivity"
             android:label="@string/activity_training_statistics_name"/>
     </application>

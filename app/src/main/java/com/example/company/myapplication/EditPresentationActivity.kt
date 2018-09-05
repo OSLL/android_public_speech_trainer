@@ -77,7 +77,6 @@ class EditPresentationActivity : AppCompatActivity() {
             val cr = contentResolver
             val ins = cr.openInputStream(uri)
 
-
             val buffer = ByteArray(1024)
 
             var readBytes = ins.read(buffer)

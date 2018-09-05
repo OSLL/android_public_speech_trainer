@@ -19,7 +19,6 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 class TrainingActivity : AppCompatActivity() {
 
     private var renderer: PdfRenderer? = null
