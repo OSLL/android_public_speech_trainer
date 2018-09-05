@@ -26,5 +26,16 @@ class PresentationActivity : AppCompatActivity() {
         trainingHistory.setOnClickListener {
             startActivity(Intent(this,TrainingHistoryActivity::class.java))
         }
+        //share example
+        share.setOnClickListener {
+            val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
+            sharingIntent.type = "text/plain"
+            val shareBody = "Your body here"
+            val shareSub = "Your subject here"
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub)
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
+            startActivity(Intent.createChooser(sharingIntent, "Share using"))
+        }
+        //-------------
     }
 }
