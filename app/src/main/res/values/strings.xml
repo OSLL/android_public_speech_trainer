@@ -35,7 +35,7 @@
     <string name="pref_title_display_name">Имя пользователя</string>
     <string name="pref_default_display_name">John Smith</string>
 
-    <string name="pref_title_add_friends_to_messages">:Желательный темп речи</string>
+    <string name="pref_title_add_friends_to_messages">Желательный темп речи</string>
     <string-array name="pref_example_list_titles">
         <item>Медленный</item>
         <item>Оптимальный</item>
