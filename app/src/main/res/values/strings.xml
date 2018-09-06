@@ -21,4 +21,6 @@
     <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
+    <string name="words_count">Количество слов в минуту</string>
+    <string name="slide_number">Номер слайда</string>
 </resources>
