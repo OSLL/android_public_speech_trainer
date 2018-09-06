@@ -68,8 +68,9 @@ class EditPresentationActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
-      
+
         val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
