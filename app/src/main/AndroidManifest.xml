@@ -23,9 +23,6 @@
             android:label="@string/activity_presentation_name"/>
         <activity android:name=".TrainingHistoryActivity"
             android:label="@string/activity_training_history_name"/>
-        <activity android:name=".TrainingStatisticsActivity"
-            android:label="@string/activity_training_statistics_name"/>
-
         <activity
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name" />
@@ -35,6 +32,9 @@
         <activity
             android:name=".EditPresentationActivity"
             android:label="@string/activity_edit_presentation_name" />
+        <activity
+            android:name=".TrainingStatisticsActivity"
+            android:label="@string/activity_training_statistics_name"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"></activity>

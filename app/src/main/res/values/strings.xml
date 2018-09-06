@@ -93,4 +93,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Вибрация</string>
+    <string name="name_of_presentation">Название презентации</string>
+    <string name="min_per_sec">min:sec</string>
+    <string name="training_completed">Тренировка завершена</string>
+    <string name="training_statistics">Статистика тренировки</string>
+    <string name="return_training">Повторить тренировку</string>
 </resources>
