@@ -6,7 +6,7 @@ import android.arch.persistence.room.*
 data class TrainingsData(@PrimaryKey(autoGenerate = true) var id: Int?,
                             @ColumnInfo(name = "presentationID") var presentationID: Int?,
                             @ColumnInfo(name = "queueNumber") var queueNumber: Int,
-                            @ColumnInfo(name = "generalDuration") var generalDuration : Array<Int>?
+                            @ColumnInfo(name = "generalDuration") var generalDuration : Int?
 ){
     constructor():this(null,0,0,null)
 }
