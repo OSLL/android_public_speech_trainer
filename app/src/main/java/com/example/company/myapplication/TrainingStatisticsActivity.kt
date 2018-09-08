@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.github.mikephil.charting.components.Legend
@@ -10,17 +11,14 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import android.content.Intent
-import kotlinx.android.synthetic.main.activity_presentation.*
 
 class TrainingStatisticsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
-      
         //share example
-        share.setOnClickListener {
+        share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"
             val shareBody = "Your body here"
