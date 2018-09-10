@@ -14,6 +14,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+const val DEFAULT_TIME = "DefTime"
+
 class EditPresentationActivity : AppCompatActivity() {
 
     private var renderer: PdfRenderer? = null
@@ -39,7 +41,11 @@ class EditPresentationActivity : AppCompatActivity() {
             val i = Intent(this, PresentationActivity::class.java)
             i.putExtra(NAME_OF_PRES,presentationName.text.toString())
             i.putExtra(URI, uri)
-            startActivity(i)
+            val pageCount = renderer?.pageCount
+            if(pageCount != null) {
+                i.putExtra(DEFAULT_TIME, pageCount.toInt())
+            }
+           startActivity(i)
         }
     }
 
@@ -52,12 +58,12 @@ class EditPresentationActivity : AppCompatActivity() {
     private fun renderPage(pageIndex: Int){
 
         currentPage?.close()
-
         currentPage = renderer?.openPage(pageIndex)
         val width = currentPage?.width
         val height = currentPage?.height
         val index = currentPage?.index
         val pageCount = renderer?.pageCount
+
         if(width != null && height != null && index != null && pageCount != null) {
             val NWidth: Int = width
             val NHeight: Int = height

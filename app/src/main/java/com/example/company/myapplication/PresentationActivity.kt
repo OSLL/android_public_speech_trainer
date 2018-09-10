@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,9 +15,17 @@ const val NAME_OF_PRES = "presentation_name"
 
 class PresentationActivity : AppCompatActivity() {
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presentation)
+
+        val DefTime = intent.getIntExtra(DEFAULT_TIME, 0)
+        var min = DefTime
+        if(min > 999){
+            min = 999
+        }
+        trainingTime.setText(min.toString()+":00")
 
         fun IsNumber(a: String, b: String): Boolean {
             try {
@@ -39,7 +48,7 @@ class PresentationActivity : AppCompatActivity() {
         }
 
         fun TestLong(a: String, b: String): Boolean{
-            return a.length < 3 && b.length < 3 && a.toInt() < 61 && b.toInt() < 60
+            return a.length < 4 && b.length < 3 && a.toInt() < 1000 && b.toInt() < 60
         }
 
         val name = intent.getStringExtra(NAME_OF_PRES)
