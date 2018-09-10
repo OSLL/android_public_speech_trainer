@@ -9,7 +9,8 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_presentation.*
 
 const val TIME_ALLOTTED_FOR_TRAINING = "TrainingTime"
-const val MESSAGE_ABOUT_FORMAT_INCORRECTNESS = "The format is incorrect"
+const val MESSAGE_ABOUT_FORMAT_INCORRECTNESS = "Неправильный формат"
+const val NAME_OF_PRES = "presentation_name"
 
 class PresentationActivity : AppCompatActivity() {
 
@@ -41,14 +42,14 @@ class PresentationActivity : AppCompatActivity() {
             return a.length < 3 && b.length < 3 && a.toInt() < 61 && b.toInt() < 60
         }
 
-        val name = intent.getStringExtra("presentation_name")
+        val name = intent.getStringExtra(NAME_OF_PRES)
         presentationName.text = name
 
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+        val uri = intent.getParcelableExtra<Uri>(URI)
 
         training.setOnClickListener {
             val i = Intent(this, TrainingActivity::class.java)
-            i.putExtra("presentation_uri", uri)
+            i.putExtra(URI, uri)
             if (SearchSymbol(trainingTime.text.toString())) {
                 val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
                 val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
@@ -63,9 +64,8 @@ class PresentationActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
-                Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS.toString())
+                Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
             }
-            startActivity(i)
         }
 
         trainingHistory.setOnClickListener {

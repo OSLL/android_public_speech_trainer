@@ -138,7 +138,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+        val uri = intent.getParcelableExtra<Uri>(URI)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
@@ -160,7 +160,7 @@ class TrainingActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch (e: IOException){
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
             Log.d("error","error in opening presentation file")
         }
     }
@@ -171,7 +171,7 @@ class TrainingActivity : AppCompatActivity() {
             try{
                 parcelFileDescriptor?.close()
             } catch (e: IOException){
-                Toast.makeText(this, "error in closing FileDescriptor", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "error in closing FileDescriptor", Toast.LENGTH_LONG).show()
                 Log.d("error","error in closing FileDescriptor")
             }
             renderer?.close()
