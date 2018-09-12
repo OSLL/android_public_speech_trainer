@@ -27,9 +27,6 @@
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name" />
         <activity
-            android:name=".PreferenceActivity"
-            android:label="Настройки" />
-        <activity
             android:name=".EditPresentationActivity"
             android:label="@string/activity_edit_presentation_name" />
         <activity
