@@ -29,6 +29,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -41,7 +42,8 @@ class TrainingActivity : AppCompatActivity() {
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap <Int, Long>()
 
-    private var PresentEntries = mutableMapOf<Int,Float?>()
+    //private var PresentEntries = mutableMapOf<Int,Float?>()
+    private var PresentEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
 
