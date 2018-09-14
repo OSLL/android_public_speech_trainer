@@ -131,7 +131,7 @@ class TrainingActivity : AppCompatActivity() {
                 if (curText == "")
                     SlideReadSpeed = 0f
                 else
-                 SlideReadSpeed = curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+                    SlideReadSpeed = curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
                 PresentEntries.put(curPageNum++,SlideReadSpeed)
 
@@ -143,6 +143,15 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+
+            val SlideReadSpeed: Float
+            if (curText == "")
+                SlideReadSpeed = 0f
+            else
+                SlideReadSpeed = curText.split(" ").size.toFloat() / time!!.toFloat() * 60f
+
+            PresentEntries.put(curPageNum++,SlideReadSpeed)
+
             timer(1,1).onFinish()
         }
     }
@@ -197,9 +206,7 @@ class TrainingActivity : AppCompatActivity() {
                 builder.setMessage(R.string.training_completed)
                 builder.setPositiveButton(R.string.training_statistics){_,_->
                     val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
-
                     
-
                     unmuteSound()
                     startActivity(stat)
                 }
