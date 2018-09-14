@@ -39,8 +39,7 @@ class TrainingActivity : AppCompatActivity() {
 
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap <Int, Long>()
-
-    //private var PresentEntries = mutableMapOf<Int,Float?>()
+    
     private var PresentEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
