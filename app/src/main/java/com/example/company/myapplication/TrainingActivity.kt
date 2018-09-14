@@ -9,11 +9,9 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.ParcelFileDescriptor
-import android.provider.Settings
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -54,7 +52,6 @@ class TrainingActivity : AppCompatActivity() {
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-        checkPermission()
         //muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
 
         val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
@@ -86,7 +83,6 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             override fun onError(i: Int) {
-                checkPermission()
             }
 
             override fun onResults(bundle: Bundle) {
@@ -165,17 +161,7 @@ class TrainingActivity : AppCompatActivity() {
                     1)
         }
     }
-
-    private fun checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse("package:" + getPackageName()))
-                startActivity(intent)
-                finish()
-            }
-        }
-    }
+    
 
 //======================
 
