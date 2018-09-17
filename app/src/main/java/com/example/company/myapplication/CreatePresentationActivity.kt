@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import java.io.FileNotFoundException
 
+const val URI = "presentation_uri"
+const val FILE_SYSTEM = "file_system"
 
 class CreatePresentationActivity : AppCompatActivity() {
 
@@ -32,11 +34,11 @@ class CreatePresentationActivity : AppCompatActivity() {
             val selectedFile = data.data //The uri with the location of the file
             try {
                 val i = Intent(this, EditPresentationActivity::class.java)
-                Log.d("file_system", selectedFile.toString())
-                i.putExtra("presentation_uri", selectedFile)
+                Log.d(FILE_SYSTEM, selectedFile.toString())
+                i.putExtra(URI, selectedFile)
                 startActivity(i)
             } catch (e: FileNotFoundException) {
-                Log.d("file_system", "file not found")
+                Log.d(FILE_SYSTEM, "file not found")
             }
         }
     }
