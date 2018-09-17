@@ -13,6 +13,9 @@ import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import android.provider.OpenableColumns
+
+
 
 class EditPresentationActivity : AppCompatActivity() {
 
@@ -70,6 +73,8 @@ class EditPresentationActivity : AppCompatActivity() {
     private fun initRenderer(){
 
         val uri = intent.getParcelableExtra<Uri>(URI)
+        val name = getFileName(uri).substring(0, getFileName(uri).indexOf(".pdf"))
+        presentationName.setText(name)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
@@ -94,5 +99,27 @@ class EditPresentationActivity : AppCompatActivity() {
             Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
             Log.d("error","error in opening presentation file")
         }
+    }
+
+    fun getFileName(uri: Uri): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = contentResolver.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor!!.close()
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
     }
 }
