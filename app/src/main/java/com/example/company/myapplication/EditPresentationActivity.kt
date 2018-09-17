@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -101,6 +102,7 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Recycle")
     fun getFileName(uri: Uri): String {
         var result: String? = null
         if (uri.scheme == "content") {
