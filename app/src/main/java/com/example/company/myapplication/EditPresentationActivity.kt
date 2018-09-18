@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import android.provider.OpenableColumns
 
 
 
@@ -71,16 +70,16 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Recycle")
     private fun initRenderer(){
 
         val uri = intent.getParcelableExtra<Uri>(URI)
-        val name = getFileName(uri).substring(0, getFileName(uri).indexOf(".pdf"))
-        presentationName.setText(name)
+        val cr = contentResolver
+        presentationName.setText(getFileName(uri, cr))
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val cr = contentResolver
             val ins = cr.openInputStream(uri)
 
             val buffer = ByteArray(1024)
@@ -101,12 +100,12 @@ class EditPresentationActivity : AppCompatActivity() {
             Log.d("error","error in opening presentation file")
         }
     }
-
+/*
     @SuppressLint("Recycle")
-    fun getFileName(uri: Uri): String {
+    fun getFileName(uri: Uri, cr: ContentResolver): String {
         var result: String? = null
         if (uri.scheme == "content") {
-            val cursor = contentResolver.query(uri, null, null, null, null)
+            val cursor = cr.query(uri, null, null, null, null)
             try {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
@@ -124,4 +123,5 @@ class EditPresentationActivity : AppCompatActivity() {
         }
         return result
     }
+    */
 }
