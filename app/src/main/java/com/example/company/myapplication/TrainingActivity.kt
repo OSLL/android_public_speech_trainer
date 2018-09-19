@@ -36,6 +36,7 @@ class TrainingActivity : AppCompatActivity() {
 
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
+        finish.isEnabled = false
         next.setOnClickListener {
             val index = currentPage?.index
             if(renderer != null && index != null) {
@@ -134,6 +135,7 @@ class TrainingActivity : AppCompatActivity() {
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             slide.setImageBitmap(bitmap)
             next.isEnabled = NIndex + 1 < NPageCount
+            finish.isEnabled = !next.isEnabled
         }
     }
 
