@@ -58,7 +58,7 @@ class TrainingActivity : AppCompatActivity() {
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-         muteSound() // mute sound, for unmute use unmuteSound()
+        muteSound() // mute sound, for unmute use unmuteSound()
 
         //init main recognizer
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
@@ -91,7 +91,6 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             override fun onError(i: Int) {
-                //mBufferSpeechRecognizer!!.startListening(mBufferSpeechRecognizerIntent)
                 Log.d("speechT", "MAIN RECOGNIZER ERROR")
             }
 
@@ -168,6 +167,7 @@ class TrainingActivity : AppCompatActivity() {
 
         mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
 
+        finish.isEnabled = false
         next.setOnClickListener {
             val index = currentPage?.index
             if(renderer != null && index != null) {
@@ -308,6 +308,7 @@ class TrainingActivity : AppCompatActivity() {
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             slide.setImageBitmap(bitmap)
             next.isEnabled = NIndex + 1 < NPageCount
+            finish.isEnabled = !next.isEnabled
         }
     }
 
