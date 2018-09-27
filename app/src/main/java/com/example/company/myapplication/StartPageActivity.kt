@@ -9,6 +9,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
 
 const val debugSlides = "making_presentation.pdf"
+const val PageCount = 26
 
 class StartPageActivity : AppCompatActivity() {
 

@@ -29,10 +29,11 @@ class DebugSlidesTest {
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     @Test
-    fun Test(){
+    fun TestOfTransNameLim(){
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
         onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
+        onView(withText(PageCount.toString()+":00")).check(matches(isDisplayed()))
     }
 }
