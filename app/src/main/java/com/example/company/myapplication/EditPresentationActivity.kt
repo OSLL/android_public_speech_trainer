@@ -84,11 +84,11 @@ class EditPresentationActivity : AppCompatActivity() {
             val fos = FileOutputStream(temp)
             val sPref = getPreferences(Context.MODE_PRIVATE)
             val ins: InputStream
-            ins = if(!sPref.getBoolean(getString(R.string.DEBUG_SLIDES), debugSlides)) {
+            ins = if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) == "") {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open("making_presentation.pdf")
+                assets.open(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides))
             }
             val buffer = ByteArray(1024)
 

@@ -21,7 +21,7 @@ class CreatePresentationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val sPref = getPreferences(Context.MODE_PRIVATE)
         super.onCreate(savedInstanceState)
-        if(!sPref.getBoolean(getString(R.string.DEBUG_SLIDES), debugSlides)) {
+        if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) == "") {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
             val intent = Intent(ACTION_GET_CONTENT)
@@ -31,7 +31,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUSETCODE)
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(URI, R.string.DEBUG_SLIDES)
+            i.putExtra(URI, sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides))
             startActivity(i)
         }
     }

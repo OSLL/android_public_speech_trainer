@@ -8,7 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
 
-const val debugSlides: Boolean = true
+const val debugSlides = "making_presentation.pdf"
 
 class StartPageActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class StartPageActivity : AppCompatActivity() {
 
         val sPref = getPreferences(Context.MODE_PRIVATE)
         val debSl = sPref.edit()
-        debSl.putBoolean(getString(R.string.DEBUG_SLIDES), debugSlides)
+        debSl.putString(getString(R.string.DEBUG_SLIDES), debugSlides)
         debSl.apply()
 
         pres1.setOnClickListener{
