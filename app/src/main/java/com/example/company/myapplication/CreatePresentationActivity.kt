@@ -37,8 +37,6 @@ class CreatePresentationActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-  //      val sPref = getPreferences(Context.MODE_PRIVATE)
- //       if(!sPref.getBoolean(getString(R.string.DEBUG_SLIDES), debugSlides)) {
             super.onActivityResult(requestCode, resultCode, data)
             if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
                 val selectedFile = data.data //The uri with the location of the file
@@ -51,7 +49,6 @@ class CreatePresentationActivity : AppCompatActivity() {
                     Log.d(FILE_SYSTEM, "file not found")
                 }
             }
-   //     }
     }
 }
 

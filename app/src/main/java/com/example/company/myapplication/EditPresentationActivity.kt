@@ -90,6 +90,12 @@ class EditPresentationActivity : AppCompatActivity() {
             } else {
                 assets.open(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides))
             }
+
+            if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) != "") {
+                val name = sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides)
+                presentationName.setText(name.substring(0, name.indexOf(".pdf")))
+            }
+
             val buffer = ByteArray(1024)
 
             var readBytes = ins.read(buffer)
