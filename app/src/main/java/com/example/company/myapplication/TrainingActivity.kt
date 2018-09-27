@@ -51,7 +51,7 @@ class TrainingActivity : AppCompatActivity() {
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-        //muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+        muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
 
         val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -274,21 +274,13 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private  fun muteSound(){
-        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
-        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
-        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
-        amanager.setStreamMute(AudioManager.STREAM_RING, true)
-        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+        val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audio.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI)
     }
 
     private fun unmuteSound(){
-        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
-        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
-        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
-        amanager.setStreamMute(AudioManager.STREAM_RING, false)
-        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
+        val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audio.setStreamVolume(AudioManager.STREAM_MUSIC, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC), AudioManager.FLAG_SHOW_UI)
     }
 
     override fun onPause() {
