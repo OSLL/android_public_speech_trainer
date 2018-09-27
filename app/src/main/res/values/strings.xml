@@ -29,4 +29,5 @@
     <string name="training_statistics">Статистика тренировки</string>
     <string name="return_training">Повторить тренировку</string>
     <string name="message_no_presentation_name">Пожалуйста, введите имя презентации</string>
+    <string name="DEBUG_SLIDES">debug_slides</string>
 </resources>

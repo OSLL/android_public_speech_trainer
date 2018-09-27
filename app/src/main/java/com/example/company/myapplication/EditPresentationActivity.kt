@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 
 const val DEFAULT_TIME = "DefTime"
 
@@ -80,9 +82,14 @@ class EditPresentationActivity : AppCompatActivity() {
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val cr = contentResolver
-            val ins = cr.openInputStream(uri)
-
+            val sPref = getPreferences(Context.MODE_PRIVATE)
+            val ins: InputStream
+            ins = if(!sPref.getBoolean(getString(R.string.DEBUG_SLIDES), debugSlides)) {
+                val cr = contentResolver
+                cr.openInputStream(uri)
+            } else {
+                assets.open("making_presentation.pdf")
+            }
             val buffer = ByteArray(1024)
 
             var readBytes = ins.read(buffer)
