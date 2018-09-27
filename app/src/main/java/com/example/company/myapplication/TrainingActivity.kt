@@ -44,6 +44,13 @@ class TrainingActivity : AppCompatActivity() {
     private var curPageNum = 1
     private var curText = ""
 
+    private var mSpeechRecognizer:SpeechRecognizer? = null
+    private var mSpeechRecognizerIntent: Intent? = null
+    private var mBufferSpeechRecognizer: SpeechRecognizer? = null
+    private var mBufferSpeechRecognizerIntent: Intent? = null
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
@@ -51,16 +58,18 @@ class TrainingActivity : AppCompatActivity() {
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-        muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+         muteSound() // mute sound, for unmute use unmuteSound()
 
-        val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-        val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+        //init main recognizer
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+
+        mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        mSpeechRecognizerIntent!!.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+        mSpeechRecognizerIntent!!.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
                 Locale.getDefault())
 
-        mSpeechRecognizer.setRecognitionListener(object : RecognitionListener {
+        mSpeechRecognizer!!.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(bundle: Bundle) {
 
             }
@@ -78,10 +87,12 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             override fun onEndOfSpeech() {
-
+                mBufferSpeechRecognizer!!.startListening(mBufferSpeechRecognizerIntent)
             }
 
             override fun onError(i: Int) {
+                //mBufferSpeechRecognizer!!.startListening(mBufferSpeechRecognizerIntent)
+                Log.d("speechT", "MAIN RECOGNIZER ERROR")
             }
 
             override fun onResults(bundle: Bundle) {
@@ -89,7 +100,7 @@ class TrainingActivity : AppCompatActivity() {
                         .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 
                 if (matches != null) {
-                    curText = matches[0]
+                    curText += matches[0]
                 }
             }
 
@@ -102,7 +113,60 @@ class TrainingActivity : AppCompatActivity() {
             }
         })
 
-        mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
+        //init buffer recognizer
+        mBufferSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+
+        mBufferSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        mBufferSpeechRecognizerIntent!!.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        mBufferSpeechRecognizerIntent!!.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+                Locale.getDefault())
+
+        mBufferSpeechRecognizer!!.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(bundle: Bundle) {
+
+            }
+
+            override fun onBeginningOfSpeech() {
+
+            }
+
+            override fun onRmsChanged(v: Float) {
+
+            }
+
+            override fun onBufferReceived(bytes: ByteArray) {
+
+            }
+
+            override fun onEndOfSpeech() {
+                mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
+            }
+
+            override fun onError(i: Int) {
+                Log.d("speechT", "BUFFER RECOGNIZER ERROR")
+            }
+
+            override fun onResults(bundle: Bundle) {
+                val matches = bundle
+                        .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+
+                if (matches != null) {
+                    curText += matches[0]
+                }
+            }
+
+            override fun onPartialResults(bundle: Bundle) {
+
+            }
+
+            override fun onEvent(i: Int, bundle: Bundle) {
+
+            }
+        })
+
+
+        mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
 
         next.setOnClickListener {
             val index = currentPage?.index
@@ -119,8 +183,10 @@ class TrainingActivity : AppCompatActivity() {
 
                 time = min.toLong()*60 + sec.toLong()
 
-                mSpeechRecognizer.stopListening()
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
+                mSpeechRecognizer!!.stopListening()
+                mBufferSpeechRecognizer!!.stopListening()
+                mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
+
 
                 val SlideReadSpeed: Float
                 if (curText == "")
