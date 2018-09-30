@@ -18,6 +18,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
         //share example
+        returnTraining.setOnClickListener{
+            startTrainingActivity()
+        }
         share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"
@@ -39,6 +42,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         //------------
 
         printSpeedLineChart(presentationSpeedData)
+    }
+
+    fun startTrainingActivity(){
+        val intent = Intent(this, PresentationActivity::class.java)
+        startActivity(intent)
     }
 
     //Инициализация графика скорсти чтения
