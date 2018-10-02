@@ -1,14 +1,22 @@
 package com.example.company.myapplication
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
+import android.media.MediaMetadataRetriever
+import android.media.MediaRecorder
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Environment
 import android.os.ParcelFileDescriptor
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
@@ -16,14 +24,24 @@ import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+
+const val AUDIO_RECORDING = "audio_recording"
+const val RECORD_AUDIO_PERMISSION = 2
+const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
 
 class TrainingActivity : AppCompatActivity() {
 
     private var renderer: PdfRenderer? = null
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
+
+    private lateinit var mediaRecorder: MediaRecorder
+    private lateinit var audioFile: File
+    private lateinit var directory: File
+    private var finishedRecording = false
 
     private var isCancelled = false
 
@@ -33,6 +51,12 @@ class TrainingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        with (sharedPref.edit()) {
+            putBoolean(getString(R.string.audio_recording), true)
+            apply()
+        }
 
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
@@ -55,14 +79,23 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+            if (!finishedRecording) {
+                stopAudioRecording()
+                finishedRecording = true
+            }
+
             timer(1,1).onFinish()
         }
     }
 
     override fun onStart() {
         super.onStart()
+
         initRenderer()
         renderPage(0)
+
+        initAudioRecording()
+
         val TrainingTime = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
         timer(TrainingTime*1000,1000).start()
     }
@@ -167,6 +200,114 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    private fun initAudioRecording() {
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        val defaultValue = false
+        val isRecordingOn = sharedPref.getBoolean(getString(R.string.audio_recording), defaultValue)
+
+        if (isRecordingOn) {
+            addPermissionsForAudioRecording()
+        } else {
+            finishedRecording = true
+        }
+    }
+
+    private fun initMediaRecorder() {
+        mediaRecorder = MediaRecorder()
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB)
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
+        val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            Environment.getExternalStorageDirectory()
+        } else {
+            filesDir
+        }
+
+        directory = File("${parent.path}${File.separator}$RECORDING_FOLDER")
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+        try {
+            audioFile = File(directory, "recording-${getCurrentDateForName()}.amr")
+            audioFile.createNewFile()
+        }
+        catch (e: IOException) {
+            Log.e("error", "unable to create audio file for recording")
+        }
+        mediaRecorder.setOutputFile(audioFile.absolutePath)
+
+        try {
+            mediaRecorder.prepare()
+        } catch (e: IOException) {
+            Log.e("error", "unable to record audio")
+        }
+    }
+
+    private fun startAudioRecording() {
+        initMediaRecorder()
+        mediaRecorder.start()
+        Log.i(AUDIO_RECORDING, "started audio recording at ${getCurrentDateForLog()}")
+    }
+
+    private fun stopAudioRecording() {
+        mediaRecorder.stop()
+        mediaRecorder.release()
+        Log.i(AUDIO_RECORDING, "finished audio recording at ${getCurrentDateForLog()}")
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(audioFile.path)
+        val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                .toInt()
+        Log.i(AUDIO_RECORDING, "audio file length: " +
+              "${formatNumberTwoDigits(duration / 1000 / 60 / 60)}:" +
+                "${formatNumberTwoDigits(duration / 1000 / 60 % 60)}:" +
+                formatNumberTwoDigits(duration / 1000 % 60))
+        Log.i(AUDIO_RECORDING, "audio file path: ${directory.absolutePath}")
+        Log.i(AUDIO_RECORDING, "audio file name: ${audioFile.name}")
+    }
+
+    // used for naming the audio recording file
+    private fun getCurrentDateForName(): String {
+        return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    }
+
+    // used for logging
+    private fun getCurrentDateForLog(): String {
+        return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date())
+    }
+
+    private fun formatNumberTwoDigits(number: Int): String {
+        return String.format("%02d", number)
+    }
+
+    private fun addPermissionsForAudioRecording() {
+        val recordingPermissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        val storingPermissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        val permissionsToRequest = mutableListOf<String>()
+        if (recordingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
+        }
+        if (storingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(),
+                    RECORD_AUDIO_PERMISSION)
+        } else {
+            startAudioRecording()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == RECORD_AUDIO_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startAudioRecording()
+            }
+        }
+    }
+
     override fun onPause() {
         if(isFinishing){
             currentPage?.close()
@@ -180,4 +321,5 @@ class TrainingActivity : AppCompatActivity() {
         }
         super.onPause()
     }
+
 }
