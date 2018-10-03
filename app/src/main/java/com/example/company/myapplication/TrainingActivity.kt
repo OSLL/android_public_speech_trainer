@@ -51,6 +51,11 @@ class TrainingActivity : AppCompatActivity() {
 
 
 
+    //private var PresentEntries = mutableMapOf<Int,Float?>()
+    private var PresentEntries = HashMap<Int,Float?>()
+    private var curPageNum = 1
+    private var curText = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
@@ -144,6 +149,7 @@ class TrainingActivity : AppCompatActivity() {
 
             override fun onError(i: Int) {
                 Log.d("speechT", "BUFFER RECOGNIZER ERROR")
+
             }
 
             override fun onResults(bundle: Bundle) {
@@ -168,6 +174,7 @@ class TrainingActivity : AppCompatActivity() {
         mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
 
         finish.isEnabled = false
+
         next.setOnClickListener {
             val index = currentPage?.index
             if(renderer != null && index != null) {
@@ -186,7 +193,6 @@ class TrainingActivity : AppCompatActivity() {
                 mSpeechRecognizer!!.stopListening()
                 mBufferSpeechRecognizer!!.stopListening()
                 mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
-
 
                 val SlideReadSpeed: Float
                 if (curText == "")
@@ -227,7 +233,6 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-
 //======================
 
     override fun onStart() {
@@ -257,7 +262,7 @@ class TrainingActivity : AppCompatActivity() {
                 builder.setMessage(R.string.training_completed)
                 builder.setPositiveButton(R.string.training_statistics){_,_->
                     val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
-                    
+                    stat.putExtra(getString(R.string.presentationEntries), PresentEntries)
                     unmuteSound()
                     startActivity(stat)
                 }
