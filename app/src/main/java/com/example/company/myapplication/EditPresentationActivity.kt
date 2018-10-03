@@ -77,8 +77,6 @@ class EditPresentationActivity : AppCompatActivity() {
         val uri = intent.getParcelableExtra<Uri>(URI)
         Log.d(FILE_SYSTEM, uri.toString())
 
-        val uri = intent.getParcelableExtra<Uri>(URI)
-
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
