@@ -1,15 +1,24 @@
 package com.example.company.myapplication
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
+import android.media.AudioManager
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.ParcelFileDescriptor
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
@@ -18,6 +27,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -30,13 +40,73 @@ class TrainingActivity : AppCompatActivity() {
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap <Int, Long>()
 
+    //private var PresentEntries = mutableMapOf<Int,Float?>()
+    private var PresentEntries = HashMap<Int,Float?>()
+    private var curPageNum = 1
+    private var curText = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
+        AddPermission()
+        muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+
+        val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+        val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+                Locale.getDefault())
+
+        mSpeechRecognizer.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(bundle: Bundle) {
+
+            }
+
+            override fun onBeginningOfSpeech() {
+
+            }
+
+            override fun onRmsChanged(v: Float) {
+
+            }
+
+            override fun onBufferReceived(bytes: ByteArray) {
+
+            }
+
+            override fun onEndOfSpeech() {
+
+            }
+
+            override fun onError(i: Int) {
+            }
+
+            override fun onResults(bundle: Bundle) {
+                val matches = bundle
+                        .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+
+                if (matches != null) {
+                    curText = matches[0]
+                }
+            }
+
+            override fun onPartialResults(bundle: Bundle) {
+
+            }
+
+            override fun onEvent(i: Int, bundle: Bundle) {
+
+            }
+        })
+
+        mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
+
         finish.isEnabled = false
+
         next.setOnClickListener {
             val index = currentPage?.index
             if(renderer != null && index != null) {
@@ -51,13 +121,51 @@ class TrainingActivity : AppCompatActivity() {
                 TimePerSlide [index+1] = time
 
                 time = min.toLong()*60 + sec.toLong()
+
+                mSpeechRecognizer.stopListening()
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
+
+                val SlideReadSpeed: Float
+                if (curText == "")
+                    SlideReadSpeed = 0f
+                else
+                    SlideReadSpeed = curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+
+                PresentEntries.put(curPageNum++,SlideReadSpeed)
+
+                Log.d("speechT", "NUMBER OF PAGE: " + (curPageNum-1).toString())
+                Log.d("speechT", "TEXT: " + curText)
+                Log.d("speechT", "read speed: " + PresentEntries.get(curPageNum-1).toString())
+                curText = ""
             }
         }
 
         finish.setOnClickListener{
+
+            val SlideReadSpeed: Float
+            if (curText == "")
+                SlideReadSpeed = 0f
+            else
+                SlideReadSpeed = curText.split(" ").size.toFloat() / time!!.toFloat() * 60f
+
+            PresentEntries.put(curPageNum++,SlideReadSpeed)
+
             timer(1,1).onFinish()
         }
     }
+
+    //speech recognizer =====
+    private fun AddPermission() {
+        val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+
+        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO),
+                    1)
+        }
+    }
+    
+
+//======================
 
     override fun onStart() {
         super.onStart()
@@ -86,6 +194,10 @@ class TrainingActivity : AppCompatActivity() {
                 builder.setMessage(R.string.training_completed)
                 builder.setPositiveButton(R.string.training_statistics){_,_->
                     val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
+
+                    stat.putExtra(getString(R.string.presentationEntries), PresentEntries)
+
+                    unmuteSound()
                     startActivity(stat)
                 }
                 val dialog: AlertDialog = builder.create()
@@ -165,6 +277,24 @@ class TrainingActivity : AppCompatActivity() {
             Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
             Log.d("error","error in opening presentation file")
         }
+    }
+
+    private  fun muteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        amanager.setStreamMute(AudioManager.STREAM_RING, true)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+    }
+
+    private fun unmuteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        amanager.setStreamMute(AudioManager.STREAM_RING, false)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
     }
 
     override fun onPause() {
