@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.ParcelFileDescriptor
@@ -20,6 +21,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
@@ -39,7 +41,7 @@ class TrainingActivity : AppCompatActivity() {
 
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap <Int, Long>()
-    
+
     private var PresentEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
@@ -51,11 +53,6 @@ class TrainingActivity : AppCompatActivity() {
 
 
 
-    //private var PresentEntries = mutableMapOf<Int,Float?>()
-    private var PresentEntries = HashMap<Int,Float?>()
-    private var curPageNum = 1
-    private var curText = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
@@ -63,7 +60,7 @@ class TrainingActivity : AppCompatActivity() {
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-        muteSound() // mute sound, for unmute use unmuteSound()
+        //muteSound() // mute sound, for unmute use unmuteSound()
 
         //init main recognizer
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
@@ -96,6 +93,7 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             override fun onError(i: Int) {
+                //mBufferSpeechRecognizer!!.startListening(mBufferSpeechRecognizerIntent)
                 Log.d("speechT", "MAIN RECOGNIZER ERROR")
             }
 
@@ -149,7 +147,6 @@ class TrainingActivity : AppCompatActivity() {
 
             override fun onError(i: Int) {
                 Log.d("speechT", "BUFFER RECOGNIZER ERROR")
-
             }
 
             override fun onResults(bundle: Bundle) {
@@ -173,8 +170,6 @@ class TrainingActivity : AppCompatActivity() {
 
         mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
 
-        finish.isEnabled = false
-
         next.setOnClickListener {
             val index = currentPage?.index
             if(renderer != null && index != null) {
@@ -194,6 +189,7 @@ class TrainingActivity : AppCompatActivity() {
                 mBufferSpeechRecognizer!!.stopListening()
                 mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
 
+
                 val SlideReadSpeed: Float
                 if (curText == "")
                     SlideReadSpeed = 0f
@@ -208,6 +204,7 @@ class TrainingActivity : AppCompatActivity() {
                 curText = ""
             }
         }
+
 
         finish.setOnClickListener{
 
@@ -232,6 +229,7 @@ class TrainingActivity : AppCompatActivity() {
                     1)
         }
     }
+
 
 //======================
 
@@ -260,7 +258,7 @@ class TrainingActivity : AppCompatActivity() {
                 timer(1,1).cancel()
                 val builder = AlertDialog.Builder(this@TrainingActivity)
                 builder.setMessage(R.string.training_completed)
-                builder.setPositiveButton(R.string.training_statistics){_,_->
+                builder.setPositiveButton(R.string.training_statistics){ _, _->
                     val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
                     stat.putExtra(getString(R.string.presentationEntries), PresentEntries)
                     unmuteSound()
@@ -313,7 +311,6 @@ class TrainingActivity : AppCompatActivity() {
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             slide.setImageBitmap(bitmap)
             next.isEnabled = NIndex + 1 < NPageCount
-            finish.isEnabled = !next.isEnabled
         }
     }
 
