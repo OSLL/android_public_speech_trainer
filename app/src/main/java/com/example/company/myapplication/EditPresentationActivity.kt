@@ -14,6 +14,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+const val DEFAULT_TIME = "DefTime"
+
 class EditPresentationActivity : AppCompatActivity() {
 
     private var renderer: PdfRenderer? = null
@@ -26,6 +28,9 @@ class EditPresentationActivity : AppCompatActivity() {
 
 
        addPresentation.setOnClickListener{
+
+           val uri = intent.getParcelableExtra<Uri>(URI)
+
              if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -35,7 +40,12 @@ class EditPresentationActivity : AppCompatActivity() {
 
             val i = Intent(this, PresentationActivity::class.java)
             i.putExtra(NAME_OF_PRES,presentationName.text.toString())
-            startActivity(i)
+            i.putExtra(URI, uri)
+            val pageCount = renderer?.pageCount
+            if(pageCount != null) {
+                i.putExtra(DEFAULT_TIME, pageCount.toInt())
+            }
+           startActivity(i)
         }
     }
 
@@ -48,12 +58,12 @@ class EditPresentationActivity : AppCompatActivity() {
     private fun renderPage(pageIndex: Int){
 
         currentPage?.close()
-
         currentPage = renderer?.openPage(pageIndex)
         val width = currentPage?.width
         val height = currentPage?.height
         val index = currentPage?.index
         val pageCount = renderer?.pageCount
+
         if(width != null && height != null && index != null && pageCount != null) {
             val NWidth: Int = width
             val NHeight: Int = height
@@ -67,13 +77,13 @@ class EditPresentationActivity : AppCompatActivity() {
         val uri = intent.getParcelableExtra<Uri>(URI)
         Log.d(FILE_SYSTEM, uri.toString())
 
+        val uri = intent.getParcelableExtra<Uri>(URI)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
             val cr = contentResolver
             val ins = cr.openInputStream(uri)
-
 
             val buffer = ByteArray(1024)
 
@@ -89,7 +99,7 @@ class EditPresentationActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch(e: IOException){
-            Toast.makeText(this, "the exception happened", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
             Log.d("error","error in opening presentation file")
         }
     }

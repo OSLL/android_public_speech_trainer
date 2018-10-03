@@ -21,5 +21,13 @@
     <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
+    <string name="words_count">Количество слов в минуту</string>
+    <string name="slide_number">Номер слайда</string>
+    <string name="name_of_presentation">Название презентации</string>
+    <string name="min_per_sec">min:sec</string>
+    <string name="training_completed">Тренировка завершена</string>
+    <string name="training_statistics">Статистика тренировки</string>
+    <string name="return_training">Повторить тренировку</string>
     <string name="message_no_presentation_name">Пожалуйста, введите имя презентации</string>
+    <string name="presentationEntries">presentationEntries</string>
 </resources>
