@@ -52,7 +52,7 @@ class TrainingActivity : AppCompatActivity() {
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-        //muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+        muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
 
         val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -104,6 +104,8 @@ class TrainingActivity : AppCompatActivity() {
         })
 
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
+
+        finish.isEnabled = false
 
         next.setOnClickListener {
             val index = currentPage?.index
@@ -245,6 +247,7 @@ class TrainingActivity : AppCompatActivity() {
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             slide.setImageBitmap(bitmap)
             next.isEnabled = NIndex + 1 < NPageCount
+            finish.isEnabled = !next.isEnabled
         }
     }
 
