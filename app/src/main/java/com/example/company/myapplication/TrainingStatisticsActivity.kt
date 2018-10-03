@@ -29,14 +29,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
         //-------------
 
-        //Тестовые данные для speed line chart
+        val presentationEntries = intent.getSerializableExtra(getString(R.string.presentationEntries)) as HashMap<Int,Float?>
         val presentationSpeedData = mutableListOf<BarEntry>()
-        presentationSpeedData.add(BarEntry(0f,20f))
-        presentationSpeedData.add(BarEntry(1f,10f))
-        presentationSpeedData.add(BarEntry(2f,2f))
-        presentationSpeedData.add(BarEntry(3f,56f))
-        presentationSpeedData.add(BarEntry(4f,0f))
-        //------------
+        for (i in 0..(presentationEntries.size-1)) {
+            presentationSpeedData.add(BarEntry((i).toFloat(), presentationEntries.get(i + 1)!!.toFloat()))
+        }
 
         printSpeedLineChart(presentationSpeedData)
     }
@@ -46,7 +43,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val labels = ArrayList<String>()
 
         for(entry in lineEntries)
-            labels.add(entry.x.toInt().toString())
+            labels.add((entry.x +1).toInt().toString())
 
         val barDataSet = BarDataSet(lineEntries, getString(R.string.words_count))
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
