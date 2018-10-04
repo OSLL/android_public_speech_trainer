@@ -76,10 +76,10 @@ class EditPresentationActivity : AppCompatActivity() {
 
     @SuppressLint("Recycle")
     private fun initRenderer(){
-
         val uri = intent.getParcelableExtra<Uri>(URI)
         val cr = contentResolver
         presentationName.setText(getFileName(uri, cr))
+        Log.d(FILE_SYSTEM, uri.toString())
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
