@@ -8,9 +8,6 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.example.company.myapplication.DBTables.DBWorkerThread
-import com.example.company.myapplication.DBTables.PresentationData
-import com.example.company.myapplication.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_presentation.*
 
 const val TIME_ALLOTTED_FOR_TRAINING = "TrainingTime"
@@ -20,21 +17,11 @@ const val NAME_OF_PRES = "presentation_name"
 class PresentationActivity : AppCompatActivity() {
 
 
-    private var mDb: SpeechDataBase? = null
-
-    private lateinit var mDbWorkerThread: DBWorkerThread
-
     private val mUiHandler = Handler()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        mDbWorkerThread = DBWorkerThread("dbWorkerThread")
-        mDbWorkerThread.start()
-
-        //mDb = SpeechDataBase.getInstance(this)
-        Log.d("HERE", "Get instance successfully!")
 
         setContentView(R.layout.activity_presentation)
 
@@ -81,13 +68,9 @@ class PresentationActivity : AppCompatActivity() {
                 val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
                 val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
                         trainingTime.text.lastIndex + 1)
-                var presentationData = PresentationData()
                 if (IsNumber(min, sec) && TestLong(min,sec)) {
                     val time = min.toLong() * 60 + sec.toLong()
                     i.putExtra(TIME_ALLOTTED_FOR_TRAINING, time)
-                    presentationData.timeLimit = time
-                    insertWeatherDataInDb(presentationData)
-                    Log.d("Success", ("TIME IS" + presentationData.timeLimit.toString()))
                     startActivity(i)
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
@@ -112,16 +95,5 @@ class PresentationActivity : AppCompatActivity() {
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
             startActivity(Intent.createChooser(sharingIntent, "Share using"))
         }
-    }
-
-    private fun insertWeatherDataInDb(presentationData: PresentationData) {
-        val task = Runnable { mDb?.PresentationDataDao()?.insert(presentationData) }
-        mDbWorkerThread.postTask(task)
-    }
-
-    override fun onDestroy() {
-        SpeechDataBase.destroyInstance()
-        mDbWorkerThread.quit()
-        super.onDestroy()
     }
 }
