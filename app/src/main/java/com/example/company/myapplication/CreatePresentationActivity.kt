@@ -50,6 +50,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             } catch (e: FileNotFoundException) {
                 Log.d(FILE_SYSTEM, "file not found")
             }
-         }
+        }
+    }
 }
 

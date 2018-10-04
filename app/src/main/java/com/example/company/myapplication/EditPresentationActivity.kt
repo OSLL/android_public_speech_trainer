@@ -29,11 +29,11 @@ class EditPresentationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_presentation)
 
 
-       addPresentation.setOnClickListener{
+        addPresentation.setOnClickListener{
 
-           val uri = intent.getParcelableExtra<Uri>(URI)
+            val uri = intent.getParcelableExtra<Uri>(URI)
 
-             if (presentationName.text.toString() == ""){
+            if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -47,7 +47,7 @@ class EditPresentationActivity : AppCompatActivity() {
             if(pageCount != null) {
                 i.putExtra(DEFAULT_TIME, pageCount.toInt())
             }
-           startActivity(i)
+            startActivity(i)
         }
     }
 
@@ -76,8 +76,8 @@ class EditPresentationActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
+
         val uri = intent.getParcelableExtra<Uri>(URI)
-        Log.d(FILE_SYSTEM, uri.toString())
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
