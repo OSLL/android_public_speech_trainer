@@ -1,6 +1,7 @@
 package com.example.company.myapplication
 
 import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -75,8 +76,11 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Recycle")
     private fun initRenderer(){
         val uri = intent.getParcelableExtra<Uri>(URI)
+        val cr = contentResolver
+        presentationName.setText(getFileName(uri, cr))
         Log.d(FILE_SYSTEM, uri.toString())
 
         try{
@@ -114,4 +118,28 @@ class EditPresentationActivity : AppCompatActivity() {
             Log.d("error","error in opening presentation file")
         }
     }
+/*
+    @SuppressLint("Recycle")
+    fun getFileName(uri: Uri, cr: ContentResolver): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = cr.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor!!.close()
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
+    }
+    */
 }
