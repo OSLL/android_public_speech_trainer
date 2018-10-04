@@ -1,6 +1,7 @@
 package com.example.company.myapplication
 
 import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -75,6 +76,7 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Recycle")
     private fun initRenderer(){
 
         val uri = intent.getParcelableExtra<Uri>(URI)
@@ -94,6 +96,10 @@ class EditPresentationActivity : AppCompatActivity() {
             if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) != "") {
                 val name = sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides)
                 presentationName.setText(name.substring(0, name.indexOf(".pdf")))
+            }else {
+                val cr = contentResolver
+                presentationName.setText(getFileName(uri, cr))
+                Log.d(FILE_SYSTEM, uri.toString())
             }
 
             val buffer = ByteArray(1024)
