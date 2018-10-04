@@ -74,8 +74,8 @@ class EditPresentationActivity : AppCompatActivity() {
     }
 
     private fun initRenderer(){
-
         val uri = intent.getParcelableExtra<Uri>(URI)
+        Log.d(FILE_SYSTEM, uri.toString())
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
