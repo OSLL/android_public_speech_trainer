@@ -37,18 +37,19 @@ class CreatePresentationActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-            if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
-                val selectedFile = data.data //The uri with the location of the file
-                try {
-                    val i = Intent(this, EditPresentationActivity::class.java)
-                    i.putExtra(URI, selectedFile)
-                    Log.d(FILE_SYSTEM, selectedFile.toString())
-                    startActivity(i)
-                } catch (e: FileNotFoundException) {
-                    Log.d(FILE_SYSTEM, "file not found")
-                }
+
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
+            val selectedFile = data.data //The uri with the location of the file
+            try {
+                val i = Intent(this, EditPresentationActivity::class.java)
+                Log.d(FILE_SYSTEM, selectedFile.toString())
+                i.putExtra(URI, selectedFile)
+
+                startActivity(i)
+            } catch (e: FileNotFoundException) {
+                Log.d(FILE_SYSTEM, "file not found")
             }
-    }
+         }
 }
 
