@@ -9,6 +9,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
 
 const val debugSpeechAudio = R.raw.philstone //Если не хотите запускать тестовую звуковую дорожку, передавайте "-1"
+                                                  //Если хотите, введите путь к файлу в raw, например: R.raw.philstone
 
 class StartPageActivity : AppCompatActivity() {
 
