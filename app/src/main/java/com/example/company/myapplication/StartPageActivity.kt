@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,11 +8,18 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
 
+const val debugSpeechAudio = R.raw.philstone //Если не хотите запускать тестовую звуковую дорожку, передавайте "-1"
+
 class StartPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
+
+        val sPref = getPreferences(Context.MODE_PRIVATE)
+        val debSl = sPref.edit()
+        debSl.putInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio)
+        debSl.apply()
 
         pres1.setOnClickListener{
             val intent = Intent(this, PresentationActivity::class.java)

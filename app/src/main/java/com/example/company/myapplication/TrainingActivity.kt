@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -37,22 +38,36 @@ class TrainingActivity : AppCompatActivity() {
 
     private var isCancelled = false
 
+    private var mPlayer: MediaPlayer? = null
+
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap <Int, Long>()
 
-    //private var PresentEntries = mutableMapOf<Int,Float?>()
     private var PresentEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sPref = getPreferences(Context.MODE_PRIVATE)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+
+
 
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         AddPermission()
-        muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+
+        if(sPref.getInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio) == -1) {
+            muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+        } else {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
+            val AudTrack = R.raw.philstone
+            val mPlayer = MediaPlayer.create(this, sPref.getInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio))
+            mPlayer.start()
+            mPlayer.setOnCompletionListener { stopPlay() }
+        }
 
         val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -141,17 +156,30 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
-
+            if(sPref.getInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio) != -1) {
+                mPlayer?.stop()
+            }
             val SlideReadSpeed: Float
             if (curText == "")
                 SlideReadSpeed = 0f
             else
-                SlideReadSpeed = curText.split(" ").size.toFloat() / time!!.toFloat() * 60f
+                SlideReadSpeed = curText.split(" ").size.toFloat() / time.toFloat() * 60f
 
             PresentEntries.put(curPageNum++,SlideReadSpeed)
 
             timer(1,1).onFinish()
         }
+    }
+
+    private fun stopPlay() {
+        mPlayer?.stop()
+        try {
+            mPlayer?.prepare()
+            mPlayer?.seekTo(0)
+        } catch (t: Throwable) {
+            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     //speech recognizer =====
