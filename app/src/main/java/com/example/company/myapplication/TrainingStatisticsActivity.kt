@@ -2,15 +2,19 @@ package com.example.company.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.SpeechRecognizer
 import android.support.v7.app.AppCompatActivity
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+
+
 
 class TrainingStatisticsActivity : AppCompatActivity() {
 
@@ -34,8 +38,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         for (i in 0..(presentationEntries.size-1)) {
             presentationSpeedData.add(BarEntry((i).toFloat(), presentationEntries.get(i + 1)!!.toFloat()))
         }
-
         printSpeedLineChart(presentationSpeedData)
+
+        val entries = ArrayList<PieEntry>()
+
+        entries.add(PieEntry(18.5f, "Green"))
+        entries.add(PieEntry(26.7f, "Yellow"))
+        entries.add(PieEntry(24.0f, "Red"))
+        entries.add(PieEntry(30.8f, "Blue"))
+        printPiechart(entries)
     }
 
     //Инициализация графика скорсти чтения
@@ -52,7 +63,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         data.setValueTextSize(0f)
 
         speed_bar_chart.setFitBars(true)
-        speed_bar_chart.setData(data)
+        speed_bar_chart.data = data
         speed_bar_chart.description.text = getString(R.string.slide_number)
         speed_bar_chart.description.setTextSize(15f)
         speed_bar_chart.animateXY(1000,1000)
@@ -71,8 +82,23 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val xAxis = speed_bar_chart.xAxis
         xAxis.textSize = 12f
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setValueFormatter(IndexAxisValueFormatter(labels))
+        xAxis.valueFormatter = IndexAxisValueFormatter(labels)
 
         speed_bar_chart.invalidate()
+    }
+
+    fun printPiechart (lineEntries: List<PieEntry>){
+//        val labels = ArrayList<String>()
+//        for(entry in lineEntries)
+//            labels.add((entry.x +1).toInt().toString())
+        val pieDataSet = PieDataSet(lineEntries, getString(R.string.words_count))
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
+//        val entries = ArrayList<PieEntry>()
+//
+//        val set = PieDataSet(entries, "Election Results")
+        val data = PieData(pieDataSet)
+        pie_chart.data = data
+
+        pie_chart.invalidate()
     }
 }
