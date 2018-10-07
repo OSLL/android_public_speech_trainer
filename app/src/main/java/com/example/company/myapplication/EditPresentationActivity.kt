@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -14,6 +15,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+const val DEFAULT_TIME = "DefTime"
+
 class EditPresentationActivity : AppCompatActivity() {
 
     private var renderer: PdfRenderer? = null
@@ -27,19 +30,23 @@ class EditPresentationActivity : AppCompatActivity() {
 
        addPresentation.setOnClickListener{
 
-           val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+           val uri = intent.getParcelableExtra<Uri>(URI)
 
              if (presentationName.text.toString() == ""){
-                Toast.makeText(this, "Please Enter Presentation Name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
 
 
             val i = Intent(this, PresentationActivity::class.java)
-            i.putExtra("presentation_name",presentationName.text.toString())
-            i.putExtra("presentation_uri", uri)
-            startActivity(i)
+            i.putExtra(NAME_OF_PRES,presentationName.text.toString())
+            i.putExtra(URI, uri)
+            val pageCount = renderer?.pageCount
+            if(pageCount != null) {
+                i.putExtra(DEFAULT_TIME, pageCount.toInt())
+            }
+           startActivity(i)
         }
     }
 
@@ -52,12 +59,12 @@ class EditPresentationActivity : AppCompatActivity() {
     private fun renderPage(pageIndex: Int){
 
         currentPage?.close()
-
         currentPage = renderer?.openPage(pageIndex)
         val width = currentPage?.width
         val height = currentPage?.height
         val index = currentPage?.index
         val pageCount = renderer?.pageCount
+
         if(width != null && height != null && index != null && pageCount != null) {
             val NWidth: Int = width
             val NHeight: Int = height
@@ -67,14 +74,16 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Recycle")
     private fun initRenderer(){
-
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+        val uri = intent.getParcelableExtra<Uri>(URI)
+        val cr = contentResolver
+        presentationName.setText(getFileName(uri, cr))
+        Log.d(FILE_SYSTEM, uri.toString())
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val cr = contentResolver
             val ins = cr.openInputStream(uri)
 
             val buffer = ByteArray(1024)
@@ -91,8 +100,32 @@ class EditPresentationActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch(e: IOException){
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
             Log.d("error","error in opening presentation file")
         }
     }
+/*
+    @SuppressLint("Recycle")
+    fun getFileName(uri: Uri, cr: ContentResolver): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = cr.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor!!.close()
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
+    }
+    */
 }
