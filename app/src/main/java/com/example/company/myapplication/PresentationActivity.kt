@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -15,9 +14,6 @@ const val MESSAGE_ABOUT_FORMAT_INCORRECTNESS = "Неправильный фор�
 const val NAME_OF_PRES = "presentation_name"
 
 class PresentationActivity : AppCompatActivity() {
-
-
-    private val mUiHandler = Handler()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
