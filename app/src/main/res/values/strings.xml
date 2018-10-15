@@ -10,7 +10,7 @@
     <string name="activity_start_page_name">Начальная страница</string>
     <string name="activity_create_presentation_name">Добавление презентации</string>
     <string name="activity_edit_presentation_name">Добавление новой презентации</string>
-    <string name="time_limit">Ограниечение времени на доклад:</string>
+    <string name="time_limit">Ограничение времени на доклад:</string>
     <string name="share">Поделиться</string>
     <string name="activity_train_name">Тренироваться</string>
     <string name="check_text">Check Presentation Text</string>
@@ -29,4 +29,6 @@
     <string name="training_statistics">Статистика тренировки</string>
     <string name="return_training">Повторить тренировку</string>
     <string name="message_no_presentation_name">Пожалуйста, введите имя презентации</string>
+    <string name="audio_recording">audio recording</string>
+    <string name="presentationEntries">presentationEntries</string>
 </resources>
