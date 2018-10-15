@@ -79,9 +79,9 @@ class TrainingActivity : AppCompatActivity() {
         } else {
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
-            val mPlayer = MediaPlayer.create(this, debugSpeechAudio)
-            mPlayer.start()
-            mPlayer.setOnCompletionListener { stopPlay() }
+            mPlayer = MediaPlayer.create(this, debugSpeechAudio)
+            mPlayer?.start()
+            mPlayer?.setOnCompletionListener { stopPlay() }
         }
 
         val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)

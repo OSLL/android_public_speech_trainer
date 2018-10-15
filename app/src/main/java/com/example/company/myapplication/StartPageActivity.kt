@@ -21,9 +21,8 @@ import android.widget.Toast
 const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
 const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
 
-const val debugSpeechAudio = R.raw.philstone //Если не хотите запускать тестовую звуковую дорожку, передавайте "-1"
-//Если хотите, введите путь к файлу в raw, например: R.raw.philstone
-
+const val debugSpeechAudio = R.raw.philstone // Путь к файлу в raw,
+                                                  // который запускается в виде тестовой звуковой дорожки.
 
 // this will be changed once the package name is changed
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
