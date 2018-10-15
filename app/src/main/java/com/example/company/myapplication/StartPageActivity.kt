@@ -1,5 +1,7 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
+import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -7,23 +9,33 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.preference.PreferenceManager
+import android.support.test.InstrumentationRegistry
+import android.support.v4.app.FragmentActivity
+import android.util.Log
+import android.widget.Toast
+
+
+const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
+const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
 
 const val debugSpeechAudio = R.raw.philstone //Если не хотите запускать тестовую звуковую дорожку, передавайте "-1"
-                                             //Если хотите, введите путь к файлу в raw, например: R.raw.philstone
+//Если хотите, введите путь к файлу в raw, например: R.raw.philstone
+
 
 // this will be changed once the package name is changed
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
 
 class StartPageActivity : AppCompatActivity() {
 
+    @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
 
-        val sPref = getPreferences(Context.MODE_PRIVATE)
-        val debSl = sPref.edit()
-        debSl.putInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio)
-        debSl.apply()
+        val t = 5
 
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
@@ -33,7 +45,6 @@ class StartPageActivity : AppCompatActivity() {
             putBoolean(getString(R.string.audio_recording), true)
             apply()
         }
-
 
         pres1.setOnClickListener{
             val intent = Intent(this, PresentationActivity::class.java)
@@ -61,7 +72,7 @@ class StartPageActivity : AppCompatActivity() {
         val id = item?.itemId
         when (id) {
             R.id.action_settings -> {
-                val intent = Intent(this, PreferenceActivity::class.java)
+                val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 return true
             }

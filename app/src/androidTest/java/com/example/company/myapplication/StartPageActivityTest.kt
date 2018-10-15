@@ -20,11 +20,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
 class StartPageActivityTest {
 
@@ -58,7 +53,7 @@ class StartPageActivityTest {
     fun test_from_start_page_to_preference(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(activity_preference)).perform(click());
-        intended(hasComponent(ComponentName(getTargetContext(), PreferenceActivity::class.java)))
+        intended(hasComponent(ComponentName(getTargetContext(), SettingsActivity::class.java)))
     }
 
     @Test

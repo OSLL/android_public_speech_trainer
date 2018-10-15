@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
 import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -56,33 +58,31 @@ class TrainingActivity : AppCompatActivity() {
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap<Int, Long>()
 
+    //private var PresentEntries = mutableMapOf<Int,Float?>()
     private var PresentEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val sPref = getPreferences(Context.MODE_PRIVATE)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
-
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isAudio = sharedPreferences.getBoolean("deb_speech_audio", false)
 
         var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
-        AddPermission()
+        initAudioRecording()
 
-        if(sPref.getInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio) == -1) {
+        if(!isAudio) {
             muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
         } else {
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
-            val AudTrack = R.raw.philstone
-            val mPlayer = MediaPlayer.create(this, sPref.getInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio))
+            val mPlayer = MediaPlayer.create(this, debugSpeechAudio)
             mPlayer.start()
             mPlayer.setOnCompletionListener { stopPlay() }
         }
-
-        initAudioRecording()
 
         val mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -173,18 +173,21 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
-            if(sPref.getInt(getString(R.string.DEBUG_AUDIO), debugSpeechAudio) != -1) {
+            if(isAudio) {
                 mPlayer?.stop()
             }
+
             if (!finishedRecording) {
                 stopAudioRecording()
                 finishedRecording = true
             }
+
+
             val SlideReadSpeed: Float
             if (curText == "")
                 SlideReadSpeed = 0f
             else
-                SlideReadSpeed = curText.split(" ").size.toFloat() / time.toFloat() * 60f
+                SlideReadSpeed = curText.split(" ").size.toFloat() / time!!.toFloat() * 60f
 
             PresentEntries.put(curPageNum++,SlideReadSpeed)
 
@@ -311,8 +314,15 @@ class TrainingActivity : AppCompatActivity() {
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val cr = contentResolver
-            val ins = cr.openInputStream(uri)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val isPres = sharedPreferences.getBoolean("deb_pres", false)
+            val ins: InputStream
+            ins = if(!isPres) {
+                val cr = contentResolver
+                cr.openInputStream(uri)
+            } else {
+                assets.open(debugSlides)
+            }
 
             val buffer = ByteArray(1024)
 
