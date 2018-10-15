@@ -166,7 +166,7 @@ class TrainingActivity : AppCompatActivity() {
             if (curText == "")
                 SlideReadSpeed = 0f
             else
-                SlideReadSpeed = curText.split(" ").size.toFloat() / time!!.toFloat() * 60f
+                SlideReadSpeed = curText.split(" ").size.toFloat() / time.toFloat() * 60f
 
             PresentEntries.put(curPageNum++,SlideReadSpeed)
 
