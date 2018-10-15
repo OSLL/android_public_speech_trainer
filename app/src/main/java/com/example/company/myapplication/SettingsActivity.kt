@@ -67,6 +67,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || NotificationPreferenceFragment::class.java.name == fragmentName
                 || DebModePreferenceFragment::class.java.name == fragmentName
+
     }
 
     /**
@@ -134,12 +135,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             setHasOptionsMenu(true)
 
             val pref = findPreference("deb_mode")
-            /*
-            pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener{preference, newValue ->
-                val flag = parseBoolean(newValue.toString())
-            }
-*/
-
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -151,7 +146,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return super.onOptionsItemSelected(item)
         }
     }
-
     companion object {
 
         /**
@@ -195,9 +189,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                         preference.setSummary(name)
                     }
                 }
-
-            }
-            else {
+            } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.summary = stringValue
