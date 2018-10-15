@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -7,8 +8,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.preference.PreferenceManager
+import android.support.v4.app.FragmentActivity
+import android.util.Log
+import android.widget.Toast
 
-const val debugSlides = "making_presentation.pdf"
+
+const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
 // this will be changed once the package name is changed
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
 
@@ -18,11 +26,8 @@ class StartPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
 
-        val sPref = getPreferences(Context.MODE_PRIVATE)
-        val debSl = sPref.edit()
-        debSl.putString(getString(R.string.DEBUG_SLIDES), debugSlides)
-        debSl.apply()
-      
+        val t = 5
+
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             if (sharedPref.contains(getString(R.string.audio_recording))) {

@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
 import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -283,13 +284,14 @@ class TrainingActivity : AppCompatActivity() {
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val sPref = getPreferences(Context.MODE_PRIVATE)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val isChecked = sharedPreferences.getBoolean("deb_pres", false)
             val ins: InputStream
-            ins = if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) == "") {
+            ins = if(!isChecked) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides))
+                assets.open(debugSlides)
             }
 
             val buffer = ByteArray(1024)

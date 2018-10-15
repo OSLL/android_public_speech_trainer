@@ -14,8 +14,10 @@ import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
 import android.preference.PreferenceManager
 import android.preference.RingtonePreference
+import android.preference.SwitchPreference
 import android.text.TextUtils
 import android.view.MenuItem
+import java.lang.Boolean.parseBoolean
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -64,6 +66,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         return PreferenceFragment::class.java.name == fragmentName
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || NotificationPreferenceFragment::class.java.name == fragmentName
+                || DebModePreferenceFragment::class.java.name == fragmentName
     }
 
     /**
@@ -123,6 +126,32 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class DebModePreferenceFragment : PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_debug_mode)
+            setHasOptionsMenu(true)
+
+            val pref = findPreference("deb_mode")
+            /*
+            pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener{preference, newValue ->
+                val flag = parseBoolean(newValue.toString())
+            }
+*/
+
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                startActivity(Intent(activity, SettingsActivity::class.java))
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
     companion object {
 
         /**
@@ -167,7 +196,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                     }
                 }
 
-            } else {
+            }
+            else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.summary = stringValue
