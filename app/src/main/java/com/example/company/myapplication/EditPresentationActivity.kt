@@ -96,6 +96,9 @@ class EditPresentationActivity : AppCompatActivity() {
             if(isChecked) {
                 val name = "making_presentation.pdf"
                 presentationName.setText(name.substring(0, name.indexOf(".pdf")))
+            } else {
+                val cr = contentResolver
+                presentationName.setText(getFileName(uri, cr))
             }
 
             val buffer = ByteArray(1024)
