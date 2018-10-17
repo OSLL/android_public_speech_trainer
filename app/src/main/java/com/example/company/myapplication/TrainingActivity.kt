@@ -33,8 +33,8 @@ import kotlin.collections.HashMap
 const val AUDIO_RECORDING = "audio_recording"
 const val RECORD_AUDIO_PERMISSION = 200 // change constant?
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
-const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознования речи
-const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознованиее речи (скорость чтения, номер страницы, распознанный текст)
+const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознавания речи
+const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознавание речи (скорость чтения, номер страницы, распознанный текст)
 
 class TrainingActivity : AppCompatActivity() {
 
