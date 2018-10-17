@@ -2,6 +2,7 @@ package com.example.company.myapplication
 
 import android.content.ComponentName
 import android.content.Context
+import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.InstrumentationRegistry.getTargetContext
@@ -13,6 +14,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents.intended
 import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import android.support.test.espresso.intent.rule.IntentsTestRule
+import android.support.test.espresso.matcher.PreferenceMatchers.withTitle
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import com.example.company.myapplication.R.string.*
@@ -29,11 +31,17 @@ class DebugSlidesTest {
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     @Test
-    fun TestOfTransNameLim(){
+    fun Test(){
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
+        val debSl = sharedPreferences.edit()
+        debSl.putBoolean("deb_pres", true)
+        debSl.apply()
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
         onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
         onView(withText(PageCount.toString()+":00")).check(matches(isDisplayed()))
+        debSl.putBoolean("deb_pres", false)
+        debSl.apply()
     }
 }

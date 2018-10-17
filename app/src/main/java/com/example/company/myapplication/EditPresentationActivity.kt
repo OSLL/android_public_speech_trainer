@@ -1,13 +1,13 @@
 package com.example.company.myapplication
 
 import android.content.Context
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -76,7 +76,6 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("Recycle")
     private fun initRenderer(){
 
         val uri = intent.getParcelableExtra<Uri>(URI)
@@ -84,22 +83,19 @@ class EditPresentationActivity : AppCompatActivity() {
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val sPref = getPreferences(Context.MODE_PRIVATE)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val isChecked = sharedPreferences.getBoolean("deb_pres", false)
             val ins: InputStream
-            ins = if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) == "") {
+            ins = if(!isChecked) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides))
+                assets.open(debugSlides)
             }
 
-            if(sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides) != "") {
-                val name = sPref.getString(getString(R.string.DEBUG_SLIDES), debugSlides)
+            if(isChecked) {
+                val name = debugSlides
                 presentationName.setText(name.substring(0, name.indexOf(".pdf")))
-            }else {
-                val cr = contentResolver
-                presentationName.setText(getFileName(uri, cr))
-                Log.d(FILE_SYSTEM, uri.toString())
             }
 
             val buffer = ByteArray(1024)
