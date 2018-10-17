@@ -33,6 +33,8 @@ import kotlin.collections.HashMap
 const val AUDIO_RECORDING = "audio_recording"
 const val RECORD_AUDIO_PERMISSION = 200 // change constant?
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
+const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознования речи
+const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознованиее речи (скорость чтения, номер страницы, распознанный текст)
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -51,41 +53,44 @@ class TrainingActivity : AppCompatActivity() {
     var TimePerSlide = HashMap<Int, Long>()
 
     //speech recognizer part
-    private var PresentEntries = HashMap<Int,Float?>()
+    private var presentationEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
     private var mIntent: Intent? = null
-    private var myService: MyService? = null
+    private var speechRecognitionService: SpeechRecognitionService? = null
     internal var mBound = false
     private var taskServiceAnswer: TaskServiceAnswer? = null
     private var audioManager: AudioManager? = null
-    private var ALL_PRESENTATION_TEXT = "" //Текст для PIE CHART
+    private var lastSlideTime: String = ""
+    private var ALL_RECOGNIZED_TEXT = "" //Текст для PIE CHART
 
+    private var time: Long = 0.toLong()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
-        var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
+        time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
-        // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры,
+        // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры;
         // после mediaRecorder.stop() его работа нормализуется;
-        // error service - nullpointerexception
+        // error service - nullPointerException;
         //initAudioRecording()
 
-        AddPermission()
+        addPermission()
 
         //finish.isEnabled = false
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        mIntent = Intent(this@TrainingActivity, MyService::class.java)
+        mIntent = Intent(this@TrainingActivity,SpeechRecognitionService::class.java)
 
         startRecognizingService()
 
 
         next.setOnClickListener {
             next.isEnabled = false
+            finish.isEnabled = false
             audioManager!!.isMicrophoneMute = true
             Toast.makeText(this, "Saving State, Please Wait", Toast.LENGTH_SHORT).show()
 
@@ -104,27 +109,22 @@ class TrainingActivity : AppCompatActivity() {
 
                     time -= min.toLong() * 60 + sec.toLong()
                     TimePerSlide[index + 1] = time
-
                     time = min.toLong()*60 + sec.toLong()
 
+                    val slideReadSpeed: Float = if (curText == "") 0f else
+                            curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
-                    val SlideReadSpeed: Float
-                    if (curText == "")
-                        SlideReadSpeed = 0f
-                    else
-                        SlideReadSpeed = curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+                    presentationEntries[curPageNum++] = slideReadSpeed
 
-                    PresentEntries.put(curPageNum++,SlideReadSpeed)
+                    Log.d(SPEECH_RECOGNITION_INFO, "page number: " + (curPageNum-1).toString())
+                    Log.d(SPEECH_RECOGNITION_INFO, "recognized text: $curText")
+                    Log.d(SPEECH_RECOGNITION_INFO, "reading speed: " + presentationEntries[curPageNum-1].toString())
 
-                    Log.d("speechT", "NUMBER OF PAGE: " + (curPageNum-1).toString())
-                    Log.d("speechT", "TEXT: " + curText)
-                    Log.d("speechT", "read speed: " + PresentEntries.get(curPageNum-1).toString())
-                    Log.d("testServiceCT","CURRENT TEXT: " + curText)
-
-                    ALL_PRESENTATION_TEXT += " " + curText
+                    ALL_RECOGNIZED_TEXT += " $curText"
                     curText = ""
-                    myService!!.message = ""
+                    speechRecognitionService!!.setMESSAGE("")
                     audioManager!!.isMicrophoneMute = false
+                    finish.isEnabled = true
                 }, 2000)
 
             }
@@ -136,22 +136,13 @@ class TrainingActivity : AppCompatActivity() {
                 finishedRecording = true
             }*/
 
-
-            /*val SlideReadSpeed: Float
-            if (curText == "")
-                SlideReadSpeed = 0f
-            else
-                SlideReadSpeed = curText.split(" ").size.toFloat() / time.toFloat() * 60f
-
-            PresentEntries.put(curPageNum++,SlideReadSpeed)*/
-
             timer(1,1).onFinish()
         }
     }
 
     //speech recognizer =====
 
-    private fun AddPermission() {
+    private fun addPermission() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
 
         val arr = arrayOf(Manifest.permission.RECORD_AUDIO)
@@ -163,52 +154,63 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun startRecognizingService(){
-        Log.d("testServiceCT","initrecognizer()")
+        Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"startRecognizingService called")
         audioManager!!.isMicrophoneMute = false
         try {
             taskServiceAnswer = TaskServiceAnswer()
             taskServiceAnswer!!.execute()
-            myService!!.message = ""
         } catch (e: NullPointerException) {
-            Log.d("testServiceEE", e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,  "start service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
         }
     }
 
     private fun stopRecognizingService(waitForRecognitionComplete: Boolean){
         if (!waitForRecognitionComplete) {
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stopRecognizingService called, without waiting for recognition to finish")
             try {
                 taskServiceAnswer!!.setEXECUTE_FLAG(false)
                 taskServiceAnswer!!.cancel(false)
             } catch (e: NullPointerException) {
-                Log.d("testServiceEE", e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
             }
         }
         else {
-            val SlideReadSpeed: Float
-            SlideReadSpeed = if (curText == "") 0f else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stopRecognizingService called, with waiting for recognition to finish")
+            try {
+                val min = lastSlideTime.substring(0,lastSlideTime.indexOf("m") - 1)
+                val sec = lastSlideTime.substring(lastSlideTime.indexOf(":") + 2, lastSlideTime.indexOf("s") - 1)
 
-            PresentEntries.put(curPageNum++, SlideReadSpeed)
+                time -= min.toLong() * 60 + sec.toLong()
+                TimePerSlide[curPageNum] = time
 
-            Log.d("speechT", "NUMBER OF PAGE: " + (curPageNum - 1).toString())
-            Log.d("speechT", "TEXT: " + curText)
-            Log.d("speechT", "read speed: " + PresentEntries.get(curPageNum - 1).toString())
-            Log.d("testServiceCT", "CURRENT TEXT: " + curText)
+                presentationEntries[curPageNum] = if (curText == "") 0f
+                    else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
-            ALL_PRESENTATION_TEXT += " " + curText
-            curText = ""
-            myService!!.message = ""
+            } catch (e: Exception) {
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "(stop service) put presentation entry error: " + e.toString())
+            }
+
+            ALL_RECOGNIZED_TEXT += curText
+
+            Log.d(SPEECH_RECOGNITION_INFO, "page number: " + (curPageNum).toString())
+            Log.d(SPEECH_RECOGNITION_INFO, "recognized text: $curText")
+            Log.d(SPEECH_RECOGNITION_INFO, "reading speed: " + presentationEntries[curPageNum].toString())
+
             audioManager!!.isMicrophoneMute = false
-
-            taskServiceAnswer!!.setEXECUTE_FLAG(false)
-            taskServiceAnswer!!.cancel(false)
+            try {
+                taskServiceAnswer!!.setEXECUTE_FLAG(false)
+                taskServiceAnswer!!.cancel(false)
+            } catch (e: Exception) {
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
+            }
         }
     }
 
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as MyService.LocalBinder
-            myService = binder.service
-            Log.d("testServiceMCONNTEC", binder.service.toString())
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"Service Connection: bind service")
+            val binder = service as SpeechRecognitionService.LocalBinder
+            speechRecognitionService = binder.service
             mBound = true
         }
 
@@ -222,30 +224,30 @@ class TrainingActivity : AppCompatActivity() {
         private var EXECUTE_FLAG = true
 
         override fun onPreExecute() {
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"onPreExecute TaskServiceAnswer")
             try {
                 bindService(mIntent, mConnection, Service.BIND_AUTO_CREATE)
                 EXECUTE_FLAG = true
             } catch (e: Exception) {
-                Log.d("testService", e.toString() + " on pre execute error")
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "onPreExecute Async Task error: " + e.toString())
             }
-
         }
 
         override fun onPostExecute(aVoid: Void?) {
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"onPostExecute TaskServiceAnswer")
             if (mBound) {
                 unbindService(mConnection)
                 mBound = false
+                Log.d("testService", "onPostExecute")
             }
         }
 
         override fun onProgressUpdate(vararg values: Void) {
             try {
-                //Log.d("testService", mService!!.message.toString())
-                curText = myService!!.message
+                curText = speechRecognitionService!!.getMESSAGE()
             } catch (e: Exception) {
-                Log.d("testService", e.toString() + " onprogressUpdate")
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "onProgressUpdate Async Task error: " + e.toString())
             }
-
         }
 
         override fun doInBackground(vararg voids: Void): Void? {
@@ -253,7 +255,7 @@ class TrainingActivity : AppCompatActivity() {
                 try {
                     TimeUnit.MILLISECONDS.sleep(150)
                 } catch (e: InterruptedException) {
-                    e.printStackTrace()
+                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "doInBackGround error: " + e.printStackTrace())
                 }
 
                 publishProgress()
@@ -288,6 +290,8 @@ class TrainingActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) {
                 val timeRemaining = timeString(millisUntilFinished)
                 if (isCancelled) {
+                    if (lastSlideTime.isEmpty())
+                        lastSlideTime = time_left.text.toString()
                     time_left.setText(R.string.training_completed)
                     cancel()
                 } else {
@@ -296,28 +300,34 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                isCancelled = true
                 timer(1, 1).cancel()
 
+                isCancelled = true
+                finish.isEnabled = false
                 next.isEnabled = false
                 audioManager!!.isMicrophoneMute = true
-                Toast.makeText(this@TrainingActivity, "Finish...", Toast.LENGTH_SHORT).show()
-                val handler = Handler()
-                handler.postDelayed({
-                    stopRecognizingService(true)
-                },2000)
+                Toast.makeText(this@TrainingActivity, "Completion...", Toast.LENGTH_SHORT).show()
 
-                val builder = AlertDialog.Builder(this@TrainingActivity)
-                builder.setMessage(R.string.training_completed)
-                builder.setPositiveButton(R.string.training_statistics) { _, _ ->
-                    val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
+                try {
+                    val handler = Handler()
+                    handler.postDelayed({
+                        stopRecognizingService(true)
 
-                    stat.putExtra(getString(R.string.presentationEntries), PresentEntries)
+                        val builder = AlertDialog.Builder(this@TrainingActivity)
+                        builder.setMessage(R.string.training_completed)
+                        builder.setPositiveButton(R.string.training_statistics) { _, _ ->
+                            val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
 
-                    startActivity(stat)
+                            stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
+
+                            startActivity(stat)
+                        }
+                        val dialog: AlertDialog = builder.create()
+                        dialog.show()
+                    }, 2500)
+                } catch (e: Exception) {
+                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "onFinish handler error: " + e.toString())
                 }
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
             }
         }
     }
@@ -362,7 +372,6 @@ class TrainingActivity : AppCompatActivity() {
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             slide.setImageBitmap(bitmap)
             next.isEnabled = NIndex + 1 < NPageCount
-            //finish.isEnabled = !next.isEnabled
         }
     }
 
@@ -477,9 +486,9 @@ class TrainingActivity : AppCompatActivity() {
 
     private fun addPermissionsForAudioRecording() {
         val recordingPermissionStatus =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
         val storingPermissionStatus =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         val permissionsToRequest = mutableListOf<String>()
         if (recordingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
@@ -491,8 +500,8 @@ class TrainingActivity : AppCompatActivity() {
 
         if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(
-                this, permissionsToRequest.toTypedArray(),
-                RECORD_AUDIO_PERMISSION
+                    this, permissionsToRequest.toTypedArray(),
+                    RECORD_AUDIO_PERMISSION
             )
         } else {
             startAudioRecording()
