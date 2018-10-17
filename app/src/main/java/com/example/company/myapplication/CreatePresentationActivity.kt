@@ -21,7 +21,7 @@ class CreatePresentationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val isChecked = sharedPreferences.getBoolean("deb_pres", false)
+        val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
         super.onCreate(savedInstanceState)
         if(!isChecked) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
@@ -30,10 +30,10 @@ class CreatePresentationActivity : AppCompatActivity() {
                     .setDataAndType(myUri, "*/*")
                     .addCategory(CATEGORY_OPENABLE)
 
-            startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUSETCODE)
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(URI, debugSlides)
+            i.putExtra(URI, "making_presentation.pdf")
             startActivity(i)
         }
     }
