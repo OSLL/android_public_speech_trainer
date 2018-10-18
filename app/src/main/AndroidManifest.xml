@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TrainingActivity"
-            android:label="@string/activity_training_name"/>
+            android:label="@string/activity_training_name"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".PresentationActivity"
             android:label="@string/activity_presentation_name"/>
