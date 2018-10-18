@@ -61,6 +61,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private var mPlayer: MediaPlayer? = null
 
+    protected lateinit var mAudioManager: AudioManager
+
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap<Int, Long>()
 
@@ -82,22 +84,12 @@ class TrainingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
+        mAudioManager = (getSystemService(Context.AUDIO_SERVICE) as AudioManager?)!!
+
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isAudio = sharedPreferences.getBoolean("deb_speech_audio", false)
 
-        var time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
-
-        initAudioRecording()
-
-        if(!isAudio) {
-            muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
-        } else {
-            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
-            mPlayer = MediaPlayer.create(this, debugSpeechAudio)
-            mPlayer?.start()
-            mPlayer?.setOnCompletionListener { stopPlay() }
-        }
+        time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
         // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры;
@@ -114,6 +106,15 @@ class TrainingActivity : AppCompatActivity() {
 
         startRecognizingService()
 
+        if(!isAudio) {
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)// mute для того, чтобы не было слышно звуков speech recognizer
+        } else {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
+            mPlayer = MediaPlayer.create(this, debugSpeechAudio)
+            mPlayer?.start()
+            mPlayer?.setOnCompletionListener { stopPlay() }
+        }
 
         next.setOnClickListener {
             next.isEnabled = false
@@ -162,12 +163,23 @@ class TrainingActivity : AppCompatActivity() {
                 stopAudioRecording()
                 finishedRecording = true
             }*/
-
+            if(isAudio) {
+                mPlayer?.stop()
+            }
             timer(1,1).onFinish()
         }
     }
 
     //speech recognizer =====
+
+    private  fun muteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        amanager.setStreamMute(AudioManager.STREAM_RING, true)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+    }
 
     private fun addPermission() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -233,16 +245,6 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-        finish.setOnClickListener{
-            if(isAudio) {
-                mPlayer?.stop()
-            }
-
-            if (!finishedRecording) {
-                stopAudioRecording()
-                finishedRecording = true
-            }
-
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"Service Connection: bind service")
@@ -279,21 +281,6 @@ class TrainingActivity : AppCompatActivity() {
             }
         }
 
-    private fun stopPlay() {
-        mPlayer?.stop()
-        try {
-            mPlayer?.prepare()
-            mPlayer?.seekTo(0)
-        } catch (t: Throwable) {
-            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-        }
-
-    }
-
-    //speech recognizer =====
-    private fun AddPermission() {
-        val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-      
         override fun onProgressUpdate(vararg values: Void) {
             try {
                 curText = speechRecognitionService!!.getMESSAGE()
@@ -321,8 +308,16 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    private fun stopPlay() {
+        mPlayer?.stop()
+        try {
+            mPlayer?.prepare()
+            mPlayer?.seekTo(0)
+        } catch (t: Throwable) {
+            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+        }
 
-//======================
+    }
 
     override fun onStart() {
         super.onStart()
@@ -599,3 +594,4 @@ class TrainingActivity : AppCompatActivity() {
         super.onDestroy()
     }
 }
+

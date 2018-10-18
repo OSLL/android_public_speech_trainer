@@ -1,6 +1,8 @@
 package com.example.company.myapplication
 
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.github.mikephil.charting.components.Legend
@@ -17,6 +19,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
+        unmuteSound()
         //share example
         share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
@@ -36,6 +39,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         printSpeedLineChart(presentationSpeedData)
+    }
+
+    private fun unmuteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        amanager.setStreamMute(AudioManager.STREAM_RING, false)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
     }
 
     //Инициализация графика скорсти чтения
