@@ -61,8 +61,6 @@ class TrainingActivity : AppCompatActivity() {
 
     private var mPlayer: MediaPlayer? = null
 
-    protected lateinit var mAudioManager: AudioManager
-
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap<Int, Long>()
 
@@ -83,8 +81,6 @@ class TrainingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
-
-        mAudioManager = (getSystemService(Context.AUDIO_SERVICE) as AudioManager?)!!
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isAudio = sharedPreferences.getBoolean("deb_speech_audio", false)
@@ -107,7 +103,7 @@ class TrainingActivity : AppCompatActivity() {
         startRecognizingService()
 
         if(!isAudio) {
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)// mute для того, чтобы не было слышно звуков speech recognizer
+            muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
         } else {
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
@@ -179,6 +175,15 @@ class TrainingActivity : AppCompatActivity() {
         amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
         amanager.setStreamMute(AudioManager.STREAM_RING, true)
         amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+    }
+
+    private fun unmuteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        amanager.setStreamMute(AudioManager.STREAM_RING, false)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
     }
 
     private fun addPermission() {
@@ -366,7 +371,7 @@ class TrainingActivity : AppCompatActivity() {
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
 
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
-
+                            unmuteSound()
                             startActivity(stat)
                         }
                         val dialog: AlertDialog = builder.create()
