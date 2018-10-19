@@ -19,7 +19,6 @@ import android.text.TextUtils
 import android.view.MenuItem
 import java.lang.Boolean.parseBoolean
 
-
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
@@ -196,7 +195,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                         preference.setSummary(name)
                     }
                 }
-            } else {
+            }
+            else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.summary = stringValue

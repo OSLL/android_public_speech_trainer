@@ -17,10 +17,6 @@ import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.widget.Toast
 
-
-const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
-const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
-// this will be changed once the package name is changed
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
 
 class StartPageActivity : AppCompatActivity() {

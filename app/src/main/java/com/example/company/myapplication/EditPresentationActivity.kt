@@ -84,18 +84,21 @@ class EditPresentationActivity : AppCompatActivity() {
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val isChecked = sharedPreferences.getBoolean("deb_pres", false)
+            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
             val ins: InputStream
             ins = if(!isChecked) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open(debugSlides)
+                assets.open("making_presentation.pdf")
             }
 
             if(isChecked) {
-                val name = debugSlides
+                val name = "making_presentation.pdf"
                 presentationName.setText(name.substring(0, name.indexOf(".pdf")))
+            } else {
+                val cr = contentResolver
+                presentationName.setText(getFileName(uri, cr))
             }
 
             val buffer = ByteArray(1024)

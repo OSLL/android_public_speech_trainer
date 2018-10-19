@@ -2,7 +2,7 @@
 
     <SwitchPreference
         android:defaultValue="false"
-        android:key="deb_pres"
-        android:title="@string/pref_title_enable_deb_pres"/>
+        android:key="@string/deb_pres"
+        android:title="@string/pref_title_enable_deb_pres" />
 
 </PreferenceScreen>
