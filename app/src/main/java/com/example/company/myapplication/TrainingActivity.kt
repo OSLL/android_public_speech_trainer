@@ -14,6 +14,14 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.media.AudioManager
 import android.net.Uri
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Environment
+import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.os.*
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -25,6 +33,7 @@ import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -381,8 +390,15 @@ class TrainingActivity : AppCompatActivity() {
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val cr = contentResolver
-            val ins = cr.openInputStream(uri)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
+            val ins: InputStream
+            ins = if(!isChecked) {
+                val cr = contentResolver
+                cr.openInputStream(uri)
+            } else {
+                assets.open("making_presentation.pdf")
+            }
 
             val buffer = ByteArray(1024)
 

@@ -22,6 +22,7 @@
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="select_a_file">Выберите файл</string>
 
     <!-- Strings related to Settings -->
 
@@ -31,6 +32,8 @@
     <string name="pref_title_enable_statistics">Включить анализ статистики</string>
     <string name="pref_description_enable_statistics">Отображение графиков после выступления
     </string>
+    <string name="pref_title_enable_deb_pres">Включить тестовые презентации</string>
+    <string name="deb_pres">Отладочня презентация</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
     <string name="pref_default_display_name">John Smith</string>
@@ -87,6 +90,8 @@
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
+    <string name="pref_header_deb_mode">Debug mode</string>
+
     <string name="pref_title_new_message_notifications">Напоминание о тренировках</string>
 
     <string name="pref_title_ringtone">Рингтон</string>
@@ -101,6 +106,7 @@
     <string name="training_statistics">Статистика тренировки</string>
     <string name="return_training">Повторить тренировку</string>
     <string name="message_no_presentation_name">Пожалуйста, введите имя презентации</string>
+    <string name="DEBUG_SLIDES">debug_slides</string>
     <string name="audio_recording">audio recording</string>
     <string name="presentationEntries">presentationEntries</string>
 </resources>

@@ -1,12 +1,13 @@
 package com.example.company.myapplication
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 
 const val DEFAULT_TIME = "DefTime"
 
@@ -28,11 +30,11 @@ class EditPresentationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_presentation)
 
 
-       addPresentation.setOnClickListener{
+        addPresentation.setOnClickListener{
 
-           val uri = intent.getParcelableExtra<Uri>(URI)
+            val uri = intent.getParcelableExtra<Uri>(URI)
 
-             if (presentationName.text.toString() == ""){
+            if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -46,7 +48,7 @@ class EditPresentationActivity : AppCompatActivity() {
             if(pageCount != null) {
                 i.putExtra(DEFAULT_TIME, pageCount.toInt())
             }
-           startActivity(i)
+            startActivity(i)
         }
     }
 
@@ -74,17 +76,30 @@ class EditPresentationActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("Recycle")
     private fun initRenderer(){
+
         val uri = intent.getParcelableExtra<Uri>(URI)
-        val cr = contentResolver
-        presentationName.setText(getFileName(uri, cr))
-        Log.d(FILE_SYSTEM, uri.toString())
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val ins = cr.openInputStream(uri)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
+            val ins: InputStream
+            ins = if(!isChecked) {
+                val cr = contentResolver
+                cr.openInputStream(uri)
+            } else {
+                assets.open("making_presentation.pdf")
+            }
+
+            if(isChecked) {
+                val name = "making_presentation.pdf"
+                presentationName.setText(name.substring(0, name.indexOf(".pdf")))
+            } else {
+                val cr = contentResolver
+                presentationName.setText(getFileName(uri, cr))
+            }
 
             val buffer = ByteArray(1024)
 
@@ -104,28 +119,4 @@ class EditPresentationActivity : AppCompatActivity() {
             Log.d("error","error in opening presentation file")
         }
     }
-/*
-    @SuppressLint("Recycle")
-    fun getFileName(uri: Uri, cr: ContentResolver): String {
-        var result: String? = null
-        if (uri.scheme == "content") {
-            val cursor = cr.query(uri, null, null, null, null)
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                }
-            } finally {
-                cursor!!.close()
-            }
-        }
-        if (result == null) {
-            result = uri.path
-            val cut = result!!.lastIndexOf('/')
-            if (cut != -1) {
-                result = result.substring(cut + 1)
-            }
-        }
-        return result
-    }
-    */
 }
