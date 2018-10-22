@@ -11,6 +11,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import java.text.BreakIterator
 
 class TrainingStatisticsActivity : AppCompatActivity() {
 
@@ -74,5 +75,43 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         xAxis.setValueFormatter(IndexAxisValueFormatter(labels))
 
         speed_bar_chart.invalidate()
+    }
+
+    fun getTop10Words(text: String) : List<Pair<String, Int>> {
+        val dictionary = HashMap<String, Int>()
+
+        val iterator = BreakIterator.getWordInstance()
+        iterator.setText(text)
+
+        var endIndex = iterator.first()
+        while (BreakIterator.DONE != endIndex) {
+            val startIndex = endIndex
+            endIndex = iterator.next()
+            if (endIndex != BreakIterator.DONE && Character.isLetterOrDigit(text[startIndex])) {
+                val word = text.substring(startIndex, endIndex)
+                val count = dictionary[word] ?: 0
+                dictionary[word] = count + 1
+            }
+        }
+
+        val result = ArrayList<Pair<String, Int>>()
+        dictionary.onEach {
+            val position = getPosition(result, it.value)
+            if (position < 10)
+                result.add(position, it.toPair())
+            if (result.size > 10)
+                result.removeAt(10)
+        }
+        return result
+    }
+
+    private fun getPosition(list : List<Pair<String, Int>>, value : Int) : Int {
+        if (list.isEmpty())
+            return 0
+        for (i in list.indices) {
+            if (value > list[i].second)
+                return i
+        }
+        return list.size
     }
 }
