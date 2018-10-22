@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
@@ -37,6 +35,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         printSpeedLineChart(presentationSpeedData)
+
+        val text = "one one one two two three four four four four"
+
+        //val presentationTop10Words = getTop10Words(intent.getStringExtra("allRecognizedText"))
+        val presentationTop10Words = getTop10Words(text)
+        val entries = ArrayList<PieEntry>()
+        for (pair in presentationTop10Words){
+            entries.add(PieEntry(pair.second.toFloat(), pair.first))
+        }
+        printPiechart(entries)
     }
 
     //Инициализация графика скорсти чтения
@@ -75,6 +83,21 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         xAxis.setValueFormatter(IndexAxisValueFormatter(labels))
 
         speed_bar_chart.invalidate()
+    }
+
+    fun printPiechart (lineEntries: List<PieEntry>){
+//        val labels = ArrayList<String>()
+//        for(entry in lineEntries)
+//            labels.add((entry.x +1).toInt().toString())
+        val pieDataSet = PieDataSet(lineEntries, getString(R.string.words_count))
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
+//        val entries = ArrayList<PieEntry>()
+//
+//        val set = PieDataSet(entries, "Election Results")
+        val data = PieData(pieDataSet)
+        pie_chart.data = data
+
+        pie_chart.invalidate()
     }
 
     fun getTop10Words(text: String) : List<Pair<String, Int>> {
