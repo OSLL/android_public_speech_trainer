@@ -37,10 +37,10 @@ class DebugSlidesTest {
         debSl.putBoolean("deb_pres", true)
         debSl.apply()
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
-        onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
+        onView(withText("making_presentation.pdf".substring(0, "making_presentation.pdf".indexOf(".pdf")))).check(matches(isDisplayed()))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
-        onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
-        onView(withText(PageCount.toString()+":00")).check(matches(isDisplayed()))
+        onView(withText("making_presentation.pdf".substring(0, "making_presentation.pdf".indexOf(".pdf")))).check(matches(isDisplayed()))
+        onView(withText("26"+":00")).check(matches(isDisplayed()))
         debSl.putBoolean("deb_pres", false)
         debSl.apply()
     }
