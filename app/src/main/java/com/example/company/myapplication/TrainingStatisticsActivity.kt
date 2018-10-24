@@ -68,7 +68,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         speed_bar_chart.axisRight.isEnabled = false// ось У справа невидимая
         speed_bar_chart.axisLeft.setDrawGridLines(false)//откл вертикальных линий сетки
         speed_bar_chart.axisLeft.textSize = 15f
-        speed_bar_chart.axisLeft.axisMinimum = 0f // минимальное значение оси x = 0
+        speed_bar_chart.axisLeft.axisMinimum = 0f // минимальное значение оси y = 0
 
         val xAxis = speed_bar_chart.xAxis
         xAxis.textSize = 12f
