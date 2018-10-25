@@ -1,6 +1,5 @@
 package com.example.company.myapplication
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -8,12 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.preference.PreferenceManager
-import android.support.v4.app.FragmentActivity
-import android.util.Log
-import android.widget.Toast
 
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
 

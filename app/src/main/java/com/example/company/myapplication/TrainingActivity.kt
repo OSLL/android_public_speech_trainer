@@ -397,7 +397,7 @@ class TrainingActivity : AppCompatActivity() {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open("making_presentation.pdf")
+                assets.open(getString(R.string.deb_pres_name))
             }
 
             val buffer = ByteArray(1024)
