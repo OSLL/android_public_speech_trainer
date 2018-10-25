@@ -24,7 +24,6 @@ const val PageCount = 26       //Количество страниц в през
 const val debugSpeechAudio = R.raw.philstone // Путь к файлу в raw,
                                                   // который запускается в виде тестовой звуковой дорожки.
 
-// this will be changed once the package name is changed
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
 
 class StartPageActivity : AppCompatActivity() {

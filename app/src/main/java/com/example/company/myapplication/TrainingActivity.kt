@@ -434,13 +434,13 @@ class TrainingActivity : AppCompatActivity() {
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val isPres = sharedPreferences.getBoolean("deb_pres", false)
+            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
             val ins: InputStream
-            ins = if(!isPres) {
+            ins = if(!isChecked) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open(debugSlides)
+                assets.open(getString(R.string.deb_pres_name))
             }
 
             val buffer = ByteArray(1024)

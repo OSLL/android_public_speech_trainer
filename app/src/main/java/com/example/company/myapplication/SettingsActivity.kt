@@ -29,6 +29,7 @@ import java.lang.Boolean.parseBoolean
  * for design guidelines and the [Settings API Guide](http://developer.android.com/guide/topics/ui/settings.html)
  * for more information on developing a Settings UI.
  */
+
 class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +68,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || NotificationPreferenceFragment::class.java.name == fragmentName
                 || DebModePreferenceFragment::class.java.name == fragmentName
-
     }
 
     /**
@@ -146,6 +146,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return super.onOptionsItemSelected(item)
         }
     }
+
     companion object {
 
         /**
@@ -189,7 +190,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                         preference.setSummary(name)
                     }
                 }
-            } else {
+            }
+            else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.summary = stringValue

@@ -34,14 +34,16 @@ class DebugSlidesTest {
     fun Test(){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
-        debSl.putBoolean("deb_pres", true)
+        val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
+        val PresName = mIntentsTestRule.activity.getString(R.string.deb_pres_name)
+        debSl.putBoolean(OnMode, true)
         debSl.apply()
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
-        onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
+        onView(withText(PresName.substring(0, PresName.indexOf(".pdf")))).check(matches(isDisplayed()))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
-        onView(withText(debugSlides.substring(0, debugSlides.indexOf(".pdf")))).check(matches(isDisplayed()))
-        onView(withText(PageCount.toString()+":00")).check(matches(isDisplayed()))
-        debSl.putBoolean("deb_pres", false)
+        onView(withText(PresName.substring(0, PresName.indexOf(".pdf")))).check(matches(isDisplayed()))
+        onView(withText("26"+":00")).check(matches(isDisplayed()))
+        debSl.putBoolean(OnMode, false)
         debSl.apply()
     }
 }
