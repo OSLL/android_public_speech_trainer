@@ -21,7 +21,7 @@ import android.widget.Toast
 const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
 const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
 
-const val debugSpeechAudio = R.raw.philstone // Путь к файлу в raw,
+const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
                                                   // который запускается в виде тестовой звуковой дорожки.
 
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
@@ -32,8 +32,6 @@ class StartPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
-
-        val t = 5
 
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {

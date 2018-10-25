@@ -83,7 +83,7 @@ class TrainingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_training)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val isAudio = sharedPreferences.getBoolean("deb_speech_audio", false)
+        val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
         time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 

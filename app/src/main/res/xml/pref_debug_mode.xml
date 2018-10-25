@@ -4,10 +4,10 @@
         android:defaultValue="false"
         android:key="@string/deb_pres"
         android:title="@string/pref_title_enable_deb_pres" />
-  
+
     <SwitchPreference
         android:defaultValue="false"
-        android:key="deb_speech_audio"
+        android:key="@string/deb_speech_audio_key"
         android:title="@string/pref_title_enable_deb_speech_audio" />
 
 </PreferenceScreen>
