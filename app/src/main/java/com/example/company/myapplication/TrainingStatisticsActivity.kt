@@ -36,10 +36,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printSpeedLineChart(presentationSpeedData)
 
-        val text = "one one one two two three four four four four"
 
-        //val presentationTop10Words = getTop10Words(intent.getStringExtra("allRecognizedText"))
-        val presentationTop10Words = getTop10Words(text)
+        val presentationTop10Words = getTop10Words(intent.getStringExtra("allRecognizedText"))
         val entries = ArrayList<PieEntry>()
         for (pair in presentationTop10Words){
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
