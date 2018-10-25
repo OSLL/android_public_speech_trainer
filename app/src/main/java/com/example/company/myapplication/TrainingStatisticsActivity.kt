@@ -3,6 +3,7 @@ package com.example.company.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -52,26 +53,28 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         data.setValueTextSize(0f)
 
         speed_bar_chart.setFitBars(true)
-        speed_bar_chart.setData(data)
+        speed_bar_chart.data = data
         speed_bar_chart.description.text = getString(R.string.slide_number)
-        speed_bar_chart.description.setTextSize(15f)
+        speed_bar_chart.description.textSize = 15f
         speed_bar_chart.animateXY(1000,1000)
-        speed_bar_chart.legend.setTextSize(20f)
-        speed_bar_chart.legend.setPosition(Legend.LegendPosition.ABOVE_CHART_LEFT)
+        speed_bar_chart.legend.textSize = 20f
+        speed_bar_chart.legend.position = Legend.LegendPosition.ABOVE_CHART_LEFT
         speed_bar_chart.legend.formSize = 0f
         speed_bar_chart.legend.xEntrySpace = 0f
 
 
         speed_bar_chart.setScaleEnabled(false)//выкл возможность зумить
-        speed_bar_chart.getXAxis().setDrawGridLines(false)//отключение горизонтальных линии сетки
+        speed_bar_chart.xAxis.setDrawGridLines(false)//отключение горизонтальных линии сетки
         speed_bar_chart.axisRight.isEnabled = false// ось У справа невидимая
         speed_bar_chart.axisLeft.setDrawGridLines(false)//откл вертикальных линий сетки
         speed_bar_chart.axisLeft.textSize = 15f
+        speed_bar_chart.axisLeft.axisMinimum = 0f // минимальное значение оси y = 0
 
         val xAxis = speed_bar_chart.xAxis
         xAxis.textSize = 12f
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setValueFormatter(IndexAxisValueFormatter(labels))
+        xAxis.valueFormatter = IndexAxisValueFormatter(labels)
+        xAxis.granularity = 1f
 
         speed_bar_chart.invalidate()
     }
