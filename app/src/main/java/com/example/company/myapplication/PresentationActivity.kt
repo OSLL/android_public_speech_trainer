@@ -71,7 +71,7 @@ class PresentationActivity : AppCompatActivity() {
         }
 
         presentationNameActivityPresentation.text = presentationData?.name
-        val uri = Uri.parse(presentationData?.path)
+        val uri = Uri.parse(presentationData?.stringUri)
 
         training.setOnClickListener {
             val i = Intent(this, TrainingActivity::class.java)

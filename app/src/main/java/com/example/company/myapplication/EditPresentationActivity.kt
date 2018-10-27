@@ -45,7 +45,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
         addPresentation.setOnClickListener{
 
-            val uri = Uri.parse(presentationData?.path)
+            val uri = Uri.parse(presentationData?.stringUri)
 
             if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
@@ -55,12 +55,6 @@ class EditPresentationActivity : AppCompatActivity() {
 
 
             val i = Intent(this, PresentationActivity::class.java)
-            //i.putExtra(NAME_OF_PRES,presentationName.text.toString())
-            //i.putExtra(URI, uri)
-            //val pageCount = renderer?.pageCount
-            //if(pageCount != null) {
-                //i.putExtra(DEFAULT_TIME, pageCount.toInt())
-            //}
             presentationData?.pageCount = renderer?.pageCount
             presentationData?.name = presentationName.text.toString()
             presentationDataDao?.updatePresentation(presentationData!!)
@@ -96,7 +90,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
     private fun initRenderer(){
 
-        val uri = Uri.parse(presentationData?.path)
+        val uri = Uri.parse(presentationData?.stringUri)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")

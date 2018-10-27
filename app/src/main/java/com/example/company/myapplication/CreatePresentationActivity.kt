@@ -53,7 +53,7 @@ class CreatePresentationActivity : AppCompatActivity() {
 
                     if (newPresentation == null) {
                         newPresentation = PresentationData()
-                        newPresentation.path = selectedFile.toString()
+                        newPresentation.stringUri = selectedFile.toString()
                         speechDataBase?.PresentationDataDao()?.insert(newPresentation)
                         currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(selectedFile.toString())?.id
 

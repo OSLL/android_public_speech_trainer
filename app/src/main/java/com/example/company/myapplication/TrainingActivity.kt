@@ -93,7 +93,7 @@ class TrainingActivity : AppCompatActivity() {
             Log.d(TEST_DB, "training_act: wrong ID")
             return
         }
-        
+
         time = presentationData?.timeLimit!!
 
         // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
@@ -399,7 +399,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initRenderer() {
-        val uri = Uri.parse(presentationData?.path)
+        val uri = Uri.parse(presentationData?.stringUri)
 
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")
