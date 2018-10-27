@@ -10,5 +10,5 @@ data class PresentationData(@PrimaryKey(autoGenerate = true) var id: Int?,
                             @ColumnInfo(name = "timeLimitInSeconds") var timeLimit : Long?,
                             @ColumnInfo(name = "pageCount") var pageCount: Int?
 ){
-    constructor():this(null,"","",0,0)
+    constructor():this(null,"","",null,0)
 }
