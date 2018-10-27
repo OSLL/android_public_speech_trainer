@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.company.myapplication">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
     <application
         android:allowBackup="true"
@@ -17,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TrainingActivity"
-            android:label="@string/activity_training_name"/>
+            android:label="@string/activity_training_name"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".PresentationActivity"
             android:label="@string/activity_presentation_name"/>
@@ -27,14 +32,16 @@
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name" />
         <activity
-            android:name=".PreferenceActivity"
-            android:label="Настройки" />
-        <activity
             android:name=".EditPresentationActivity"
             android:label="@string/activity_edit_presentation_name" />
         <activity
             android:name=".TrainingStatisticsActivity"
             android:label="@string/activity_training_statistics_name"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <service android:name=".SpeechRecognitionService"
+            android:enabled="true"/>
     </application>
 
 </manifest>

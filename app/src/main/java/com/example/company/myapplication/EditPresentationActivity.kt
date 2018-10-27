@@ -1,11 +1,13 @@
 package com.example.company.myapplication
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -13,6 +15,9 @@ import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
+
+const val DEFAULT_TIME = "DefTime"
 
 class EditPresentationActivity : AppCompatActivity() {
 
@@ -25,20 +30,24 @@ class EditPresentationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_presentation)
 
 
-       addPresentation.setOnClickListener{
+        addPresentation.setOnClickListener{
 
-           val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+            val uri = intent.getParcelableExtra<Uri>(URI)
 
-             if (presentationName.text.toString() == ""){
-                Toast.makeText(this, "Please Enter Presentation Name", Toast.LENGTH_SHORT).show()
+            if (presentationName.text.toString() == ""){
+                Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
 
 
             val i = Intent(this, PresentationActivity::class.java)
-            i.putExtra("presentation_name",presentationName.text.toString())
-            i.putExtra("presentation_uri", uri)
+            i.putExtra(NAME_OF_PRES,presentationName.text.toString())
+            i.putExtra(URI, uri)
+            val pageCount = renderer?.pageCount
+            if(pageCount != null) {
+                i.putExtra(DEFAULT_TIME, pageCount.toInt())
+            }
             startActivity(i)
         }
     }
@@ -52,12 +61,12 @@ class EditPresentationActivity : AppCompatActivity() {
     private fun renderPage(pageIndex: Int){
 
         currentPage?.close()
-
         currentPage = renderer?.openPage(pageIndex)
         val width = currentPage?.width
         val height = currentPage?.height
         val index = currentPage?.index
         val pageCount = renderer?.pageCount
+
         if(width != null && height != null && index != null && pageCount != null) {
             val NWidth: Int = width
             val NHeight: Int = height
@@ -69,13 +78,28 @@ class EditPresentationActivity : AppCompatActivity() {
 
     private fun initRenderer(){
 
-        val uri = intent.getParcelableExtra<Uri>("presentation_uri")
+        val uri = intent.getParcelableExtra<Uri>(URI)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val cr = contentResolver
-            val ins = cr.openInputStream(uri)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
+            val ins: InputStream
+            ins = if(!isChecked) {
+                val cr = contentResolver
+                cr.openInputStream(uri)
+            } else {
+                assets.open(getString(R.string.deb_pres_name))
+            }
+
+            if(isChecked) {
+                val name = getString(R.string.deb_pres_name)
+                presentationName.setText(name.substring(0, name.indexOf(".pdf")))
+            } else {
+                val cr = contentResolver
+                presentationName.setText(getFileName(uri, cr))
+            }
 
             val buffer = ByteArray(1024)
 
@@ -91,7 +115,7 @@ class EditPresentationActivity : AppCompatActivity() {
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch(e: IOException){
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
             Log.d("error","error in opening presentation file")
         }
     }

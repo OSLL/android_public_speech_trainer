@@ -11,8 +11,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/speed_bar_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:layout_weight="1"/>
+
+        <!--Вывод pieChart https://github.com/OSLL/android_public_speech_trainer/issues/33-->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pie_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:layout_weight="1"/>
+
         <Button
-            android:id="@+id/share"
+            android:id="@+id/share1"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="@string/share" />
