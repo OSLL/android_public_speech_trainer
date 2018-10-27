@@ -11,6 +11,9 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
@@ -25,14 +28,25 @@ class EditPresentationActivity : AppCompatActivity() {
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
 
+    private var presentationDataDao: PresentationDataDao? = null
+    private var presentationData: PresentationData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
 
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
+        if (presId > 0)
+            presentationData = presentationDataDao?.getPresentationWithId(presId)
+        else {
+            Log.d(TEST_DB, "edit_pres_act: wrong ID")
+            return
+        }
 
         addPresentation.setOnClickListener{
 
-            val uri = intent.getParcelableExtra<Uri>(URI)
+            val uri = Uri.parse(presentationData?.path)
 
             if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
@@ -78,7 +92,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
     private fun initRenderer(){
 
-        val uri = intent.getParcelableExtra<Uri>(URI)
+        val uri = Uri.parse(presentationData?.path)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")

@@ -110,4 +110,5 @@
     <string name="DEBUG_SLIDES">debug_slides</string>
     <string name="audio_recording">audio recording</string>
     <string name="presentationEntries">presentationEntries</string>
+    <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
 </resources>

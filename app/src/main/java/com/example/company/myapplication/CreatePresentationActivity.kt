@@ -10,12 +10,17 @@ import android.os.Environment
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import java.io.FileNotFoundException
 
 const val URI = "presentation_uri"
 const val FILE_SYSTEM = "file_system"
+const val TEST_DB = "test_db"
 
 class CreatePresentationActivity : AppCompatActivity() {
+    private var speechDataBase: SpeechDataBase? = null
 
     private val REQUSETCODE = 111
 
@@ -42,8 +47,25 @@ class CreatePresentationActivity : AppCompatActivity() {
             if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
                 val selectedFile = data.data //The uri with the location of the file
                 try {
+                    speechDataBase = SpeechDataBase.getInstance(this)
+                    var newPresentation: PresentationData? = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(selectedFile.toString())
+                    var currentPresID: Int? = newPresentation?.id
+
+                    if (newPresentation == null) {
+                        newPresentation = PresentationData()
+                        newPresentation.path = selectedFile.toString()
+                        speechDataBase?.PresentationDataDao()?.insert(newPresentation)
+                        currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(selectedFile.toString())?.id
+
+                        Log.d(TEST_DB, "create new pres: $newPresentation")
+                    }
+                    else {
+                        Log.d(TEST_DB, "open exists presentation: $newPresentation")
+                        Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_SHORT).show()
+                    }
+
                     val i = Intent(this, EditPresentationActivity::class.java)
-                    i.putExtra(URI, selectedFile)
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),currentPresID)
                     Log.d(FILE_SYSTEM, selectedFile.toString())
                     startActivity(i)
                 } catch (e: FileNotFoundException) {
