@@ -1,6 +1,5 @@
 package com.example.company.myapplication
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -56,12 +55,17 @@ class EditPresentationActivity : AppCompatActivity() {
 
 
             val i = Intent(this, PresentationActivity::class.java)
-            i.putExtra(NAME_OF_PRES,presentationName.text.toString())
-            i.putExtra(URI, uri)
-            val pageCount = renderer?.pageCount
-            if(pageCount != null) {
-                i.putExtra(DEFAULT_TIME, pageCount.toInt())
-            }
+            //i.putExtra(NAME_OF_PRES,presentationName.text.toString())
+            //i.putExtra(URI, uri)
+            //val pageCount = renderer?.pageCount
+            //if(pageCount != null) {
+                //i.putExtra(DEFAULT_TIME, pageCount.toInt())
+            //}
+            presentationData?.pageCount = renderer?.pageCount
+            presentationData?.name = presentationName.text.toString()
+            presentationDataDao?.updatePresentation(presentationData!!)
+
+            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
             startActivity(i)
         }
     }
@@ -111,8 +115,12 @@ class EditPresentationActivity : AppCompatActivity() {
                 val name = getString(R.string.deb_pres_name)
                 presentationName.setText(name.substring(0, name.indexOf(".pdf")))
             } else {
-                val cr = contentResolver
-                presentationName.setText(getFileName(uri, cr))
+                //val cr = contentResolver
+                //presentationName.setText(getFileName(uri, cr))
+                if (presentationData?.name!!.isNullOrEmpty())
+                    presentationName.setText(getFileName(uri,contentResolver))
+                else
+                    presentationName.setText(presentationData?.name)
             }
 
             val buffer = ByteArray(1024)
