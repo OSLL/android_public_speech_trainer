@@ -82,10 +82,10 @@ class PresentationActivity : AppCompatActivity() {
                         trainingTime.text.lastIndex + 1)
                 if (IsNumber(min, sec) && TestLong(min,sec)) {
                     val time = min.toLong() * 60 + sec.toLong()
-                    //i.putExtra(TIME_ALLOTTED_FOR_TRAINING, time)
                     presentationData?.timeLimit = time
                     presentationDataDao?.updatePresentation(presentationData!!)
 
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                     startActivity(i)
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
