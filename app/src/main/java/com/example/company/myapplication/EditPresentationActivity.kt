@@ -102,20 +102,14 @@ class EditPresentationActivity : AppCompatActivity() {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open(getString(R.string.deb_pres_name))
+                assets.open(presentationData?.stringUri)
             }
 
-            if(isChecked) {
-                val name = getString(R.string.deb_pres_name)
-                presentationName.setText(name.substring(0, name.indexOf(".pdf")))
-            } else {
-                //val cr = contentResolver
-                //presentationName.setText(getFileName(uri, cr))
-                if (presentationData?.name!!.isNullOrEmpty())
-                    presentationName.setText(getFileName(uri,contentResolver))
-                else
-                    presentationName.setText(presentationData?.name)
-            }
+            if (presentationData?.name!!.isNullOrEmpty())
+                presentationName.setText(getFileName(uri,contentResolver))
+            else
+                presentationName.setText(presentationData?.name)
+
 
             val buffer = ByteArray(1024)
 

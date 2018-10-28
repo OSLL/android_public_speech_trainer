@@ -13,6 +13,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import java.io.File
 import java.io.FileNotFoundException
 
 const val URI = "presentation_uri"
@@ -37,7 +38,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(URI, R.string.deb_pres_name)
+            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),checkForPresentationInDB(getString(R.string.deb_pres_name)))
             startActivity(i)
         }
     }
@@ -47,31 +48,36 @@ class CreatePresentationActivity : AppCompatActivity() {
             if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
                 val selectedFile = data.data //The uri with the location of the file
                 try {
-                    speechDataBase = SpeechDataBase.getInstance(this)
-                    var newPresentation: PresentationData? = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(selectedFile.toString())
-                    var currentPresID: Int? = newPresentation?.id
-
-                    if (newPresentation == null) {
-                        newPresentation = PresentationData()
-                        newPresentation.stringUri = selectedFile.toString()
-                        speechDataBase?.PresentationDataDao()?.insert(newPresentation)
-                        currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(selectedFile.toString())?.id
-
-                        Log.d(TEST_DB, "create new pres: $newPresentation")
-                    }
-                    else {
-                        Log.d(TEST_DB, "open exists presentation: $newPresentation")
-                        Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_SHORT).show()
-                    }
-
                     val i = Intent(this, EditPresentationActivity::class.java)
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),currentPresID)
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),checkForPresentationInDB(selectedFile.toString()))
                     Log.d(FILE_SYSTEM, selectedFile.toString())
                     startActivity(i)
                 } catch (e: FileNotFoundException) {
                     Log.d(FILE_SYSTEM, "file not found")
                 }
             }
+    }
+
+    private fun checkForPresentationInDB(stringUri: String): Int {
+        speechDataBase = SpeechDataBase.getInstance(this)
+
+        var newPresentation: PresentationData? = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)
+        var currentPresID: Int? = newPresentation?.id
+
+        if (newPresentation == null) {
+            newPresentation = PresentationData()
+            newPresentation.stringUri = stringUri
+            speechDataBase?.PresentationDataDao()?.insert(newPresentation)
+            currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
+
+            Log.d(TEST_DB, "create new pres: $newPresentation")
+        }
+        else {
+            Log.d(TEST_DB, "open exists presentation: $newPresentation")
+            Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_SHORT).show()
+        }
+
+        return currentPresID!!
     }
 }
 
