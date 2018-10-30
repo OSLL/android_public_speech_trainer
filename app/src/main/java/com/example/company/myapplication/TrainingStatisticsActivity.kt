@@ -12,6 +12,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import kotlin.math.abs
 
 class TrainingStatisticsActivity : AppCompatActivity() {
 
@@ -37,6 +38,13 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         printSpeedLineChart(presentationSpeedData)
+
+        var averageSpeed = presentationEntries.values.map { it!!.toFloat() }.toFloatArray().average()
+        val bestSlide = presentationEntries.minBy { abs(it.value!!.toFloat().minus(120))}!!.key
+        val worstSlide = presentationEntries.maxBy { abs(it.value!!.toFloat().minus(120))}!!.key
+
+        textView.text = "Средняя скорость: $averageSpeed\nЛучший слайд: $bestSlide\nХудший слайд: $worstSlide"
+
     }
 
     //Инициализация графика скорсти чтения
