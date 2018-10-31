@@ -371,6 +371,8 @@ class TrainingActivity : AppCompatActivity() {
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
 
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
+
+                            stat.putExtra("allRecognizedText", ALL_RECOGNIZED_TEXT)
                             unmuteSound()
                             startActivity(stat)
                         }
