@@ -52,7 +52,7 @@ class StartPageActivityTest {
     @Test
     fun test_from_start_page_to_preference(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
-        onView(withText(activity_preference)).perform(click());
+        onView(withText(activity_preference)).perform(click())
         intended(hasComponent(ComponentName(getTargetContext(), SettingsActivity::class.java)))
     }
 

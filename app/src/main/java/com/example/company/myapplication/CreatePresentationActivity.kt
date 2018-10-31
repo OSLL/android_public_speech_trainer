@@ -29,11 +29,10 @@ class CreatePresentationActivity : AppCompatActivity() {
             val intent = Intent(ACTION_GET_CONTENT)
                     .setDataAndType(myUri, "*/*")
                     .addCategory(CATEGORY_OPENABLE)
-
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(URI, "making_presentation.pdf")
+            i.putExtra(URI, R.string.deb_pres_name)
             startActivity(i)
         }
     }
