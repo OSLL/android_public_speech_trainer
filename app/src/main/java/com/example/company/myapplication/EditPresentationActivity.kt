@@ -90,11 +90,11 @@ class EditPresentationActivity : AppCompatActivity() {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open("making_presentation.pdf")
+                assets.open(getString(R.string.deb_pres_name))
             }
 
             if(isChecked) {
-                val name = "making_presentation.pdf"
+                val name = getString(R.string.deb_pres_name)
                 presentationName.setText(name.substring(0, name.indexOf(".pdf")))
             } else {
                 val cr = contentResolver

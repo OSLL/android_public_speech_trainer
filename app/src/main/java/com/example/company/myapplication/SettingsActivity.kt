@@ -29,6 +29,7 @@ import java.lang.Boolean.parseBoolean
  * for design guidelines and the [Settings API Guide](http://developer.android.com/guide/topics/ui/settings.html)
  * for more information on developing a Settings UI.
  */
+
 class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,12 +135,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             setHasOptionsMenu(true)
 
             val pref = findPreference("deb_mode")
-            /*
-            pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener{preference, newValue ->
-                val flag = parseBoolean(newValue.toString())
-            }
-*/
-
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -195,7 +190,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                         preference.setSummary(name)
                     }
                 }
-
             }
             else {
                 // For all other preferences, set the summary to the value's

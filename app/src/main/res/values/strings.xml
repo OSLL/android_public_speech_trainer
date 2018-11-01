@@ -33,7 +33,10 @@
     <string name="pref_description_enable_statistics">Отображение графиков после выступления
     </string>
     <string name="pref_title_enable_deb_pres">Включить тестовые презентации</string>
+    <string name="deb_speech_audio_key">deb_speech_audio</string>
+    <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочня презентация</string>
+    <string name="deb_pres_name">making_presentation.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
     <string name="pref_default_display_name">John Smith</string>

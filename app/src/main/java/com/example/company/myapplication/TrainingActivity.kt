@@ -13,6 +13,8 @@ import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
@@ -53,6 +55,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private var isCancelled = false
 
+    private var mPlayer: MediaPlayer? = null
+
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap<Int, Long>()
 
@@ -75,6 +79,9 @@ class TrainingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_training)
 
         saveImage()
+      
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
         time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
@@ -93,6 +100,15 @@ class TrainingActivity : AppCompatActivity() {
 
         startRecognizingService()
 
+        if(!isAudio) {
+            muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+        } else {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
+            mPlayer = MediaPlayer.create(this, debugSpeechAudio)
+            mPlayer?.start()
+            mPlayer?.setOnCompletionListener { stopPlay() }
+        }
 
         next.setOnClickListener {
             next.isEnabled = false
@@ -141,7 +157,9 @@ class TrainingActivity : AppCompatActivity() {
                 stopAudioRecording()
                 finishedRecording = true
             }*/
-
+            if(isAudio) {
+                mPlayer?.stop()
+            }
             timer(1,1).onFinish()
         }
     }
@@ -222,6 +240,24 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     //speech recognizer =====
+
+    private  fun muteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        amanager.setStreamMute(AudioManager.STREAM_RING, true)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+    }
+
+    private fun unmuteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        amanager.setStreamMute(AudioManager.STREAM_RING, false)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
+    }
 
     private fun addPermission() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -356,8 +392,16 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    private fun stopPlay() {
+        mPlayer?.stop()
+        try {
+            mPlayer?.prepare()
+            mPlayer?.seekTo(0)
+        } catch (t: Throwable) {
+            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+        }
 
-//======================
+    }
 
     override fun onStart() {
         super.onStart()
@@ -408,8 +452,13 @@ class TrainingActivity : AppCompatActivity() {
 
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
 
+
                             val name = intent.getStringExtra(NAME_OF_PRES)
                             stat.putExtra(NAME_OF_PRES, name)
+
+
+                            stat.putExtra("allRecognizedText", ALL_RECOGNIZED_TEXT)
+                            unmuteSound()
 
                             startActivity(stat)
                         }
@@ -479,7 +528,7 @@ class TrainingActivity : AppCompatActivity() {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open("making_presentation.pdf")
+                assets.open(getString(R.string.deb_pres_name))
             }
 
             val buffer = ByteArray(1024)
@@ -642,3 +691,4 @@ class TrainingActivity : AppCompatActivity() {
         super.onDestroy()
     }
 }
+
