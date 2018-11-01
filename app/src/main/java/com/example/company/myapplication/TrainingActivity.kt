@@ -10,19 +10,12 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
+import android.media.AudioManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
-import android.media.AudioManager
 import android.net.Uri
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.Environment
-import android.os.ParcelFileDescriptor
-import android.preference.PreferenceManager
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.os.*
+import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -42,6 +35,7 @@ import kotlin.collections.HashMap
 const val AUDIO_RECORDING = "audio_recording"
 const val RECORD_AUDIO_PERMISSION = 200 // change constant?
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
+const val IMAGE_FOLDER = "public_speech_trainer/images"
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознавания речи
 const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознавание речи (скорость чтения, номер страницы, распознанный текст)
 
@@ -53,6 +47,7 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var mediaRecorder: MediaRecorder
     private lateinit var audioFile: File
+    private lateinit var imageFile: File
     private lateinit var directory: File
     private var finishedRecording = false
 
@@ -78,6 +73,8 @@ class TrainingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+
+        saveImage()
 
         time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
@@ -149,14 +146,95 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetWorldReadable")
+    private fun saveImage() {
+
+        var fos: FileOutputStream? = null
+        //var bmpBase: Bitmap? = null
+
+/*
+        bmpBase = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888)
+        canvas = Canvas(bmpBase)
+        val paint = Paint()
+        paint.color = Color.RED
+        canvas.drawCircle(50f,50f,30f, paint)
+*/
+
+        val temp = File(this.cacheDir, "tempImage.pdf")
+
+        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_WRITE)
+        renderer = PdfRenderer(parcelFileDescriptor)
+
+        currentPage = renderer?.openPage(0)
+        val width = currentPage?.width
+        val height = currentPage?.height
+        if (width != null && height != null) {
+            val defW = 397
+            val defH = 298
+            bmpBase = Bitmap.createBitmap(defW, defH, Bitmap.Config.ARGB_8888)
+
+            currentPage?.render(bmpBase, null,null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
+        }
+
+        val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            Environment.getExternalStorageDirectory()
+        } else {
+            filesDir
+        }
+
+        directory = File("${parent.path}${File.separator}$IMAGE_FOLDER")
+
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+        try {
+            imageFile = File(directory, "image.png")
+            imageFile.createNewFile()
+        } catch (e: IOException) {
+            Log.e("error", "unable to create image file for images")
+        }
+
+        //SAVING!!
+        try {
+            fos = FileOutputStream(imageFile)
+            bmpBase?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+
+            fos.flush()
+            fos.close()
+            fos = null
+            imageFile.setReadable(true, false)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close()
+                    fos = null
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+            }
+        }
+
+        addPermissionsForAudioRecording()
+
+    }
+
     //speech recognizer =====
 
     private fun addPermission() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        val loadPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
 
         val arr = arrayOf(Manifest.permission.RECORD_AUDIO)
 
         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arr,
+                    1)
+        }
+
+        if (loadPerm != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arr,
                     1)
         }
@@ -327,7 +405,11 @@ class TrainingActivity : AppCompatActivity() {
                         builder.setPositiveButton(R.string.training_statistics) { _, _ ->
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
 
+
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
+
+                            val name = intent.getStringExtra(NAME_OF_PRES)
+                            stat.putExtra(NAME_OF_PRES, name)
 
                             startActivity(stat)
                         }
@@ -512,6 +594,10 @@ class TrainingActivity : AppCompatActivity() {
         }
         if (storingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
             permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
+        if (storingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
 
         if (permissionsToRequest.isNotEmpty()) {
