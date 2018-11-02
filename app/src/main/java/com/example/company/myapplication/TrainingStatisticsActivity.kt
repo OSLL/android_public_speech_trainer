@@ -58,64 +58,68 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         printPiechart(entries)
     }
 
-    fun DrawPict(){
-
+    fun DrawPict() {
+        val width = bmpBase?.width
+        val height = bmpBase?.height
         val presName = intent.getStringExtra(NAME_OF_PRES)
 
-        Log.d("razmeri", bmpBase?.width.toString() + " / " + bmpBase?.height.toString())
+        if(width != null && height != null) {
+            val NWidth: Int = width
+            val NHeight: Int = height
+            finishBmp = Bitmap.createBitmap(NWidth, NHeight + 185, Bitmap.Config.ARGB_8888)
 
-        finishBmp = Bitmap.createBitmap(bmpBase!!.width, bmpBase!!.height + 185, Bitmap.Config.ARGB_8888)
-        val whitePaint = Paint()
-        whitePaint.style = Paint.Style.FILL
-        whitePaint.color = Color.WHITE
+            val whitePaint = Paint()
+            whitePaint.style = Paint.Style.FILL
+            whitePaint.color = Color.WHITE
 
-        val nameBmp = Bitmap.createBitmap(bmpBase!!.width, 40, Bitmap.Config.ARGB_8888)
-        val nameC = Canvas(nameBmp)
-        nameC.drawPaint(whitePaint)
-        val namePaint = Paint()
-        namePaint.color = Color.BLACK
-        namePaint.style = Paint.Style.FILL
-        namePaint.isAntiAlias = true
-        namePaint.textSize = 24f
-        namePaint.isUnderlineText = true;
-        nameC.drawText(presName, 90f, 30f, namePaint)
+            val nameBmp = Bitmap.createBitmap(NWidth, 40, Bitmap.Config.ARGB_8888)
+            val nameC = Canvas(nameBmp)
+            nameC.drawPaint(whitePaint)
+            val namePaint = Paint()
+            namePaint.color = Color.BLACK
+            namePaint.style = Paint.Style.FILL
+            namePaint.isAntiAlias = true
+            namePaint.textSize = 24f
+            namePaint.isUnderlineText = true;
+            nameC.drawText(presName, 90f, 30f, namePaint)
 
-        val countBmp = Bitmap.createBitmap(bmpBase!!.width, 30, Bitmap.Config.ARGB_8888)
-        val countC = Canvas(countBmp)
-        countC.drawPaint(whitePaint)
-        val countPaint = Paint()
-        countPaint.color = Color.BLACK
-        countPaint.style = Paint.Style.FILL
-        countPaint.isAntiAlias = true
-        countPaint.textSize = 20f
-        countC.drawText("Вы тренировались 1 раз(а)", 20f, 20f, countPaint)
+            val countBmp = Bitmap.createBitmap(NWidth, 30, Bitmap.Config.ARGB_8888)
+            val countC = Canvas(countBmp)
+            countC.drawPaint(whitePaint)
+            val countPaint = Paint()
+            countPaint.color = Color.BLACK
+            countPaint.style = Paint.Style.FILL
+            countPaint.isAntiAlias = true
+            countPaint.textSize = 20f
+            countC.drawText("Вы тренировались 1 раз(а)", 20f, 20f, countPaint)
 
-        val statBmp = Bitmap.createBitmap(bmpBase!!.width, 115, Bitmap.Config.ARGB_8888)
-        val statC = Canvas(statBmp)
-        statC.drawPaint(whitePaint)
-        val statPaint = Paint()
-        statPaint.color = Color.BLACK
-        statPaint.style = Paint.Style.FILL
-        statPaint.isAntiAlias = true
-        statPaint.textSize = 20f
-        statC.drawText("Результат тренировки:", 20f, 20f, statPaint)
-        statPaint.textSize = 17f
-        statPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC);
-        statC.drawText("---Вы говорили 1 секунд(у)", 30f, 43f, statPaint)
-        statC.drawText("---Ваш результат на 100% далек от рекордного", 30f, 66f, statPaint)
-        statC.drawText("---Вы заработали:", 30f, 99f, statPaint)
+            val statBmp = Bitmap.createBitmap(NWidth, 115, Bitmap.Config.ARGB_8888)
+            val statC = Canvas(statBmp)
+            statC.drawPaint(whitePaint)
+            val statPaint = Paint()
+            statPaint.color = Color.BLACK
+            statPaint.style = Paint.Style.FILL
+            statPaint.isAntiAlias = true
+            statPaint.textSize = 20f
+            statC.drawText("Результат тренировки:", 20f, 20f, statPaint)
+            statPaint.textSize = 17f
+            statPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC);
+            statC.drawText("---Вы говорили 1 секунд(у)", 30f, 43f, statPaint)
+            statC.drawText("---Ваш результат на 100% далек от рекордного", 30f, 66f, statPaint)
+            statC.drawText("---Вы заработали:", 30f, 99f, statPaint)
 
-        val canvas = Canvas(finishBmp)
-        val paint = Paint()
-        canvas.drawBitmap(bmpBase,0f,0f, paint)
-        canvas.drawBitmap(nameBmp,0f,bmpBase!!.height.toFloat(), paint)
-        canvas.drawBitmap(countBmp,0f,bmpBase!!.height.toFloat() + 40f, paint)
-        canvas.drawBitmap(statBmp,0f,bmpBase!!.height.toFloat() + 70f, paint)
-        val paintCircle = Paint()
-        paintCircle.color = Color.YELLOW
-        canvas.drawCircle(185f, bmpBase!!.height.toFloat() + 161f, 15f, paintCircle)
-        canvas.drawCircle(225f, bmpBase!!.height.toFloat() + 161f, 15f, paintCircle)
-        canvas.drawCircle(265f, bmpBase!!.height.toFloat() + 161f, 15f, paintCircle)
+            val canvas = Canvas(finishBmp)
+            val paint = Paint()
+            canvas.drawBitmap(bmpBase, 0f, 0f, paint)
+            canvas.drawBitmap(nameBmp, 0f, NHeight.toFloat(), paint)
+            canvas.drawBitmap(countBmp, 0f, NHeight.toFloat() + 40f, paint)
+            canvas.drawBitmap(statBmp, 0f, NHeight.toFloat() + 70f, paint)
+            val paintCircle = Paint()
+            paintCircle.color = Color.YELLOW
+            canvas.drawCircle(185f, NHeight.toFloat() + 161f, 15f, paintCircle)
+            canvas.drawCircle(225f, NHeight.toFloat() + 161f, 15f, paintCircle)
+            canvas.drawCircle(265f, NHeight.toFloat() + 161f, 15f, paintCircle)
+        }
     }
 
     //Инициализация графика скорсти чтения

@@ -13,7 +13,6 @@ import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
-import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
@@ -167,17 +166,6 @@ class TrainingActivity : AppCompatActivity() {
     @SuppressLint("SetWorldReadable")
     private fun saveImage() {
 
-        var fos: FileOutputStream? = null
-        //var bmpBase: Bitmap? = null
-
-/*
-        bmpBase = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888)
-        canvas = Canvas(bmpBase)
-        val paint = Paint()
-        paint.color = Color.RED
-        canvas.drawCircle(50f,50f,30f, paint)
-*/
-
         val temp = File(this.cacheDir, "tempImage.pdf")
 
         parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_WRITE)
@@ -192,47 +180,6 @@ class TrainingActivity : AppCompatActivity() {
             bmpBase = Bitmap.createBitmap(defW, defH, Bitmap.Config.ARGB_8888)
 
             currentPage?.render(bmpBase, null,null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
-        }
-
-        val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-            Environment.getExternalStorageDirectory()
-        } else {
-            filesDir
-        }
-
-        directory = File("${parent.path}${File.separator}$IMAGE_FOLDER")
-
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        try {
-            imageFile = File(directory, "image.png")
-            imageFile.createNewFile()
-        } catch (e: IOException) {
-            Log.e("error", "unable to create image file for images")
-        }
-
-        //SAVING!!
-        try {
-            fos = FileOutputStream(imageFile)
-            bmpBase?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-
-            fos.flush()
-            fos.close()
-            fos = null
-            imageFile.setReadable(true, false)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close()
-                    fos = null
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-            }
         }
 
         addPermissionsForAudioRecording()
