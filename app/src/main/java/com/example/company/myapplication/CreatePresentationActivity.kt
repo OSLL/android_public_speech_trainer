@@ -74,7 +74,7 @@ class CreatePresentationActivity : AppCompatActivity() {
         }
         else {
             Log.d(TEST_DB, "open exists presentation: $newPresentation")
-            Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_LONG).show()
         }
 
         return currentPresID!!
