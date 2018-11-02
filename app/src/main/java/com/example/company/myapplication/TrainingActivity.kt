@@ -13,6 +13,7 @@ import android.graphics.pdf.PdfRenderer
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -61,6 +62,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private var isCancelled = false
 
+    private var mPlayer: MediaPlayer? = null
+
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap<Int, Long>()
 
@@ -96,6 +99,10 @@ class TrainingActivity : AppCompatActivity() {
 
         time = presentationData?.timeLimit!!
 
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
+
+
         // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
         // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры;
         // после mediaRecorder.stop() его работа нормализуется;
@@ -111,6 +118,15 @@ class TrainingActivity : AppCompatActivity() {
 
         startRecognizingService()
 
+        if(!isAudio) {
+            muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+        } else {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
+            mPlayer = MediaPlayer.create(this, debugSpeechAudio)
+            mPlayer?.start()
+            mPlayer?.setOnCompletionListener { stopPlay() }
+        }
 
         next.setOnClickListener {
             next.isEnabled = false
@@ -159,12 +175,32 @@ class TrainingActivity : AppCompatActivity() {
                 stopAudioRecording()
                 finishedRecording = true
             }*/
-
+            if(isAudio) {
+                mPlayer?.stop()
+            }
             timer(1,1).onFinish()
         }
     }
 
     //speech recognizer =====
+
+    private  fun muteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        amanager.setStreamMute(AudioManager.STREAM_RING, true)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+    }
+
+    private fun unmuteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        amanager.setStreamMute(AudioManager.STREAM_RING, false)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
+    }
 
     private fun addPermission() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -293,8 +329,16 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    private fun stopPlay() {
+        mPlayer?.stop()
+        try {
+            mPlayer?.prepare()
+            mPlayer?.seekTo(0)
+        } catch (t: Throwable) {
+            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+        }
 
-//======================
+    }
 
     override fun onStart() {
         super.onStart()
@@ -343,6 +387,8 @@ class TrainingActivity : AppCompatActivity() {
 
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
 
+                            stat.putExtra("allRecognizedText", ALL_RECOGNIZED_TEXT)
+                            unmuteSound()
                             startActivity(stat)
                         }
                         val dialog: AlertDialog = builder.create()
@@ -570,3 +616,4 @@ class TrainingActivity : AppCompatActivity() {
         super.onDestroy()
     }
 }
+

@@ -1,17 +1,18 @@
 package com.example.company.myapplication
 
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import java.text.BreakIterator
 
 class TrainingStatisticsActivity : AppCompatActivity() {
 
@@ -37,6 +38,14 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         printSpeedLineChart(presentationSpeedData)
+
+
+        val presentationTop10Words = getTop10Words(intent.getStringExtra("allRecognizedText"))
+        val entries = ArrayList<PieEntry>()
+        for (pair in presentationTop10Words){
+            entries.add(PieEntry(pair.second.toFloat(), pair.first))
+        }
+        printPiechart(entries)
     }
 
     //Инициализация графика скорсти чтения
@@ -77,5 +86,58 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         xAxis.granularity = 1f
 
         speed_bar_chart.invalidate()
+    }
+
+    fun printPiechart (lineEntries: List<PieEntry>){
+//        val labels = ArrayList<String>()
+//        for(entry in lineEntries)
+//            labels.add((entry.x +1).toInt().toString())
+        val pieDataSet = PieDataSet(lineEntries, getString(R.string.words_count))
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
+//        val entries = ArrayList<PieEntry>()
+//
+//        val set = PieDataSet(entries, "Election Results")
+        val data = PieData(pieDataSet)
+        pie_chart.data = data
+
+        pie_chart.invalidate()
+    }
+
+    fun getTop10Words(text: String) : List<Pair<String, Int>> {
+        val dictionary = HashMap<String, Int>()
+
+        val iterator = BreakIterator.getWordInstance()
+        iterator.setText(text)
+
+        var endIndex = iterator.first()
+        while (BreakIterator.DONE != endIndex) {
+            val startIndex = endIndex
+            endIndex = iterator.next()
+            if (endIndex != BreakIterator.DONE && Character.isLetterOrDigit(text[startIndex])) {
+                val word = text.substring(startIndex, endIndex)
+                val count = dictionary[word] ?: 0
+                dictionary[word] = count + 1
+            }
+        }
+
+        val result = ArrayList<Pair<String, Int>>()
+        dictionary.onEach {
+            val position = getPosition(result, it.value)
+            if (position < 10)
+                result.add(position, it.toPair())
+            if (result.size > 10)
+                result.removeAt(10)
+        }
+        return result
+    }
+
+    private fun getPosition(list : List<Pair<String, Int>>, value : Int) : Int {
+        if (list.isEmpty())
+            return 0
+        for (i in list.indices) {
+            if (value > list[i].second)
+                return i
+        }
+        return list.size
     }
 }
