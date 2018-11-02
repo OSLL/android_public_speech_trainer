@@ -91,7 +91,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             countPaint.style = Paint.Style.FILL
             countPaint.isAntiAlias = true
             countPaint.textSize = 20f
-            countC.drawText("Вы тренировались 1 раз(а)", 20f, 20f, countPaint)
+            countC.drawText(getString(R.string.count_of_training), 20f, 20f, countPaint)
 
             val statBmp = Bitmap.createBitmap(NWidth, 115, Bitmap.Config.ARGB_8888)
             val statC = Canvas(statBmp)
@@ -101,12 +101,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             statPaint.style = Paint.Style.FILL
             statPaint.isAntiAlias = true
             statPaint.textSize = 20f
-            statC.drawText("Результат тренировки:", 20f, 20f, statPaint)
+            statC.drawText(getString(R.string.result_of_training), 20f, 20f, statPaint)
             statPaint.textSize = 17f
             statPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC);
-            statC.drawText("---Вы говорили 1 секунд(у)", 30f, 43f, statPaint)
-            statC.drawText("---Ваш результат на 100% далек от рекордного", 30f, 66f, statPaint)
-            statC.drawText("---Вы заработали:", 30f, 99f, statPaint)
+            statC.drawText(getString(R.string.time_of_training), 30f, 43f, statPaint)
+            statC.drawText(getString(R.string.record_of_training), 30f, 66f, statPaint)
+            statC.drawText(getString(R.string.earnings_of_training), 30f, 99f, statPaint)
 
             val canvas = Canvas(finishBmp)
             val paint = Paint()
