@@ -2,6 +2,7 @@ package com.example.company.myapplication
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.media.AudioManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,11 +10,14 @@ import android.util.Log
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.github.mikephil.charting.utils.ViewPortHandler
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import java.text.BreakIterator
 
+@Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,16 +93,25 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     }
 
     fun printPiechart (lineEntries: List<PieEntry>){
-//        val labels = ArrayList<String>()
-//        for(entry in lineEntries)
-//            labels.add((entry.x +1).toInt().toString())
-        val pieDataSet = PieDataSet(lineEntries, getString(R.string.words_count))
+
+        val pieDataSet = PieDataSet(lineEntries, null)
+        pieDataSet.valueFormatter = IValueFormatter { value, _, _, _ -> "${value.toInt()}" }
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
-//        val entries = ArrayList<PieEntry>()
-//
-//        val set = PieDataSet(entries, "Election Results")
+
+
         val data = PieData(pieDataSet)
         pie_chart.data = data
+
+        pie_chart.centerText = "Наиболее популярные слова"
+        pie_chart.data.setValueTextSize(10f)
+        pie_chart.data.setValueTextColor(Color.WHITE)
+        pie_chart.setDrawSliceText(false)
+
+        pie_chart.description.isEnabled = false
+
+        pie_chart.animateY(1200)
+
+        pie_chart.legend.position = Legend.LegendPosition.RIGHT_OF_CHART_CENTER
 
         pie_chart.invalidate()
     }
