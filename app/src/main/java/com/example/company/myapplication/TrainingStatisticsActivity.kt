@@ -39,9 +39,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printSpeedLineChart(presentationSpeedData)
 
-        var averageSpeed = presentationEntries.values.map { it!!.toFloat() }.toFloatArray().average()
-        val bestSlide = presentationEntries.minBy { abs(it.value!!.toFloat().minus(120))}!!.key
-        val worstSlide = presentationEntries.maxBy { abs(it.value!!.toFloat().minus(120))}!!.key
+        var averageSpeed = getAverageSpeed(presentationEntries)
+        val bestSlide = getBestSlide(presentationEntries)
+        val worstSlide = getWorstSlide(presentationEntries)
 
         textView.text = "Средняя скорость: $averageSpeed\nЛучший слайд: $bestSlide\nХудший слайд: $worstSlide"
 
