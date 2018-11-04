@@ -3,7 +3,6 @@ package com.example.company.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -12,7 +11,6 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import kotlin.math.abs
 
 class TrainingStatisticsActivity : AppCompatActivity() {
 
@@ -34,7 +32,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val presentationEntries = intent.getSerializableExtra(getString(R.string.presentationEntries)) as HashMap<Int,Float?>
         val presentationSpeedData = mutableListOf<BarEntry>()
         for (i in 0..(presentationEntries.size-1)) {
-            presentationSpeedData.add(BarEntry((i).toFloat(), presentationEntries.get(i + 1)!!.toFloat()))
+            presentationSpeedData.add(BarEntry((i).toFloat(), presentationEntries[i + 1]!!.toFloat()))
         }
 
         printSpeedLineChart(presentationSpeedData)
@@ -43,7 +41,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(presentationEntries)
         val worstSlide = getWorstSlide(presentationEntries)
 
-        textView.text = "Средняя скорость: $averageSpeed\nЛучший слайд: $bestSlide\nХудший слайд: $worstSlide"
+        textView.text = getString(R.string.average_speed) + " $averageSpeed\n" + getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) + " $worstSlide\n"
 
     }
 
