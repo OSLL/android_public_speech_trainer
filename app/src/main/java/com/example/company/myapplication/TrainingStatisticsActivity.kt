@@ -31,6 +31,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
         //-------------
 
+        returnBut.setOnClickListener{
+            val returnIntent = Intent(this, StartPageActivity::class.java)
+            startActivity(returnIntent)
+        }
+
         val presentationEntries = intent.getSerializableExtra(getString(R.string.presentationEntries)) as HashMap<Int,Float?>
         val presentationSpeedData = mutableListOf<BarEntry>()
         for (i in 0..(presentationEntries.size-1)) {
@@ -140,4 +145,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
         return list.size
     }
+
+
 }
