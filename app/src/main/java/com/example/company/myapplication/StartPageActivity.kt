@@ -41,16 +41,7 @@ class StartPageActivity : AppCompatActivity() {
             putBoolean(getString(R.string.audio_recording), true)
             apply()
         }
-
-        pres1.setOnClickListener{
-            val intent = Intent(this, PresentationActivity::class.java)
-            startActivity(intent)
-        }
-
-        pres2.setOnClickListener{
-            val intent = Intent(this, PresentationActivity::class.java)
-            startActivity(intent)
-        }
+        
 
         addBtn.setOnClickListener{
             val intent = Intent(this, CreatePresentationActivity::class.java)
