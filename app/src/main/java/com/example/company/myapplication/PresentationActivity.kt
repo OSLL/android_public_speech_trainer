@@ -32,7 +32,7 @@ class PresentationActivity : AppCompatActivity() {
                 a.toInt()
                 b.toInt()
                 return true
-            } catch (e: NumberFormatException) {
+            } catch (e: NumberFormatException){
                 return false
             }
         }
