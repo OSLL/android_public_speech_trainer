@@ -59,6 +59,7 @@ class PresentationActivity : AppCompatActivity() {
         training.setOnClickListener {
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(URI, uri)
+            i.putExtra(NAME_OF_PRES, name)
             if (SearchSymbol(trainingTime.text.toString())) {
                 val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
                 val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
@@ -82,13 +83,10 @@ class PresentationActivity : AppCompatActivity() {
         }
         //share example
         share.setOnClickListener {
-            val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
-            sharingIntent.type = "text/plain"
-            val shareBody = "Your body here"
-            val shareSub = "Your subject here"
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub)
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
-            startActivity(Intent.createChooser(sharingIntent, "Share using"))
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(url))
+            sharingIntent.type = "image/jpg"
+            startActivity(Intent.createChooser(sharingIntent, "Share with friends"))
         }
         //-------------
     }
