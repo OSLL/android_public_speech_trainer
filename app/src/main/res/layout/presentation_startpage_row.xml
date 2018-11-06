@@ -90,7 +90,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/start_training_btn_presentation_start_page_row"
+            android:id="@+id/change_btn_presentation_start_page_row"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="bottom|center_horizontal"

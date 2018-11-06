@@ -113,4 +113,9 @@
     <string name="audio_recording">audio recording</string>
     <string name="presentationEntries">presentationEntries</string>
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
+
+    <!-- For Change Presentation -->
+    <string name="changePresentationFlag">change_presentation_flag</string>
+    <string name="further">Далее</string>
+    <string name="save">Сохранить</string>
 </resources>

@@ -30,6 +30,10 @@ import java.io.FileOutputStream
 
 
 class PresentationStartpageRow(private val presentation: PresentationData, private val ctx: Context): Item<ViewHolder>() {
+    companion object {
+        const val activatedChangePresentationFlag = 1
+    }
+
     private var renderer: PdfRenderer? = null
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
@@ -48,14 +52,11 @@ class PresentationStartpageRow(private val presentation: PresentationData, priva
 
         presentationId = presentation.id
 
-        viewHolder.itemView.start_training_btn_presentation_start_page_row.setOnClickListener {
+        viewHolder.itemView.change_btn_presentation_start_page_row.setOnClickListener {
             val i = Intent(ctx, EditPresentationActivity::class.java)
             i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID),presentation.id)
-            try {
-                startActivity(ctx,i,null)
-            }catch (e:Exception) {
-                Log.d("row_start", e.toString())
-            }
+            i.putExtra(ctx.getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
+            startActivity(ctx,i,null)
         }
     }
 

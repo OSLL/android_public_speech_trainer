@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import com.example.company.myapplication.views.PresentationStartpageRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -32,6 +34,14 @@ class PresentationActivity : AppCompatActivity() {
         else {
             Log.d(TEST_DB, "presentation_act: wrong ID")
             return
+        }
+
+        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
+
+        if (changePresentationFlag) {
+            training.text = getString(R.string.save)
+            share.visibility = View.INVISIBLE
+            trainingHistory.visibility = View.INVISIBLE
         }
 
         if (presentationData?.timeLimit == null) {
@@ -74,8 +84,6 @@ class PresentationActivity : AppCompatActivity() {
         val uri = Uri.parse(presentationData?.stringUri)
 
         training.setOnClickListener {
-            val i = Intent(this, TrainingActivity::class.java)
-            i.putExtra(URI, uri)
             if (SearchSymbol(trainingTime.text.toString())) {
                 val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
                 val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
@@ -85,8 +93,17 @@ class PresentationActivity : AppCompatActivity() {
                     presentationData?.timeLimit = time
                     presentationDataDao?.updatePresentation(presentationData!!)
 
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                    startActivity(i)
+                    if (!changePresentationFlag) {
+                        val i = Intent(this, TrainingActivity::class.java)
+                        i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                        startActivity(i)
+                    }
+                    else {
+                        val i = Intent(this, StartPageActivity::class.java)
+                        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(i)
+                    }
+
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
                     Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)

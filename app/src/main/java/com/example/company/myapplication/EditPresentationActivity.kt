@@ -10,6 +10,8 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.views.PresentationStartpageRow
+import com.example.company.myapplication.views.PresentationStartpageRow.Companion.activatedChangePresentationFlag
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -46,6 +48,11 @@ class EditPresentationActivity : AppCompatActivity() {
             return
         }
 
+        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
+        if (changePresentationFlag)
+            addPresentation.text = getString(R.string.further)
+
+
         addPresentation.setOnClickListener{
 
             val uri = Uri.parse(presentationData?.stringUri)
@@ -55,12 +62,14 @@ class EditPresentationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
-
-            val i = Intent(this, PresentationActivity::class.java)
             presentationData?.pageCount = renderer?.pageCount
             presentationData?.name = presentationName.text.toString()
             presentationDataDao?.updatePresentation(presentationData!!)
+
+            val i = Intent(this, PresentationActivity::class.java)
+
+            if (changePresentationFlag)
+                i.putExtra(getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
 
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
             startActivity(i)
