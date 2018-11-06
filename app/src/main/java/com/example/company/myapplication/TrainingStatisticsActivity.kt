@@ -173,7 +173,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val pieDataSet = PieDataSet(lineEntries, null)
         pieDataSet.valueFormatter = IValueFormatter { value, _, _, _ -> "${value.toInt()}" }
-        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
+        val arrOfColors = intArrayOf(Color.RED, Color.BLUE, Color.CYAN, Color.GRAY, Color.GREEN, Color.MAGENTA, Color.DKGRAY, Color.LTGRAY, Color.YELLOW, Color.BLACK)
+        pieDataSet.setColors(arrOfColors,255)
 
 
         val data = PieData(pieDataSet)
