@@ -179,7 +179,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val data = PieData(pieDataSet)
         pie_chart.data = data
 
-        pie_chart.centerText = "Наиболее популярные слова"
+        pie_chart.centerText = getString(R.string.pie_chart_tittle)
         pie_chart.data.setValueTextSize(10f)
         pie_chart.data.setValueTextColor(Color.WHITE)
         pie_chart.setDrawSliceText(false)
