@@ -89,23 +89,15 @@ class PresentationActivity : AppCompatActivity() {
                 val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
                 val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
                         trainingTime.text.lastIndex + 1)
-                if (IsNumber(min, sec) && TestLong(min,sec)) {
+                if (IsNumber(min, sec) && TestLong(min, sec)) {
                     val time = min.toLong() * 60 + sec.toLong()
                     presentationData?.timeLimit = time
                     presentationDataDao?.updatePresentation(presentationData!!)
-
-                    //if (!changePresentationFlag) {
-                        val i = Intent(this, TrainingActivity::class.java)
-                        i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(i)
-                    /*}
-                    else {
-                        val i = Intent(this, StartPageActivity::class.java)
-                        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(i)
-                    }*/
-
+                    
+                    val i = Intent(this, TrainingActivity::class.java)
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(i)
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
                     Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
