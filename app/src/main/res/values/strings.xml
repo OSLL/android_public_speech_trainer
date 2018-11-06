@@ -126,5 +126,6 @@
     <string name="time_of_training">---Вы говорили 1 секунд(у)</string>
     <string name="record_of_training">---Ваш результат на 100% далек от рекордного</string>
     <string name="earnings_of_training">---Вы заработали:</string>
+
     <string name="back_to_main">Вернуться на главную</string>
 </resources>
