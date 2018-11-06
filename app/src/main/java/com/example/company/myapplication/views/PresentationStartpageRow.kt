@@ -41,7 +41,6 @@ class PresentationStartpageRow(private val presentation: PresentationData,privat
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        Log.d("bind_test", presentation.toString())
         viewHolder.itemView.name_presentation_start_page_row.text = presentation.name
         viewHolder.itemView.time_limit_presentation_start_page_row.text = getStringPresentationTimeLimit(presentation.timeLimit!!)
         viewHolder.itemView.page_count_presentation_start_page_row.text = getStringPresentationPageCount(presentation.pageCount)
