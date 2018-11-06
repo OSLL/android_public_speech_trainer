@@ -19,6 +19,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
+
+
 const val DEFAULT_TIME = "DefTime"
 
 class EditPresentationActivity : AppCompatActivity() {
@@ -36,8 +38,10 @@ class EditPresentationActivity : AppCompatActivity() {
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
-        if (presId > 0)
+        if (presId > 0) {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
+            Log.d("test_row", "edit act: $presentationData")
+        }
         else {
             Log.d(TEST_DB, "edit_pres_act: wrong ID")
             return
@@ -66,8 +70,12 @@ class EditPresentationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        initRenderer()
-        renderPage(0)
+        try {
+            initRenderer()
+            renderPage(0)
+        }catch (e: Exception) {
+            Log.d("test_row", "edit pres : $e" )
+        }
     }
 
     private fun renderPage(pageIndex: Int){
@@ -95,10 +103,8 @@ class EditPresentationActivity : AppCompatActivity() {
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
             val ins: InputStream
-            ins = if(!isChecked) {
+            ins = if (presentationData?.debugFlag == 0) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {

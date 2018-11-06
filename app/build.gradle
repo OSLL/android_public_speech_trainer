@@ -46,6 +46,7 @@ dependencies {
 dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.xwray:groupie:2.1.0'
 }
 
 allprojects {

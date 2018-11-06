@@ -20,8 +20,7 @@
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/colorAccent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -91,12 +90,13 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/start_training_btn_presentation_start_page_row"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="10dp"
-            android:text="Тренироваться"
+            android:text="Редактировать"
             android:textAllCaps="false" />
 
 
