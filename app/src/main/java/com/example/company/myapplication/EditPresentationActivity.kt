@@ -40,7 +40,6 @@ class EditPresentationActivity : AppCompatActivity() {
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         if (presId > 0) {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
-            Log.d("test_row", "edit act: $presentationData")
         }
         else {
             Log.d(TEST_DB, "edit_pres_act: wrong ID")
@@ -70,12 +69,8 @@ class EditPresentationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        try {
-            initRenderer()
-            renderPage(0)
-        }catch (e: Exception) {
-            Log.d("test_row", "edit pres : $e" )
-        }
+        initRenderer()
+        renderPage(0)
     }
 
     private fun renderPage(pageIndex: Int){

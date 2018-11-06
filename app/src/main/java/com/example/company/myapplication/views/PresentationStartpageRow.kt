@@ -44,7 +44,6 @@ class PresentationStartpageRow(private val presentation: PresentationData, priva
         viewHolder.itemView.name_presentation_start_page_row.text = presentation.name
         viewHolder.itemView.time_limit_presentation_start_page_row.text = getStringPresentationTimeLimit(presentation.timeLimit!!)
         viewHolder.itemView.page_count_presentation_start_page_row.text = getStringPresentationPageCount(presentation.pageCount)
-        //viewHolder.itemView.image_view_presentation_start_page_row.setImageBitmap(getBitmapFromAsset("presentation_img.jpg"))
         viewHolder.itemView.image_view_presentation_start_page_row.setImageBitmap(getFirstSlideBitmap(presentation.stringUri))
 
         presentationId = presentation.id
@@ -89,18 +88,6 @@ class PresentationStartpageRow(private val presentation: PresentationData, priva
         val cases = arrayOf(2, 0, 1, 1, 1, 2)
 
         return titles[if (n % 100 in 5..19) 2 else cases[if (n % 10 < 5) n % 10 else 5]]
-    }
-
-    private fun getBitmapFromAsset(strName: String): Bitmap {
-        val assetManager = ctx.assets
-        var istr: InputStream? = null
-        try {
-            istr = assetManager.open(strName)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return BitmapFactory.decodeStream(istr)
     }
 
     private fun renderPage(pageIndex: Int): Bitmap? {
