@@ -1,6 +1,5 @@
 package com.example.company.myapplication
 
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
@@ -10,14 +9,10 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.example.company.myapplication.StartPageActivity.Companion.TRAINING_FLAG
-import com.example.company.myapplication.StartPageActivity.Companion.actionInformation
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
-import java.io.File
 import java.io.FileNotFoundException
 
-const val URI = "presentation_uri"
 const val FILE_SYSTEM = "file_system"
 const val TEST_DB = "test_db"
 

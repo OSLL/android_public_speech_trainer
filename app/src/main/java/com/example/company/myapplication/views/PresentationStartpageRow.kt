@@ -1,32 +1,22 @@
 package com.example.company.myapplication.views
 
 import android.annotation.SuppressLint
+import android.support.v4.app.FragmentManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
-import android.os.ParcelFileDescriptor
-import com.example.company.myapplication.R
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.presentation_startpage_row.view.*
-import java.io.IOException
-import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat.startActivity
+import android.support.v7.app.AlertDialog
 import android.util.Log
-import android.widget.Toast
-import com.example.company.myapplication.EditPresentationActivity
-import com.example.company.myapplication.TrainingActivity
-import com.example.company.myapplication.getFileName
-import kotlinx.android.synthetic.main.activity_edit_presentation.*
-import java.io.File
-import java.io.FileOutputStream
+import com.example.company.myapplication.*
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 
 
 class PresentationStartpageRow(private val presentation: PresentationData,private val firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
@@ -49,10 +39,43 @@ class PresentationStartpageRow(private val presentation: PresentationData,privat
         presentationId = presentation.id
 
         viewHolder.itemView.change_btn_presentation_start_page_row.setOnClickListener {
-            val i = Intent(ctx, EditPresentationActivity::class.java)
-            i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID),presentation.id)
-            i.putExtra(ctx.getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
-            startActivity(ctx,i,null)
+            val builder = AlertDialog.Builder(ctx)
+            builder.setMessage(ctx.getString(R.string.change_presentation_task) + "${presentation.name} ?")
+
+            builder.setPositiveButton(ctx.getString(R.string.change)) { _, _ ->
+                val i = Intent(ctx, EditPresentationActivity::class.java)
+                i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID),presentation.id)
+                i.putExtra(ctx.getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
+                startActivity(ctx,i,null)
+            }
+
+            builder.setNegativeButton(ctx.getString(R.string.no)) { _, _ -> }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+
+        viewHolder.itemView.rm_presentation_start_page_row.setOnClickListener {
+
+            val builder = AlertDialog.Builder(ctx)
+            builder.setMessage(ctx.getString(R.string.request_for_remove_presentation) + "${presentation.name} ?")
+            builder.setPositiveButton(ctx.getString(R.string.remove)) { _, _ ->
+                val position = StartPageActivity.adapter?.getAdapterPosition(this)
+                StartPageActivity.adapter?.remove(this)
+                StartPageActivity.adapter?.notifyItemRemoved(position!!)
+
+                if (presentationId != null)
+                    SpeechDataBase.getInstance(ctx)?.PresentationDataDao()?.deletePresentationWithId(presentationId!!)
+                else {
+                    Log.d("presentation_row_test", "error id = $presentationId")
+                }
+            }
+
+            builder.setNegativeButton(ctx.getString(R.string.leave)) { _, _ ->
+
+            }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
         }
     }
 

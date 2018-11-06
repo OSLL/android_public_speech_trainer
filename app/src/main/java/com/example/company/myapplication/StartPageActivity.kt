@@ -27,7 +27,6 @@ import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
-import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.ViewHolder
 import java.io.File
 import java.io.FileOutputStream
@@ -45,12 +44,9 @@ const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.pref
 
 class StartPageActivity : AppCompatActivity() {
     companion object {
-        const val actionInformation = "actionInformation"
-        const val TRAINING_FLAG = -1
-        const val CHANGE_PRESENTATION_FLAG = -2
+        var adapter: GroupAdapter<ViewHolder>? = null
     }
 
-    private var adapter: GroupAdapter<ViewHolder>? = null
     private var listPresentationData: List<PresentationData>? = null
     private var presentationDataDao: PresentationDataDao? = null
 
@@ -125,7 +121,6 @@ class StartPageActivity : AppCompatActivity() {
 
             }
         }
-
         recyclerview_startpage.adapter = adapter
 
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
