@@ -23,6 +23,9 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
@@ -73,16 +76,29 @@ class TrainingActivity : AppCompatActivity() {
 
     private var time: Long = 0.toLong()
 
+    private var presentationDataDao: PresentationDataDao? = null
+    private var presentationData: PresentationData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
+        if (presId > 0)
+            presentationData = presentationDataDao?.getPresentationWithId(presId)
+        else {
+            Log.d(TEST_DB, "training_act: wrong ID")
+            return
+        }
+
+        time = presentationData?.timeLimit!!
+
         saveImage()
-      
+
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
-        time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
         // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
         // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры;
@@ -358,8 +374,7 @@ class TrainingActivity : AppCompatActivity() {
 
         //initAudioRecording()
 
-        val TrainingTime = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
-        timer(TrainingTime * 1000, 1000).start()
+        timer(time * 1000, 1000).start()
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
@@ -463,7 +478,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initRenderer() {
-        val uri = intent.getParcelableExtra<Uri>(URI)
+        val uri = Uri.parse(presentationData?.stringUri)
 
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")

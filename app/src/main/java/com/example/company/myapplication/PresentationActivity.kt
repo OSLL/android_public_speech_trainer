@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_presentation.*
 
 const val TIME_ALLOTTED_FOR_TRAINING = "TrainingTime"
@@ -14,18 +17,34 @@ const val MESSAGE_ABOUT_FORMAT_INCORRECTNESS = "Неправильный фор�
 const val NAME_OF_PRES = "presentation_name"
 
 class PresentationActivity : AppCompatActivity() {
+    private var presentationDataDao: PresentationDataDao? = null
+    private var presentationData: PresentationData? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presentation)
 
-        val DefTime = intent.getIntExtra(DEFAULT_TIME, 0)
-        var min = DefTime
-        if(min > 999){
-            min = 999
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
+        if (presId > 0)
+            presentationData = presentationDataDao?.getPresentationWithId(presId)
+        else {
+            Log.d(TEST_DB, "presentation_act: wrong ID")
+            return
         }
-        trainingTime.setText(min.toString()+":00")
+
+        if (presentationData?.timeLimit == null) {
+            val DefTime = presentationData?.pageCount!!
+            var min = DefTime
+            if (min > 999) {
+                min = 999
+            }
+            trainingTime.setText(min.toString() + ":00")
+        }
+        else {
+            trainingTime.setText((presentationData?.timeLimit!!.toInt()/60).toString() + ":00")
+        }
 
         fun IsNumber(a: String, b: String): Boolean {
             try {
@@ -51,22 +70,23 @@ class PresentationActivity : AppCompatActivity() {
             return a.length < 4 && b.length < 3 && a.toInt() < 1000 && b.toInt() < 60
         }
 
-        val name = intent.getStringExtra(NAME_OF_PRES)
-        presentationName.text = name
-
-        val uri = intent.getParcelableExtra<Uri>(URI)
+        presentationNameActivityPresentation.text = presentationData?.name
+        val uri = Uri.parse(presentationData?.stringUri)
 
         training.setOnClickListener {
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(URI, uri)
-            i.putExtra(NAME_OF_PRES, name)
+            i.putExtra(NAME_OF_PRES, presentationData?.name)
             if (SearchSymbol(trainingTime.text.toString())) {
                 val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
                 val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
                         trainingTime.text.lastIndex + 1)
                 if (IsNumber(min, sec) && TestLong(min,sec)) {
                     val time = min.toLong() * 60 + sec.toLong()
-                    i.putExtra(TIME_ALLOTTED_FOR_TRAINING, time)
+                    presentationData?.timeLimit = time
+                    presentationDataDao?.updatePresentation(presentationData!!)
+
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                     startActivity(i)
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
