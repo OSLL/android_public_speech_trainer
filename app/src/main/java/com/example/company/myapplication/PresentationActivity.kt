@@ -42,6 +42,7 @@ class PresentationActivity : AppCompatActivity() {
             training.text = getString(R.string.save)
             share.visibility = View.INVISIBLE
             trainingHistory.visibility = View.INVISIBLE
+            training.visibility = View.GONE
         }
 
         if (presentationData?.timeLimit == null) {
@@ -61,7 +62,7 @@ class PresentationActivity : AppCompatActivity() {
                 a.toInt()
                 b.toInt()
                 return true
-            } catch (e: NumberFormatException) {
+            } catch (e: NumberFormatException){
                 return false
             }
         }
@@ -93,17 +94,41 @@ class PresentationActivity : AppCompatActivity() {
                     presentationData?.timeLimit = time
                     presentationDataDao?.updatePresentation(presentationData!!)
 
-                    if (!changePresentationFlag) {
+                    //if (!changePresentationFlag) {
                         val i = Intent(this, TrainingActivity::class.java)
                         i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(i)
-                    }
+                    /*}
                     else {
                         val i = Intent(this, StartPageActivity::class.java)
                         i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(i)
-                    }
+                    }*/
 
+                } else {
+                    Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
+                    Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
+                }
+            } else {
+                Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
+                Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
+            }
+        }
+
+        main_btn_activity_presentation.setOnClickListener {
+            if (SearchSymbol(trainingTime.text.toString())) {
+                val min = trainingTime.text.toString().substring(0, trainingTime.text.indexOf(":"))
+                val sec = trainingTime.text.toString().substring(trainingTime.text.indexOf(":") + 1,
+                        trainingTime.text.lastIndex + 1)
+                if (IsNumber(min, sec) && TestLong(min, sec)) {
+                    val time = min.toLong() * 60 + sec.toLong()
+                    presentationData?.timeLimit = time
+                    presentationDataDao?.updatePresentation(presentationData!!)
+
+                    val i = Intent(this, StartPageActivity::class.java)
+                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(i)
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
                     Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
@@ -119,13 +144,10 @@ class PresentationActivity : AppCompatActivity() {
         }
         //share example
         share.setOnClickListener {
-            val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
-            sharingIntent.type = "text/plain"
-            val shareBody = "Your body here"
-            val shareSub = "Your subject here"
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub)
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
-            startActivity(Intent.createChooser(sharingIntent, "Share using"))
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(url))
+            sharingIntent.type = "image/jpg"
+            startActivity(Intent.createChooser(sharingIntent, "Share with friends"))
         }
         //-------------
     }
