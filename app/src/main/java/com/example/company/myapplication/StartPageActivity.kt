@@ -111,6 +111,11 @@ class StartPageActivity : AppCompatActivity() {
 
         for (presentation in listPresentationData!!) {
             try {
+                if (presentation.timeLimit == null || presentation.pageCount == 0) {
+                    presentationDataDao?.deletePresentationWithId(presentation.id!!)
+                    continue
+                }
+
                 adapter?.add(PresentationStartpageRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
             } catch (e: Exception) {
                 Toast.makeText(this,"file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!",Toast.LENGTH_LONG).show()
