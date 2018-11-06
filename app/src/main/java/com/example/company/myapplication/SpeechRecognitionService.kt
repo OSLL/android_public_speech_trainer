@@ -90,7 +90,7 @@ public class SpeechRecognitionService: Service() {
     }
 
     // Count down timer for Jelly Bean work around
-    protected var mNoSpeechCountDown: CountDownTimer = object : CountDownTimer(1000, 1000) {
+    protected var mNoSpeechCountDown: CountDownTimer = object : CountDownTimer(5000, 5000) {
 
         override fun onTick(millisUntilFinished: Long) {
 
