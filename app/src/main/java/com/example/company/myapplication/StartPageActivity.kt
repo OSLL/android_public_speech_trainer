@@ -13,10 +13,12 @@ import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AnimationUtils
 import kotlinx.android.synthetic.main.activity_start_page.*
 import android.widget.Toast
 import com.example.company.myapplication.views.PresentationStartpageRow
@@ -165,6 +167,7 @@ class StartPageActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         refreshRecyclerView()
+        runLayoutAnimation(recyclerview_startpage)
     }
 
     override fun onStop() {
@@ -232,4 +235,14 @@ class StartPageActivity : AppCompatActivity() {
         initRenderer(strUri,debugFlag)
         return renderPage(0)
     }
+
+    private fun runLayoutAnimation(recyclerView: RecyclerView) {
+        val context: Context = recyclerView.context
+        val controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+
+        recyclerView.layoutAnimation = controller
+        recyclerView.adapter.notifyDataSetChanged()
+        recyclerView.scheduleLayoutAnimation()
+}
 }
