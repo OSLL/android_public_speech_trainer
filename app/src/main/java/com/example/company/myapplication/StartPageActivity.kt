@@ -110,7 +110,13 @@ class StartPageActivity : AppCompatActivity() {
         }
 
         for (presentation in listPresentationData!!) {
-            adapter?.add(PresentationStartpageRow(presentation,getFirstSlideBitmap(presentation.stringUri,presentation.debugFlag),this@StartPageActivity))
+            try {
+                adapter?.add(PresentationStartpageRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
+            } catch (e: Exception) {
+                Toast.makeText(this,"file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!",Toast.LENGTH_LONG).show()
+                presentationDataDao?.deletePresentationWithId(presentation.id!!)
+
+            }
         }
 
         recyclerview_startpage.adapter = adapter
