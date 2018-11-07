@@ -1,6 +1,6 @@
 <resources>
     <string name="activity_training_history_name">История тренировок</string>
-    <string name="activity_training_statistics_name">Статистика тренировки</string> 
+    <string name="activity_training_statistics_name">Статистика тренировки</string>
     <string name="first_training">Первая тренировка</string>
     <string name="second_training">Вторая тренировка</string>
     <string name="activity_training_name">Тренировка</string>
@@ -112,6 +112,24 @@
     <string name="DEBUG_SLIDES">debug_slides</string>
     <string name="audio_recording">audio recording</string>
     <string name="presentationEntries">presentationEntries</string>
+
+    <!-- Strings related to speech recording and analysis -->
+    <string name="start_recording">Начать запись</string>
+    <string name="stop_recording">Закончить запись</string>
+    <string name="voice_analysis_instructions">После нажатия кнопки \"Начать запись\" подождите, пока остановится обратный отсчёт, и начните говорить после этого.\n\nПосле нажатия кнопки \"Закончить запись\" будет произведён анализ звуковой дорожки, результаты которого выведутся в этом текстовом поле.</string>
+    <string name="settings">Настройки</string>
+    <string name="voice_analysis">Анализ речи</string>
+    <string name="countdown_volume_levels">Уровни громкости при обратном отсчёте</string>
+    <string name="maximal">Максимальный</string>
+    <string name="minimal">Минимальный</string>
+    <string name="average">Средний</string>
+    <string name="speech_volume_levels">Уровни громкости во время тренировки</string>
+    <string name="silence_and_speech_time">Объём пауз и голоса</string>
+    <string name="pauses">Паузы</string>
+    <string name="voice">Голос</string>
+    <string name="duration">Длительность записи</string>
+    <string name="only_silence">Анализатор \"не слышит\" ваш голос. Говорите громче или перейдите в более тихое помещение.</string>
+
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
 
     <!-- Example settings for Shared Picture -->
