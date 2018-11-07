@@ -20,6 +20,7 @@ import java.text.BreakIterator
 
 var bmpBase: Bitmap? = null
 var url = ""
+var speed_statistics: Int? = null
 
 
 class TrainingStatisticsActivity : AppCompatActivity() {
@@ -61,6 +62,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
         }
         printPiechart(entries)
+
+        speed_statistics = intent.getStringExtra("allRecognizedText").split(" ").size
     }
 
     fun DrawPict() {
