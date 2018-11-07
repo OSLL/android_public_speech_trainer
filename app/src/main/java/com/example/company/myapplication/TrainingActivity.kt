@@ -39,9 +39,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
-const val AUDIO_RECORDING = "audio_recording"
-const val RECORD_AUDIO_PERMISSION = 200 // change constant?
-const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознавания речи
 const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознавание речи (скорость чтения, номер страницы, распознанный текст)
 
@@ -112,8 +109,8 @@ class TrainingActivity : AppCompatActivity() {
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(
-                            time_left.text.indexOf(":") + 2,
-                            time_left.text.indexOf("s") - 1
+                        time_left.text.indexOf(":") + 2,
+                        time_left.text.indexOf("s") - 1
                     )
 
                     time -= min.toLong() * 60 + sec.toLong()
@@ -121,7 +118,7 @@ class TrainingActivity : AppCompatActivity() {
                     time = min.toLong()*60 + sec.toLong()
 
                     val slideReadSpeed: Float = if (curText == "") 0f else
-                            curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+                        curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
                     presentationEntries[curPageNum++] = slideReadSpeed
 
@@ -158,7 +155,7 @@ class TrainingActivity : AppCompatActivity() {
 
         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arr,
-                    1)
+                1)
         }
     }
 
@@ -193,7 +190,7 @@ class TrainingActivity : AppCompatActivity() {
                 TimePerSlide[curPageNum] = time
 
                 presentationEntries[curPageNum] = if (curText == "") 0f
-                    else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+                else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
             } catch (e: Exception) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "(stop service) put presentation entry error: " + e.toString())
@@ -502,9 +499,9 @@ class TrainingActivity : AppCompatActivity() {
 
     private fun addPermissionsForAudioRecording() {
         val recordingPermissionStatus =
-                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
         val storingPermissionStatus =
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         val permissionsToRequest = mutableListOf<String>()
         if (recordingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
@@ -516,8 +513,8 @@ class TrainingActivity : AppCompatActivity() {
 
         if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(
-                    this, permissionsToRequest.toTypedArray(),
-                    RECORD_AUDIO_PERMISSION
+                this, permissionsToRequest.toTypedArray(),
+                RECORD_AUDIO_PERMISSION
             )
         } else {
             startAudioRecording()
