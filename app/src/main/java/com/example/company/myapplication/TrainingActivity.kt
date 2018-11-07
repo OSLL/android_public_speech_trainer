@@ -78,12 +78,6 @@ class TrainingActivity : AppCompatActivity() {
 
         time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
 
-        // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
-        // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры;
-        // после mediaRecorder.stop() его работа нормализуется;
-        // error service - nullPointerException;
-        //initAudioRecording()
-
         addPermission()
 
         //finish.isEnabled = false
@@ -137,11 +131,6 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
-            /*if (!finishedRecording) {
-                stopAudioRecording()
-                finishedRecording = true
-            }*/
-
             timer(1,1).onFinish()
         }
     }
@@ -417,122 +406,6 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-    private fun initAudioRecording() {
-        val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
-        val defaultValue = false
-        val isRecordingOn = sharedPref.getBoolean(getString(R.string.audio_recording), defaultValue)
-
-        if (isRecordingOn) {
-            addPermissionsForAudioRecording()
-        } else {
-            finishedRecording = true
-        }
-    }
-
-    private fun initMediaRecorder() {
-        mediaRecorder = MediaRecorder()
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB)
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
-        val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-            Environment.getExternalStorageDirectory()
-        } else {
-            filesDir
-        }
-
-        directory = File("${parent.path}${File.separator}$RECORDING_FOLDER")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        try {
-            audioFile = File(directory, "recording-${getCurrentDateForName()}.amr")
-            audioFile.createNewFile()
-        } catch (e: IOException) {
-            Log.e("error", "unable to create audio file for recording")
-        }
-        mediaRecorder.setOutputFile(audioFile.absolutePath)
-
-        try {
-            mediaRecorder.prepare()
-        } catch (e: IOException) {
-            Log.e("error", "unable to record audio")
-        }
-    }
-
-    private fun startAudioRecording() {
-        initMediaRecorder()
-        mediaRecorder.start()
-        Log.i(AUDIO_RECORDING, "started audio recording at ${getCurrentDateForLog()}")
-    }
-
-    private fun stopAudioRecording() {
-        mediaRecorder.stop()
-        mediaRecorder.release()
-        Log.i(AUDIO_RECORDING, "finished audio recording at ${getCurrentDateForLog()}")
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(audioFile.path)
-        val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            .toInt()
-        Log.i(
-            AUDIO_RECORDING, "audio file length: " +
-                    "${formatNumberTwoDigits(duration / 1000 / 60 / 60)}:" +
-                    "${formatNumberTwoDigits(duration / 1000 / 60 % 60)}:" +
-                    formatNumberTwoDigits(duration / 1000 % 60)
-        )
-        Log.i(AUDIO_RECORDING, "audio file path: ${directory.absolutePath}")
-        Log.i(AUDIO_RECORDING, "audio file name: ${audioFile.name}")
-    }
-
-    // used for naming the audio recording file
-    private fun getCurrentDateForName(): String {
-        return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    }
-
-    // used for logging
-    private fun getCurrentDateForLog(): String {
-        return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date())
-    }
-
-    private fun formatNumberTwoDigits(number: Int): String {
-        return String.format("%02d", number)
-    }
-
-    private fun addPermissionsForAudioRecording() {
-        val recordingPermissionStatus =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-        val storingPermissionStatus =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-        val permissionsToRequest = mutableListOf<String>()
-        if (recordingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
-        }
-        if (storingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this, permissionsToRequest.toTypedArray(),
-                RECORD_AUDIO_PERMISSION
-            )
-        } else {
-            startAudioRecording()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RECORD_AUDIO_PERMISSION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startAudioRecording()
-            }
-        }
-    }
 
     override fun onPause() {
         if (isFinishing) {

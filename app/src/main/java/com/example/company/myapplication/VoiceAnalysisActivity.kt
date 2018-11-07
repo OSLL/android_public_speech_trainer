@@ -24,7 +24,7 @@ import android.widget.Button
 import android.widget.TextView
 import java.util.concurrent.TimeUnit
 
-const val AUDIO_RECORDING = "APST.VOICE_ANALYSIS_ACTIVITY"
+const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"
 const val RECORD_AUDIO_PERMISSION = 200 // change constant?
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
 const val POST_COUNTDOWN_ACTION = "com.example.company.myapplication.ACTION_POST_COUNTDOWN" // TODO: change name later when we get a new package name
