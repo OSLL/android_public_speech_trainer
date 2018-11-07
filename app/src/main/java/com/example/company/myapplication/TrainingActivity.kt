@@ -10,25 +10,22 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
+import android.media.AudioManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
-import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.Environment
-import android.os.ParcelFileDescriptor
-import android.preference.PreferenceManager
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.os.*
+import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
@@ -48,12 +45,9 @@ class TrainingActivity : AppCompatActivity() {
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
 
-    private lateinit var mediaRecorder: MediaRecorder
-    private lateinit var audioFile: File
-    private lateinit var directory: File
-    private var finishedRecording = false
-
     private var isCancelled = false
+
+    private var mPlayer: MediaPlayer? = null
 
     @SuppressLint("UseSparseArrays")
     var TimePerSlide = HashMap<Int, Long>()
@@ -72,11 +66,29 @@ class TrainingActivity : AppCompatActivity() {
 
     private var time: Long = 0.toLong()
 
+    private var presentationDataDao: PresentationDataDao? = null
+    private var presentationData: PresentationData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
-        time = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
+        if (presId > 0)
+            presentationData = presentationDataDao?.getPresentationWithId(presId)
+        else {
+            Log.d(TEST_DB, "training_act: wrong ID")
+            return
+        }
+
+        time = presentationData?.timeLimit!!
+
+        saveImage()
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
+
 
         addPermission()
 
@@ -87,6 +99,15 @@ class TrainingActivity : AppCompatActivity() {
 
         startRecognizingService()
 
+        if(!isAudio) {
+            muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
+        } else {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 50, 0)
+            mPlayer = MediaPlayer.create(this, debugSpeechAudio)
+            mPlayer?.start()
+            mPlayer?.setOnCompletionListener { stopPlay() }
+        }
 
         next.setOnClickListener {
             next.isEnabled = false
@@ -131,20 +152,69 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+
+            if(isAudio) {
+                mPlayer?.stop()
+            }
             timer(1,1).onFinish()
         }
     }
 
+    @SuppressLint("SetWorldReadable")
+    private fun saveImage() {
+
+        val temp = File(this.cacheDir, "tempImage.pdf")
+
+        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_WRITE)
+        renderer = PdfRenderer(parcelFileDescriptor)
+
+        currentPage = renderer?.openPage(0)
+        val width = currentPage?.width
+        val height = currentPage?.height
+        if (width != null && height != null) {
+            val defW = 397
+            val defH = 298
+            bmpBase = Bitmap.createBitmap(defW, defH, Bitmap.Config.ARGB_8888)
+
+            currentPage?.render(bmpBase, null,null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
+        }
+
+    }
+
     //speech recognizer =====
+
+    private  fun muteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        amanager.setStreamMute(AudioManager.STREAM_RING, true)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+    }
+
+    private fun unmuteSound(){
+        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        amanager.setStreamMute(AudioManager.STREAM_RING, false)
+        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
+    }
 
     private fun addPermission() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        val loadPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
 
         val arr = arrayOf(Manifest.permission.RECORD_AUDIO)
 
         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arr,
                 1)
+        }
+
+        if (loadPerm != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arr,
+                    1)
         }
     }
 
@@ -264,8 +334,16 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    private fun stopPlay() {
+        mPlayer?.stop()
+        try {
+            mPlayer?.prepare()
+            mPlayer?.seekTo(0)
+        } catch (t: Throwable) {
+            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+        }
 
-//======================
+    }
 
     override fun onStart() {
         super.onStart()
@@ -275,8 +353,7 @@ class TrainingActivity : AppCompatActivity() {
 
         //initAudioRecording()
 
-        val TrainingTime = intent.getLongExtra(TIME_ALLOTTED_FOR_TRAINING, 0)
-        timer(TrainingTime * 1000, 1000).start()
+        timer(time * 1000, 1000).start()
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
@@ -313,7 +390,16 @@ class TrainingActivity : AppCompatActivity() {
                         builder.setPositiveButton(R.string.training_statistics) { _, _ ->
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
 
+
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
+
+
+                            val name = intent.getStringExtra(NAME_OF_PRES)
+                            stat.putExtra(NAME_OF_PRES, name)
+
+
+                            stat.putExtra("allRecognizedText", ALL_RECOGNIZED_TEXT)
+                            unmuteSound()
 
                             startActivity(stat)
                         }
@@ -371,7 +457,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initRenderer() {
-        val uri = intent.getParcelableExtra<Uri>(URI)
+        val uri = Uri.parse(presentationData?.stringUri)
 
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")
@@ -405,7 +491,6 @@ class TrainingActivity : AppCompatActivity() {
             Log.d("error", "error in opening presentation file")
         }
     }
-
 
     override fun onPause() {
         if (isFinishing) {

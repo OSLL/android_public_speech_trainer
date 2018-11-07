@@ -33,6 +33,8 @@
     <string name="pref_description_enable_statistics">Отображение графиков после выступления
     </string>
     <string name="pref_title_enable_deb_pres">Включить тестовые презентации</string>
+    <string name="deb_speech_audio_key">deb_speech_audio</string>
+    <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочня презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
 
@@ -110,6 +112,8 @@
     <string name="DEBUG_SLIDES">debug_slides</string>
     <string name="audio_recording">audio recording</string>
     <string name="presentationEntries">presentationEntries</string>
+
+    <!-- Strings related to speech recording and analysis -->
     <string name="start_recording">Начать запись</string>
     <string name="stop_recording">Закончить запись</string>
     <string name="voice_analysis_instructions">После нажатия кнопки \"Начать запись\" подождите, пока остановится обратный отсчёт, и начните говорить после этого.\n\nПосле нажатия кнопки \"Закончить запись\" будет произведён анализ звуковой дорожки, результаты которого выведутся в этом текстовом поле.</string>
@@ -125,6 +129,7 @@
     <string name="voice">Голос</string>
     <string name="duration">Длительность записи</string>
     <string name="only_silence">Анализатор \"не слышит\" ваш голос. Говорите громче или перейдите в более тихое помещение.</string>
+
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
 
     <!-- Example settings for Shared Picture -->

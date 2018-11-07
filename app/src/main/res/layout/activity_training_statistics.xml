@@ -14,17 +14,24 @@
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/speed_bar_chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_weight="1"/>
+            android:layout_height="234dp"
+            android:layout_weight="1"
+            android:visibility="visible" />
 
         <!--Вывод pieChart https://github.com/OSLL/android_public_speech_trainer/issues/33-->
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pie_chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_weight="1"/>
+            android:layout_height="235dp"
+            android:layout_weight="1"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/returnBut"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:text="Вернуться на главную" />
 
         <Button
             android:id="@+id/share1"
