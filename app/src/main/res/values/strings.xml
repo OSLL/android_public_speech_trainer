@@ -23,6 +23,7 @@
     <string name="second_presentation">Презентация 2</string>
     <string name="title_activity_settings">Settings</string>
     <string name="select_a_file">Выберите файл</string>
+    <string name="back_to_main">На главную</string>
 
     <!-- Strings related to Settings -->
 
@@ -138,4 +139,5 @@
     <string name="time_of_training">---Вы говорили 1 секунд(у)</string>
     <string name="record_of_training">---Ваш результат на 100% далек от рекордного</string>
     <string name="earnings_of_training">---Вы заработали:</string>
+    <string name="pie_chart_tittle">Наиболее популярные слова</string>
 </resources>
