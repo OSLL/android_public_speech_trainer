@@ -40,6 +40,8 @@ class TestDatabase {
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
+
+        setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     @Test
@@ -63,6 +65,8 @@ class TestDatabase {
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
+
+        setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     @Test
@@ -95,6 +99,8 @@ class TestDatabase {
 
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
         assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
+
+        setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     private fun setTrainingPresentationMod(mode: Boolean) {
@@ -103,5 +109,6 @@ class TestDatabase {
         val testPresentationMode = mControllerTestRule.activity.getString(R.string.deb_pres)
 
         spe.putBoolean(testPresentationMode, mode)
+        spe.apply()
     }
 }
