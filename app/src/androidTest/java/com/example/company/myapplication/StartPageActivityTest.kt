@@ -30,23 +30,7 @@ class StartPageActivityTest {
     @Test
     fun buttonsExist() {
         onView(withId(R.id.addBtn)).check(matches(isDisplayed()))
-        onView(withText(first_presentation)).check(matches(isDisplayed()))
-        onView(withId(R.id.pres1)).check(matches(isDisplayed()))
-        onView(withText(second_presentation)).check(matches(isDisplayed()))
-        onView(withId(R.id.pres2)).check(matches(isDisplayed()))
         onView(withText(add_presentation_symbol)).check(matches(isDisplayed()))
-    }
-
-    @Test
-    fun test_from_start_page_to_presentation_with_pres1(){
-        onView(withId(R.id.pres1)).perform(click())
-        intended(hasComponent(ComponentName(getTargetContext(), PresentationActivity::class.java)))
-    }
-
-    @Test
-    fun test_from_start_page_to_presentation_with_pres2(){
-        onView(withId(R.id.pres2)).perform(click())
-        intended(hasComponent(ComponentName(getTargetContext(), PresentationActivity::class.java)))
     }
 
     @Test
