@@ -94,6 +94,11 @@ class StartPageActivity : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
+            R.id.action_voice_analysis -> {
+                val intent = Intent(this, VoiceAnalysisActivity::class.java)
+                startActivity(intent)
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }

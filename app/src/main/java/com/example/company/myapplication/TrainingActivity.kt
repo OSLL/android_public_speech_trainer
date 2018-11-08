@@ -36,10 +36,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
-const val AUDIO_RECORDING = "audio_recording"
-const val RECORD_AUDIO_PERMISSION = 200 // change constant?
-const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
-const val IMAGE_FOLDER = "public_speech_trainer/images"
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознавания речи
 const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознавание речи (скорость чтения, номер страницы, распознанный текст)
 
@@ -48,12 +44,6 @@ class TrainingActivity : AppCompatActivity() {
     private var renderer: PdfRenderer? = null
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
-
-    private lateinit var mediaRecorder: MediaRecorder
-    private lateinit var audioFile: File
-    private lateinit var imageFile: File
-    private lateinit var directory: File
-    private var finishedRecording = false
 
     private var isCancelled = false
 
@@ -101,12 +91,6 @@ class TrainingActivity : AppCompatActivity() {
         val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
 
-        // Запись звука мешает работе speech recognizer, а именно mediaRecorder.start().
-        // SpeechRecognizer начинает бесконечно запускаться, не останавливая старые экземпляры;
-        // после mediaRecorder.stop() его работа нормализуется;
-        // error service - nullPointerException;
-        //initAudioRecording()
-
         addPermission()
 
         //finish.isEnabled = false
@@ -141,8 +125,8 @@ class TrainingActivity : AppCompatActivity() {
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(
-                            time_left.text.indexOf(":") + 2,
-                            time_left.text.indexOf("s") - 1
+                        time_left.text.indexOf(":") + 2,
+                        time_left.text.indexOf("s") - 1
                     )
 
                     time -= min.toLong() * 60 + sec.toLong()
@@ -150,7 +134,7 @@ class TrainingActivity : AppCompatActivity() {
                     time = min.toLong()*60 + sec.toLong()
 
                     val slideReadSpeed: Float = if (curText == "") 0f else
-                            curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+                        curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
                     presentationEntries[curPageNum++] = slideReadSpeed
 
@@ -169,10 +153,7 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
-            /*if (!finishedRecording) {
-                stopAudioRecording()
-                finishedRecording = true
-            }*/
+
             if(isAudio) {
                 mPlayer?.stop()
             }
@@ -198,8 +179,6 @@ class TrainingActivity : AppCompatActivity() {
 
             currentPage?.render(bmpBase, null,null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
         }
-
-        addPermissionsForAudioRecording()
 
     }
 
@@ -231,7 +210,7 @@ class TrainingActivity : AppCompatActivity() {
 
         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arr,
-                    1)
+                1)
         }
 
         if (loadPerm != PackageManager.PERMISSION_GRANTED) {
@@ -271,7 +250,7 @@ class TrainingActivity : AppCompatActivity() {
                 TimePerSlide[curPageNum] = time
 
                 presentationEntries[curPageNum] = if (curText == "") 0f
-                    else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
+                else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
             } catch (e: Exception) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "(stop service) put presentation entry error: " + e.toString())
@@ -505,127 +484,6 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-    private fun initAudioRecording() {
-        val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
-        val defaultValue = false
-        val isRecordingOn = sharedPref.getBoolean(getString(R.string.audio_recording), defaultValue)
-
-        if (isRecordingOn) {
-            addPermissionsForAudioRecording()
-        } else {
-            finishedRecording = true
-        }
-    }
-
-    private fun initMediaRecorder() {
-        mediaRecorder = MediaRecorder()
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB)
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
-        val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-            Environment.getExternalStorageDirectory()
-        } else {
-            filesDir
-        }
-
-        directory = File("${parent.path}${File.separator}$RECORDING_FOLDER")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        try {
-            audioFile = File(directory, "recording-${getCurrentDateForName()}.amr")
-            audioFile.createNewFile()
-        } catch (e: IOException) {
-            Log.e("error", "unable to create audio file for recording")
-        }
-        mediaRecorder.setOutputFile(audioFile.absolutePath)
-
-        try {
-            mediaRecorder.prepare()
-        } catch (e: IOException) {
-            Log.e("error", "unable to record audio")
-        }
-    }
-
-    private fun startAudioRecording() {
-        initMediaRecorder()
-        mediaRecorder.start()
-        Log.i(AUDIO_RECORDING, "started audio recording at ${getCurrentDateForLog()}")
-    }
-
-    private fun stopAudioRecording() {
-        mediaRecorder.stop()
-        mediaRecorder.release()
-        Log.i(AUDIO_RECORDING, "finished audio recording at ${getCurrentDateForLog()}")
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(audioFile.path)
-        val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            .toInt()
-        Log.i(
-            AUDIO_RECORDING, "audio file length: " +
-                    "${formatNumberTwoDigits(duration / 1000 / 60 / 60)}:" +
-                    "${formatNumberTwoDigits(duration / 1000 / 60 % 60)}:" +
-                    formatNumberTwoDigits(duration / 1000 % 60)
-        )
-        Log.i(AUDIO_RECORDING, "audio file path: ${directory.absolutePath}")
-        Log.i(AUDIO_RECORDING, "audio file name: ${audioFile.name}")
-    }
-
-    // used for naming the audio recording file
-    private fun getCurrentDateForName(): String {
-        return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    }
-
-    // used for logging
-    private fun getCurrentDateForLog(): String {
-        return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date())
-    }
-
-    private fun formatNumberTwoDigits(number: Int): String {
-        return String.format("%02d", number)
-    }
-
-    private fun addPermissionsForAudioRecording() {
-        val recordingPermissionStatus =
-                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-        val storingPermissionStatus =
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-        val permissionsToRequest = mutableListOf<String>()
-        if (recordingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
-        }
-        if (storingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-
-        if (storingPermissionStatus != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                    this, permissionsToRequest.toTypedArray(),
-                    RECORD_AUDIO_PERMISSION
-            )
-        } else {
-            startAudioRecording()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RECORD_AUDIO_PERMISSION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startAudioRecording()
-            }
-        }
-    }
-
     override fun onPause() {
         if (isFinishing) {
             currentPage?.close()
@@ -645,4 +503,3 @@ class TrainingActivity : AppCompatActivity() {
         super.onDestroy()
     }
 }
-
