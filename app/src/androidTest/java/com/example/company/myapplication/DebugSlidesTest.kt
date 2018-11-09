@@ -8,6 +8,8 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import junit.framework.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +22,9 @@ class DebugSlidesTest {
 
     @Test
     fun Test(){
+        val db = SpeechDataBase.getInstance(getTargetContext())?.PresentationDataDao()
+        db?.deleteAll() // удаление всех элементов БД
+        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
         val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
