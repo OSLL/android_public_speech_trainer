@@ -11,6 +11,8 @@ import android.support.test.runner.AndroidJUnit4
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import junit.framework.Assert.*
 import kotlinx.android.synthetic.main.activity_start_page.*
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +22,16 @@ class TestDatabase {
     @Rule
     @JvmField
     var mControllerTestRule = ControlledActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    @Before
+    fun enableDebugMode() {
+        setTrainingPresentationMod(true) // включение тестовой презентации
+    }
+
+    @After
+    fun disableDebugMode() {
+        setTrainingPresentationMod(false) // выключение тестовой презентации
+    }
 
     @Test
     fun addNewPresentationManuallyTest() {
@@ -31,8 +43,6 @@ class TestDatabase {
         mControllerTestRule.relaunchActivity() // перезапуск активити для обновления recyclerView
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
 
-        setTrainingPresentationMod(true) // включение тестовой презентации
-
         // Добавление новой презентации
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.addPresentation)).perform(click())
@@ -40,8 +50,6 @@ class TestDatabase {
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
-
-        setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     @Test
@@ -54,8 +62,6 @@ class TestDatabase {
         mControllerTestRule.relaunchActivity() // перезапуск активити для обновления recyclerView
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
 
-        setTrainingPresentationMod(true) // включение тестовой презентации
-
         // Добавление новой презентации
         for (i in 0..1) {
             onView(withId(R.id.addBtn)).perform(click())
@@ -65,8 +71,6 @@ class TestDatabase {
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
-
-        setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     @Test
@@ -78,8 +82,6 @@ class TestDatabase {
 
         mControllerTestRule.relaunchActivity() // перезапуск активити для обновления recyclerView
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
-
-        setTrainingPresentationMod(true) // включение тестовой презентации
 
         // Добавление новой презентации
         onView(withId(R.id.addBtn)).perform(click())
@@ -99,8 +101,6 @@ class TestDatabase {
 
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
         assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
-
-        setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     private fun setTrainingPresentationMod(mode: Boolean) {
