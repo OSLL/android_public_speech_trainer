@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent.getActivity
 import android.content.Context
@@ -11,9 +12,12 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_start_page.*
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.pm.PackageManager
 import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.FragmentActivity
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
 
@@ -32,6 +36,9 @@ class StartPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
+
+        if(!checkPermissions())
+            checkPermissions()
 
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
@@ -57,6 +64,28 @@ class StartPageActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    fun checkPermissions(): Boolean {
+        val permissions = ArrayList<String>()
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        permissions.add(Manifest.permission.INTERNET)
+        permissions.add(Manifest.permission.RECORD_AUDIO)
+
+        var result: Int
+        val listPermissionsNeeded = ArrayList<String>()
+        for (p in permissions) {
+            result = ContextCompat.checkSelfPermission(this, p)
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p)
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toTypedArray(), 100)
+            return false
+        }
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
