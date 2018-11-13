@@ -82,28 +82,6 @@ class StartPageActivity : AppCompatActivity() {
 
     }
 
-    fun checkPermissions(): Boolean {
-        val permissions = ArrayList<String>()
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        permissions.add(Manifest.permission.INTERNET)
-        permissions.add(Manifest.permission.RECORD_AUDIO)
-
-        var result: Int
-        val listPermissionsNeeded = ArrayList<String>()
-        for (p in permissions) {
-            result = ContextCompat.checkSelfPermission(this, p)
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(p)
-            }
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toTypedArray(), 100)
-            return false
-        }
-        return true
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu,menu)
         return super.onCreateOptionsMenu(menu)
