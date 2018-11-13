@@ -39,7 +39,7 @@ class SoundTrackValidationTest {
 
         onView(withId(android.R.id.button1)).perform(click())
 
-        assertEquals(speed_statistics!!.toFloat(),48f,5f)
+        assertEquals(speed_statistics!!.toFloat(),48f,10f)
 
         debSl.putBoolean(OnMode, false)
         debSl.putBoolean(OnAudio, false)
