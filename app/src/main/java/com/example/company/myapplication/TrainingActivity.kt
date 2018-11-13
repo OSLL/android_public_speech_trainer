@@ -75,8 +75,9 @@ class TrainingActivity : AppCompatActivity() {
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
-        if (presId > 0)
+        if (presId > 0) {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
+        }
         else {
             Log.d(TEST_DB, "training_act: wrong ID")
             return
@@ -389,15 +390,8 @@ class TrainingActivity : AppCompatActivity() {
                         builder.setMessage(R.string.training_completed)
                         builder.setPositiveButton(R.string.training_statistics) { _, _ ->
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
-
-
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
-
-
-                            val name = intent.getStringExtra(NAME_OF_PRES)
-                            stat.putExtra(NAME_OF_PRES, name)
-
-
+                            stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                             stat.putExtra("allRecognizedText", ALL_RECOGNIZED_TEXT)
                             unmuteSound()
 
@@ -462,10 +456,8 @@ class TrainingActivity : AppCompatActivity() {
         try {
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
             val ins: InputStream
-            ins = if(!isChecked) {
+            ins = if(presentationData?.debugFlag == 0) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {

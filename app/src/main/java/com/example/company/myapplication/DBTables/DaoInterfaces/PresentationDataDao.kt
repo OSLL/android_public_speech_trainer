@@ -15,6 +15,9 @@ interface PresentationDataDao {
     @Query("DELETE from presentationdata")
     fun deleteAll()
 
+    @Query("DELETE FROM presentationdata WHERE id = :ID")
+    fun deletePresentationWithId(ID: Int)
+
     @Query("SELECT * from presentationdata WHERE id = :ID LIMIT 1")
     fun getPresentationWithId(ID: Int): PresentationData
 
