@@ -34,6 +34,7 @@ import java.io.IOException
 import java.io.InputStream
 
 
+
 const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
 const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
 

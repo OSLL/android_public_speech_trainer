@@ -152,4 +152,8 @@
     <string name="record_of_training">---Ваш результат на 100% далек от рекордного</string>
     <string name="earnings_of_training">---Вы заработали:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
+
+    <!-- Example settings for Tests -->
+    <string name="test_time">00:30</string>
+
 </resources>

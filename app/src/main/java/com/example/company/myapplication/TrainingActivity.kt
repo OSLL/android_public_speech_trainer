@@ -3,10 +3,7 @@ package com.example.company.myapplication
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -69,6 +66,8 @@ class TrainingActivity : AppCompatActivity() {
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
 
+    var isAudio: Boolean? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
@@ -88,7 +87,7 @@ class TrainingActivity : AppCompatActivity() {
         saveImage()
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
+        isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
 
         addPermission()
@@ -100,7 +99,7 @@ class TrainingActivity : AppCompatActivity() {
 
         startRecognizingService()
 
-        if(!isAudio) {
+        if(!isAudio!!) {
             muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
         } else {
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -153,10 +152,6 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
-
-            if(isAudio) {
-                mPlayer?.stop()
-            }
             timer(1,1).onFinish()
         }
     }
@@ -230,7 +225,7 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-    private fun stopRecognizingService(waitForRecognitionComplete: Boolean){
+    fun stopRecognizingService(waitForRecognitionComplete: Boolean){
         if (!waitForRecognitionComplete) {
             Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stopRecognizingService called, without waiting for recognition to finish")
             try {
@@ -384,6 +379,9 @@ class TrainingActivity : AppCompatActivity() {
                 try {
                     val handler = Handler()
                     handler.postDelayed({
+                        if(isAudio!!) {
+                            mPlayer?.stop()
+                        }
                         stopRecognizingService(true)
 
                         val builder = AlertDialog.Builder(this@TrainingActivity)
@@ -397,6 +395,7 @@ class TrainingActivity : AppCompatActivity() {
 
                             startActivity(stat)
                         }
+
                         val dialog: AlertDialog = builder.create()
                         dialog.show()
                     }, 2500)
