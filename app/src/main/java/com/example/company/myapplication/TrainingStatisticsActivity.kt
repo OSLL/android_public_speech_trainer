@@ -10,6 +10,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
@@ -27,15 +30,32 @@ var speed_statistics: Int? = null
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
 
+    private var presentationDataDao: PresentationDataDao? = null
+    private var presentationData: PresentationData? = null
+
     private var finishBmp: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
-        
-        //share example
-        DrawPict()
-        url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp,  "title", null)
 
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
+        if (presId > 0) {
+            presentationData = presentationDataDao?.getPresentationWithId(presId)
+        }
+        else {
+            Log.d(TEST_DB, "training_act: wrong ID")
+            return
+        }
+
+        try {
+            //share example
+            DrawPict()
+            url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
+
+        }catch (e: Exception) {
+            Log.d("aga_get_it", e.toString())
+        }
         share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(url))
@@ -71,7 +91,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     fun DrawPict() {
         val width = bmpBase?.width
         val height = bmpBase?.height
-        val presName = intent.getStringExtra(NAME_OF_PRES)
+        val presName = presentationData?.name
 
         if(width != null && height != null) {
             val NWidth: Int = width

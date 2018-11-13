@@ -1,9 +1,7 @@
 package com.example.company.myapplication
 
-import android.content.Context
 import android.content.Intent
-import android.content.Intent.ACTION_GET_CONTENT
-import android.content.Intent.CATEGORY_OPENABLE
+import android.content.Intent.*
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -13,10 +11,8 @@ import android.util.Log
 import android.widget.Toast
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
-import java.io.File
 import java.io.FileNotFoundException
 
-const val URI = "presentation_uri"
 const val FILE_SYSTEM = "file_system"
 const val TEST_DB = "test_db"
 
@@ -32,7 +28,7 @@ class CreatePresentationActivity : AppCompatActivity() {
         if(!isChecked) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
-            val intent = Intent(ACTION_GET_CONTENT)
+            val intent = Intent(ACTION_OPEN_DOCUMENT)
                     .setDataAndType(myUri, "*/*")
                     .addCategory(CATEGORY_OPENABLE)
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
@@ -67,6 +63,10 @@ class CreatePresentationActivity : AppCompatActivity() {
         if (newPresentation == null) {
             newPresentation = PresentationData()
             newPresentation.stringUri = stringUri
+
+            if (stringUri == getString(R.string.deb_pres_name))
+                newPresentation.debugFlag = 1
+
             speechDataBase?.PresentationDataDao()?.insert(newPresentation)
             currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
 
