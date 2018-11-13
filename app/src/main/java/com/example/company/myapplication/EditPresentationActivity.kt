@@ -62,17 +62,20 @@ class EditPresentationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            presentationData?.pageCount = renderer?.pageCount
-            presentationData?.name = presentationName.text.toString()
-            presentationDataDao?.updatePresentation(presentationData!!)
-
-            val i = Intent(this, PresentationActivity::class.java)
-
-            if (changePresentationFlag)
+            if(presentationName.text.length < 48) {
+                val i = Intent(this, PresentationActivity::class.java)
+                presentationData?.pageCount = renderer?.pageCount
+                presentationData?.name = presentationName.text.toString()
+                presentationDataDao?.updatePresentation(presentationData!!)
+              
+                if (changePresentationFlag)
                 i.putExtra(getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
 
-            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-            startActivity(i)
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                startActivity(i)
+            }
+            else
+                Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -6,6 +6,9 @@ import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
 import android.media.MediaMetadataRetriever
@@ -168,9 +171,22 @@ class TrainingActivity : AppCompatActivity() {
         val width = currentPage?.width
         val height = currentPage?.height
         if (width != null && height != null) {
-            val defW = 397
-            val defH = 298
-            bmpBase = Bitmap.createBitmap(defW, defH, Bitmap.Config.ARGB_8888)
+            val defW = 397f
+            val defH = 298f
+
+            val coeff = height.toFloat()/width.toFloat()
+
+            val curW = defW.toInt()
+            val curH = (defW * coeff).toInt()
+
+            bmpBase = Bitmap.createBitmap(curW, curH, Bitmap.Config.ARGB_8888)
+
+            val whitePaint = Paint()
+            whitePaint.style = Paint.Style.FILL
+            whitePaint.color = Color.WHITE
+
+            val BmpToWhite = Canvas(bmpBase)
+            BmpToWhite.drawPaint(whitePaint)
 
             currentPage?.render(bmpBase, null,null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
         }

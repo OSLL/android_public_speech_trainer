@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -109,9 +110,19 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             namePaint.color = Color.BLACK
             namePaint.style = Paint.Style.FILL
             namePaint.isAntiAlias = true
-            namePaint.textSize = 24f
-            namePaint.isUnderlineText = true;
-            nameC.drawText(presName, 90f, 30f, namePaint)
+            if(presName?.length != null) {
+                when {
+                    presName.length < 32 -> namePaint.textSize = 24f
+                    presName.length < 37 -> namePaint.textSize = 20f
+                    else -> namePaint.textSize = 16f
+                }
+                namePaint.isUnderlineText = true
+                if (presName.length < 30) {
+                    nameC.drawText(presName, ((32 - presName.length).toFloat()) * 6.5f, 30f, namePaint)
+                } else
+                    nameC.drawText(presName, 20f, 30f, namePaint)
+            }
+
 
             val countBmp = Bitmap.createBitmap(NWidth, 30, Bitmap.Config.ARGB_8888)
             val countC = Canvas(countBmp)
