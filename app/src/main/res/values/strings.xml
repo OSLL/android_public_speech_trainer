@@ -134,6 +134,18 @@
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
 
+    <!-- For Change Presentation -->
+    <string name="changePresentationFlag">change_presentation_flag</string>
+    <string name="further">Далее</string>
+    <string name="save">Сохранить</string>
+    <string name="change_presentation_task">"Редактировать презентацию "</string>
+    <string name="change">"Редактировать"</string>
+    <string name="no">"Нет"</string>
+    <string name="remove">"Удалить"</string>
+    <string name="leave">"Оставить"</string>
+    <string name="request_for_remove_presentation">"Вы действительно хотите удалить презентацию "</string>
+
+
     <!-- Example settings for Shared Picture -->
     <string name="count_of_training">Вы тренировались 1 раз(а)</string>
     <string name="result_of_training">Результат тренировки:</string>
