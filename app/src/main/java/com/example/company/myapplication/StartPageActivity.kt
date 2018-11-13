@@ -8,27 +8,17 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
-import kotlinx.android.synthetic.main.activity_start_page.*
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.content.pm.PackageManager
-import android.preference.PreferenceManager
-import android.support.test.InstrumentationRegistry
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.widget.Toast
 import com.example.company.myapplication.views.PresentationStartpageRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
@@ -37,6 +27,7 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_start_page.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -88,28 +79,6 @@ class StartPageActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-    }
-
-    fun checkPermissions(): Boolean {
-        val permissions = ArrayList<String>()
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        permissions.add(Manifest.permission.INTERNET)
-        permissions.add(Manifest.permission.RECORD_AUDIO)
-
-        var result: Int
-        val listPermissionsNeeded = ArrayList<String>()
-        for (p in permissions) {
-            result = ContextCompat.checkSelfPermission(this, p)
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(p)
-            }
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toTypedArray(), 100)
-            return false
-        }
-        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
