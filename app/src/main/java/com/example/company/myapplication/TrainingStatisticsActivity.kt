@@ -41,7 +41,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(presentationEntries)
         val worstSlide = getWorstSlide(presentationEntries)
 
-        textView.text = getString(R.string.average_speed) + " $averageSpeed\n" + getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) + " $worstSlide\n"
+        textView.text = getString(R.string.average_speed) + " %.2f слов/мин\n".format(averageSpeed) + getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) + " $worstSlide"
 
     }
 

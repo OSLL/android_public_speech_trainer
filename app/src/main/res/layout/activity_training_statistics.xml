@@ -14,7 +14,7 @@
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/speed_bar_chart"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="160dp"
             android:layout_weight="1"
             android:visibility="visible" />
 
@@ -23,7 +23,7 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pie_chart"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="250dp"
             android:layout_weight="1"
             android:visibility="visible">
 
@@ -33,6 +33,7 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_weight="1" />
 
         <Button
