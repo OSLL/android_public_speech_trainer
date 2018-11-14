@@ -135,6 +135,12 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             setHasOptionsMenu(true)
 
             val pref = findPreference("deb_mode")
+            /*
+            pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener{preference, newValue ->
+                val flag = parseBoolean(newValue.toString())
+            }
+*/
+
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

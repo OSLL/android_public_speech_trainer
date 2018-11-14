@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,21 +8,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/speed_bar_chart"
             android:layout_width="match_parent"
-<<<<<<< HEAD
             android:layout_height="160dp"
-=======
->>>>>>> f9a5b62b855439b61940ada54902b5b0575839c9
             android:layout_weight="1"
-            android:visibility="visible"
-            android:layout_height="250dp" />
+            android:visibility="visible" />
 
-<<<<<<< HEAD
         <!--Вывод pieChart https://github.com/OSLL/android_public_speech_trainer/issues/33-->
 
         <com.github.mikephil.charting.charts.PieChart
@@ -33,8 +28,6 @@
             android:visibility="visible">
 
         </com.github.mikephil.charting.charts.PieChart>
-=======
->>>>>>> f9a5b62b855439b61940ada54902b5b0575839c9
 
         <TextView
             android:id="@+id/textView"
@@ -43,44 +36,18 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1" />
 
-
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pie_chart"
-            android:layout_width="match_parent"
-            android:layout_weight="1.3"
-            android:visibility="visible"
-            android:layout_height="400dp"
-            android:layout_marginStart="5dp"/>
-
         <Button
             android:id="@+id/share1"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="@string/share" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/returnTraining"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <Button
-                android:id="@+id/returnBut"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:text="@string/back_to_main"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/returnTraining"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:text="@string/return_training"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
+            android:layout_height="40dp"
+            android:text="@string/return_training" />
 
     </LinearLayout>
 
-</ScrollView>
+</android.support.constraint.ConstraintLayout>

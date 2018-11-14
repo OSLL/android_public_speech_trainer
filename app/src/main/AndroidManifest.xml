@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.company.myapplication">
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
 
     <application
         android:allowBackup="true"
@@ -24,16 +20,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".TrainingActivity"
+        <activity android:name=".TrainingActivity"
             android:label="@string/activity_training_name"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".PresentationActivity"
-            android:label="@string/activity_presentation_name" />
-        <activity
-            android:name=".TrainingHistoryActivity"
-            android:label="@string/activity_training_history_name" />
+            android:label="@string/activity_presentation_name"/>
+        <activity android:name=".TrainingHistoryActivity"
+            android:label="@string/activity_training_history_name"/>
         <activity
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name" />
@@ -42,16 +36,12 @@
             android:label="@string/activity_edit_presentation_name" />
         <activity
             android:name=".TrainingStatisticsActivity"
-            android:label="@string/activity_training_statistics_name" />
+            android:label="@string/activity_training_statistics_name"/>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
-
-        <service
-            android:name=".SpeechRecognitionService"
-            android:enabled="true" />
-
-        <activity android:name=".VoiceAnalysisActivity"></activity>
+            android:label="@string/title_activity_settings"></activity>
+        <service android:name=".SpeechRecognitionService"
+            android:enabled="true"/>
     </application>
 
 </manifest>

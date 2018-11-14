@@ -3,9 +3,5 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="1"
-        android:title="@string/settings" />
-    <item
-        android:id="@+id/action_voice_analysis"
-        android:orderInCategory="2"
-        android:title="@string/voice_analysis" />
+        android:title="Настройки" />
 </menu>
