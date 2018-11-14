@@ -330,6 +330,7 @@ class TrainingActivity : AppCompatActivity() {
                             stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
 
                             startActivity(stat)
+                            finish()
                         }
                         val dialog: AlertDialog = builder.create()
                         dialog.show()
