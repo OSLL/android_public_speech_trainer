@@ -32,7 +32,7 @@ class PresentationActivity : AppCompatActivity() {
         if (presId > 0)
             presentationData = presentationDataDao?.getPresentationWithId(presId)
         else {
-            Log.d(TEST_DB, "presentation_act: wrong ID")
+            Log.d(APST_TAG, "presentation_act: wrong ID")
             return
         }
 
