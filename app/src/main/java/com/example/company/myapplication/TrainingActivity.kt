@@ -11,8 +11,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
-import android.media.MediaMetadataRetriever
-import android.media.MediaRecorder
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
@@ -23,15 +21,17 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
@@ -69,6 +69,9 @@ class TrainingActivity : AppCompatActivity() {
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
 
+    private var trainingDataDao: TrainingDataDao? = null
+    private var trainingData: TrainingData? = null
+
     var isAudio: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,6 +87,10 @@ class TrainingActivity : AppCompatActivity() {
             Log.d(TEST_DB, "training_act: wrong ID")
             return
         }
+
+        trainingData = TrainingData()
+        trainingDataDao = SpeechDataBase.getInstance(this)?.TrainingDataDao()
+
 
         time = presentationData?.timeLimit!!
 
@@ -268,6 +275,12 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             ALL_RECOGNIZED_TEXT += curText
+
+            trainingData?.allRecognizedText = ALL_RECOGNIZED_TEXT
+            trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
+
+            val trainingDBHelper = TrainingDBHelper(this)
+            trainingDBHelper.addTrainingInDB(trainingData!!,presentationData!!)
 
             Log.d(SPEECH_RECOGNITION_INFO, "page number: " + (curPageNum).toString())
             Log.d(SPEECH_RECOGNITION_INFO, "recognized text: $curText")
