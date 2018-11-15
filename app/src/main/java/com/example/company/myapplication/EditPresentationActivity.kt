@@ -1,6 +1,5 @@
 package com.example.company.myapplication
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -11,11 +10,18 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.views.PresentationStartpageRow
+import com.example.company.myapplication.views.PresentationStartpageRow.Companion.activatedChangePresentationFlag
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+
+
 
 const val DEFAULT_TIME = "DefTime"
 
@@ -25,30 +31,51 @@ class EditPresentationActivity : AppCompatActivity() {
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
 
+    private var presentationDataDao: PresentationDataDao? = null
+    private var presentationData: PresentationData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
 
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
+        if (presId > 0) {
+            presentationData = presentationDataDao?.getPresentationWithId(presId)
+        }
+        else {
+            Log.d(TEST_DB, "edit_pres_act: wrong ID")
+            return
+        }
+
+        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
+        if (changePresentationFlag)
+            addPresentation.text = getString(R.string.further)
+
 
         addPresentation.setOnClickListener{
 
-            val uri = intent.getParcelableExtra<Uri>(URI)
+            val uri = Uri.parse(presentationData?.stringUri)
 
             if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            if(presentationName.text.length < 48) {
+                val i = Intent(this, PresentationActivity::class.java)
+                presentationData?.pageCount = renderer?.pageCount
+                presentationData?.name = presentationName.text.toString()
+                presentationDataDao?.updatePresentation(presentationData!!)
+              
+                if (changePresentationFlag)
+                i.putExtra(getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
 
-
-            val i = Intent(this, PresentationActivity::class.java)
-            i.putExtra(NAME_OF_PRES,presentationName.text.toString())
-            i.putExtra(URI, uri)
-            val pageCount = renderer?.pageCount
-            if(pageCount != null) {
-                i.putExtra(DEFAULT_TIME, pageCount.toInt())
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                startActivity(i)
             }
-            startActivity(i)
+            else
+                Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -78,28 +105,24 @@ class EditPresentationActivity : AppCompatActivity() {
 
     private fun initRenderer(){
 
-        val uri = intent.getParcelableExtra<Uri>(URI)
+        val uri = Uri.parse(presentationData?.stringUri)
 
         try{
             val temp = File(this.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
             val ins: InputStream
-            ins = if(!isChecked) {
+            ins = if (presentationData?.debugFlag == 0) {
                 val cr = contentResolver
                 cr.openInputStream(uri)
             } else {
-                assets.open(getString(R.string.deb_pres_name))
+                assets.open(presentationData?.stringUri)
             }
 
-            if(isChecked) {
-                val name = getString(R.string.deb_pres_name)
-                presentationName.setText(name.substring(0, name.indexOf(".pdf")))
-            } else {
-                val cr = contentResolver
-                presentationName.setText(getFileName(uri, cr))
-            }
+            if (presentationData?.name!!.isNullOrEmpty())
+                presentationName.setText(getFileName(uri,contentResolver))
+            else
+                presentationName.setText(presentationData?.name)
+
 
             val buffer = ByteArray(1024)
 
