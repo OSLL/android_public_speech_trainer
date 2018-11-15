@@ -22,11 +22,12 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
+import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
+import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
 import java.io.File
 import java.io.FileOutputStream
@@ -69,8 +70,8 @@ class TrainingActivity : AppCompatActivity() {
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
 
-    private var trainingDataDao: TrainingDataDao? = null
     private var trainingData: TrainingData? = null
+    private var trainingSlideDBHelper: TrainingSlideDBHelper? = null
 
     var isAudio: Boolean? = null
 
@@ -89,8 +90,7 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         trainingData = TrainingData()
-        trainingDataDao = SpeechDataBase.getInstance(this)?.TrainingDataDao()
-
+        trainingSlideDBHelper = TrainingSlideDBHelper(this)
 
         time = presentationData?.timeLimit!!
 
@@ -141,6 +141,11 @@ class TrainingActivity : AppCompatActivity() {
                     time -= min.toLong() * 60 + sec.toLong()
                     TimePerSlide[index + 1] = time
                     time = min.toLong()*60 + sec.toLong()
+
+                    val tsd = TrainingSlideData()
+                    tsd.spentTimeInSec = TimePerSlide[curPageNum]!!
+                    tsd.knownWords = curText
+                    trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
                     val slideReadSpeed: Float = if (curText == "") 0f else
                         curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
@@ -267,6 +272,20 @@ class TrainingActivity : AppCompatActivity() {
                 time -= min.toLong() * 60 + sec.toLong()
                 TimePerSlide[curPageNum] = time
 
+                val tsd = TrainingSlideData()
+                tsd.spentTimeInSec = TimePerSlide[curPageNum]!!
+                tsd.knownWords = curText
+                trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
+
+                val list = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
+                if (list == null) {
+                    Log.d(TEST_DB + "_slide", "train act: slides == null")
+                } else {
+                    for (i in 0..(list.size - 1)) {
+                        Log.d(TEST_DB + "_slide", "train act, L $i : ${list[i]}")
+                    }
+                }
+
                 presentationEntries[curPageNum] = if (curText == "") 0f
                 else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
@@ -281,6 +300,15 @@ class TrainingActivity : AppCompatActivity() {
 
             val trainingDBHelper = TrainingDBHelper(this)
             trainingDBHelper.addTrainingInDB(trainingData!!,presentationData!!)
+
+            val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
+            if (list != null) {
+                for (i in 0..(list!!.size - 1)) {
+                    Log.d(TEST_DB, "train act, T $i : ${list[i]}")
+                }
+            } else {
+                Log.d(TEST_DB, "train act: list == null")
+            }
 
             Log.d(SPEECH_RECOGNITION_INFO, "page number: " + (curPageNum).toString())
             Log.d(SPEECH_RECOGNITION_INFO, "recognized text: $curText")

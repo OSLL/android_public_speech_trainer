@@ -39,7 +39,7 @@ const val debugSlides = "making_presentation.pdf"   //Название през�
 const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
-                                                  // который запускается в виде тестовой звуковой дорожки.
+// который запускается в виде тестовой звуковой дорожки.
 
 const val SHARED_PREFERENCES_FILE_NAME = "com.example.company.myapplication.prefs"
 
@@ -50,21 +50,17 @@ class StartPageActivity : AppCompatActivity() {
 
     private var listPresentationData: List<PresentationData>? = null
     private var presentationDataDao: PresentationDataDao? = null
-
     private var renderer: PdfRenderer? = null
     private var currentPage: PdfRenderer.Page? = null
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
-
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
-      
+
         if (!checkPermissions())
             checkPermissions()
-
         adapter = GroupAdapter<ViewHolder>()
-
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             if (sharedPref.contains(getString(R.string.audio_recording))) {
@@ -73,20 +69,15 @@ class StartPageActivity : AppCompatActivity() {
             putBoolean(getString(R.string.audio_recording), true)
             apply()
         }
-
-
         addBtn.setOnClickListener{
             val intent = Intent(this, CreatePresentationActivity::class.java)
             startActivity(intent)
         }
-
     }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.itemId
         when (id) {
@@ -103,32 +94,26 @@ class StartPageActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
     private fun fillRecyclerView() {
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         listPresentationData = presentationDataDao?.getAll()
-
         if (listPresentationData == null || adapter == null || presentationDataDao == null) {
             Toast.makeText(this, "fillRecError",Toast.LENGTH_LONG).show()
             return
         }
-
         for (presentation in listPresentationData!!) {
             try {
                 if (presentation.timeLimit == null || presentation.pageCount == 0) {
                     presentationDataDao?.deletePresentationWithId(presentation.id!!)
                     continue
                 }
-
                 adapter?.add(PresentationStartpageRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
             } catch (e: Exception) {
                 Toast.makeText(this,"file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!",Toast.LENGTH_LONG).show()
                 presentationDataDao?.deletePresentationWithId(presentation.id!!)
-
             }
         }
         recyclerview_startpage.adapter = adapter
-
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
             val row = item as PresentationStartpageRow
             val i = Intent(this, TrainingActivity::class.java)
@@ -136,20 +121,17 @@ class StartPageActivity : AppCompatActivity() {
             startActivity(i)
         }
     }
-
     private fun refreshRecyclerView() {
         adapter?.clear()
         adapter?.notifyDataSetChanged()
         fillRecyclerView()
     }
-
     fun checkPermissions(): Boolean {
         val permissions = ArrayList<String>()
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         permissions.add(Manifest.permission.INTERNET)
         permissions.add(Manifest.permission.RECORD_AUDIO)
-
         var result: Int
         val listPermissionsNeeded = ArrayList<String>()
         for (p in permissions) {
@@ -164,26 +146,21 @@ class StartPageActivity : AppCompatActivity() {
         }
         return true
     }
-
     override fun onStart() {
         super.onStart()
         refreshRecyclerView()
         runLayoutAnimation(recyclerview_startpage)
     }
-
     override fun onStop() {
         super.onStop()
     }
-
     private fun renderPage(pageIndex: Int): Bitmap? {
-
         currentPage?.close()
         currentPage = renderer?.openPage(pageIndex)
         val width = currentPage?.width
         val height = currentPage?.height
         val index = currentPage?.index
         val pageCount = renderer?.pageCount
-
         if(width != null && height != null && index != null && pageCount != null) {
             val NWidth: Int = width
             val NHeight: Int = height
@@ -193,10 +170,8 @@ class StartPageActivity : AppCompatActivity() {
         }
         return null
     }
-
     private fun initRenderer(strUri: String, debugFlag: Int){
         val uri = Uri.parse(strUri)
-
         try{
             val temp = File(cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
@@ -212,18 +187,14 @@ class StartPageActivity : AppCompatActivity() {
             } else {
                 assets.open(strUri)
             }
-
             val buffer = ByteArray(1024)
-
             var readBytes = ins.read(buffer)
             while(readBytes != -1){
                 fos.write(buffer, 0, readBytes)
                 readBytes = ins.read(buffer)
             }
-
             fos.close()
             ins.close()
-
             parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(parcelFileDescriptor)
         } catch(e: IOException){
@@ -231,19 +202,16 @@ class StartPageActivity : AppCompatActivity() {
             Log.d("error","error in opening presentation file")
         }
     }
-
     private fun getFirstSlideBitmap(strUri: String, debugFlag: Int): Bitmap? {
         initRenderer(strUri,debugFlag)
         return renderPage(0)
     }
-
     private fun runLayoutAnimation(recyclerView: RecyclerView) {
         val context: Context = recyclerView.context
         val controller =
                 AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
-
         recyclerView.layoutAnimation = controller
         recyclerView.adapter.notifyDataSetChanged()
         recyclerView.scheduleLayoutAnimation()
-}
+    }
 }

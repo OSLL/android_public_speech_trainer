@@ -35,7 +35,7 @@ class TrainingDBHelper {
         }
     }
 
-    fun getAllTrainings(presentationData: PresentationData): MutableList<TrainingData>? {
+    fun getAllTrainingsForPresentation(presentationData: PresentationData): MutableList<TrainingData>? {
         if (presentationData.trainingDataId == null) return null
 
         val trainingDataDao = SpeechDataBase.getInstance(context)?.TrainingDataDao()

@@ -1,9 +1,7 @@
 package com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
+import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 
 @Dao
@@ -17,4 +15,16 @@ interface TrainingSlideDataDao {
 
     @Query("DELETE from trainingslidedata")
     fun deleteAll()
+
+    @Query("DELETE FROM trainingslidedata WHERE id = :ID")
+    fun deleteSlideWithId(ID: Int)
+
+    @Query("SELECT * from trainingslidedata WHERE id = :ID LIMIT 1")
+    fun getSlideWithId(ID: Int): TrainingSlideData
+
+    @Update
+    fun updateSlide(trainingsSlideData: TrainingSlideData)
+
+    @Query("SELECT * from trainingslidedata WHERE id = (SELECT MAX(id) from trainingslidedata)")
+    fun getLastSlide(): TrainingSlideData
 }
