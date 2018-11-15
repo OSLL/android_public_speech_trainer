@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -32,6 +33,8 @@ var bmpBase: Bitmap? = null
 var url = ""
 var speed_statistics: Int? = null
 
+const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
+
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
 
@@ -42,6 +45,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var finishBmp: Bitmap? = null
 
+    @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
@@ -54,7 +58,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             trainingData = SpeechDataBase.getInstance(this)?.TrainingDataDao()?.getTrainingWithId(trainingId)
         }
         else {
-            Log.d(TEST_DB, "stat_act: wrong ID")
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "stat_act: wrong ID")
             return
         }
 
@@ -64,7 +68,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
 
         }catch (e: Exception) {
-            Log.d("aga_get_it", e.toString())
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
         }
         share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)

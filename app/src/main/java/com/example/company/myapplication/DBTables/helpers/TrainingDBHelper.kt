@@ -1,8 +1,6 @@
 package com.example.company.myapplication.DBTables.helpers
 
 import android.content.Context
-import android.util.Log
-import com.example.company.myapplication.TEST_DB
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData

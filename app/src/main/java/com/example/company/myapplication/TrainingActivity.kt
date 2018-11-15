@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
-const val TEST_DB_SLIDE = "test_db_slide.TrainingActivity"
 const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
 
 class TrainingActivity : AppCompatActivity() {
@@ -86,7 +85,7 @@ class TrainingActivity : AppCompatActivity() {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
         }
         else {
-            Log.d(TEST_DB + ACTIVITY_TRAINING_NAME, "training_act: wrong ID")
+            Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "training_act: wrong ID")
             return
         }
 
@@ -273,10 +272,10 @@ class TrainingActivity : AppCompatActivity() {
 
                 val list = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
                 if (list == null) {
-                    Log.d(TEST_DB_SLIDE, "train act: slides == null")
+                    Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act: slides == null")
                 } else {
                     for (i in 0..(list.size - 1)) {
-                        Log.d(TEST_DB_SLIDE, "train act, L $i : ${list[i]}")
+                        Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act, L $i : ${list[i]}")
                     }
                 }
 
@@ -296,10 +295,10 @@ class TrainingActivity : AppCompatActivity() {
             val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
             if (list != null) {
                 for (i in 0..(list!!.size - 1)) {
-                    Log.d(TEST_DB + ACTIVITY_TRAINING_NAME, "train act, T $i : ${list[i]}")
+                    Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act, T $i : ${list[i]}")
                 }
             } else {
-                Log.d(TEST_DB + ACTIVITY_TRAINING_NAME, "train act: list == null")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act: list == null")
             }
 
             audioManager!!.isMicrophoneMute = false
