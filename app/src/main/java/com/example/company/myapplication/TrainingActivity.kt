@@ -54,7 +54,6 @@ class TrainingActivity : AppCompatActivity() {
     var TimePerSlide = HashMap<Int, Long>()
 
     //speech recognizer part
-    private var presentationEntries = HashMap<Int,Float?>()
     private var curPageNum = 1
     private var curText = ""
     private var mIntent: Intent? = null
@@ -146,15 +145,6 @@ class TrainingActivity : AppCompatActivity() {
                     tsd.spentTimeInSec = TimePerSlide[curPageNum]!!
                     tsd.knownWords = curText
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
-
-                    val slideReadSpeed: Float = if (curText == "") 0f else
-                        curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
-
-                    presentationEntries[curPageNum++] = slideReadSpeed
-
-                    Log.d(SPEECH_RECOGNITION_INFO, "page number: " + (curPageNum-1).toString())
-                    Log.d(SPEECH_RECOGNITION_INFO, "recognized text: $curText")
-                    Log.d(SPEECH_RECOGNITION_INFO, "reading speed: " + presentationEntries[curPageNum-1].toString())
 
                     ALL_RECOGNIZED_TEXT += " $curText"
                     curText = ""
@@ -286,8 +276,6 @@ class TrainingActivity : AppCompatActivity() {
                     }
                 }
 
-                presentationEntries[curPageNum] = if (curText == "") 0f
-                else curText.split(" ").size.toFloat() / TimePerSlide[curPageNum]!!.toFloat() * 60f
 
             } catch (e: Exception) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "(stop service) put presentation entry error: " + e.toString())
@@ -309,10 +297,6 @@ class TrainingActivity : AppCompatActivity() {
             } else {
                 Log.d(TEST_DB, "train act: list == null")
             }
-
-            Log.d(SPEECH_RECOGNITION_INFO, "page number: " + (curPageNum).toString())
-            Log.d(SPEECH_RECOGNITION_INFO, "recognized text: $curText")
-            Log.d(SPEECH_RECOGNITION_INFO, "reading speed: " + presentationEntries[curPageNum].toString())
 
             audioManager!!.isMicrophoneMute = false
             try {
@@ -445,9 +429,10 @@ class TrainingActivity : AppCompatActivity() {
                         builder.setMessage(R.string.training_completed)
                         builder.setPositiveButton(R.string.training_statistics) { _, _ ->
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
-                            stat.putExtra(getString(R.string.presentationEntries), presentationEntries)
                             stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                            stat.putExtra("allRecognizedText", ALL_RECOGNIZED_TEXT)
+                            stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase?.getInstance(
+                                    this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
+
                             unmuteSound()
 
                             startActivity(stat)
