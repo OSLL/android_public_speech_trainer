@@ -19,7 +19,6 @@ class TrainingHistoryItem(private val training: TrainingData, private val ctx: C
 
     @SuppressLint("SetTextI18n")
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        //viewHolder.itemView.date_training_history_row.text = getDateCurrentTimeZone(training.timeStampInSec!!)
         viewHolder.itemView.date_training_history_row.text = DateUtils.formatDateTime(
                 ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_DATE) + " | " +
                 DateUtils.formatDateTime(

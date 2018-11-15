@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознавания речи
-const val SPEECH_RECOGNITION_INFO = "test_speech_info" // информация о распознавание речи (скорость чтения, номер страницы, распознанный текст)
+const val TEST_DB_SLIDE = "test_db_slide"
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -269,10 +269,10 @@ class TrainingActivity : AppCompatActivity() {
 
                 val list = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
                 if (list == null) {
-                    Log.d(TEST_DB + "_slide", "train act: slides == null")
+                    Log.d(TEST_DB_SLIDE, "train act: slides == null")
                 } else {
                     for (i in 0..(list.size - 1)) {
-                        Log.d(TEST_DB + "_slide", "train act, L $i : ${list[i]}")
+                        Log.d(TEST_DB_SLIDE, "train act, L $i : ${list[i]}")
                     }
                 }
 
