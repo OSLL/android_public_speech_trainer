@@ -17,12 +17,13 @@ import kotlinx.android.synthetic.main.activity_presentation.*
 const val TIME_ALLOTTED_FOR_TRAINING = "TrainingTime"
 const val MESSAGE_ABOUT_FORMAT_INCORRECTNESS = "Неправильный формат"
 const val NAME_OF_PRES = "presentation_name"
+const val ACTIVITY_PRESENTATION_NAME = ".PresentationActivity"
 
 class PresentationActivity : AppCompatActivity() {
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presentation)
@@ -32,7 +33,7 @@ class PresentationActivity : AppCompatActivity() {
         if (presId > 0)
             presentationData = presentationDataDao?.getPresentationWithId(presId)
         else {
-            Log.d(APST_TAG, "presentation_act: wrong ID")
+            Log.d(APST_TAG + ACTIVITY_PRESENTATION_NAME, "presentation_act: wrong ID")
             return
         }
 
