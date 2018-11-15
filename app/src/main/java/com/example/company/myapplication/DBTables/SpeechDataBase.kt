@@ -5,15 +5,15 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingsDataDao
-import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingsSlideDataDao
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingDataDao
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingSlideDataDao
 
-@Database(entities = arrayOf(PresentationData::class, TrainingsData::class, TrainingsSlideData::class), version = 1)
+@Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 1)
 abstract class SpeechDataBase : RoomDatabase() {
 
     abstract fun PresentationDataDao(): PresentationDataDao
-    abstract fun TrainingsDataDao(): TrainingsDataDao
-    abstract fun TrainingsSlideDataDao(): TrainingsSlideDataDao
+    abstract fun TrainingDataDao(): TrainingDataDao
+    abstract fun TrainingSlideDataDao(): TrainingSlideDataDao
 
     companion object {
         private var INSTANCE: SpeechDataBase? = null
