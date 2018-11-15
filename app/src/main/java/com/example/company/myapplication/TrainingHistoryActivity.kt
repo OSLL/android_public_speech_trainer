@@ -1,12 +1,12 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
-import com.example.company.myapplication.views.PresentationStartpageRow
 import com.example.company.myapplication.views.TrainingHistoryItem
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -15,9 +15,12 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_training_history.*
 
+const val ACTIVITY_HISTORY_NAME = ".TrainingHistoryActivity"
+
 class TrainingHistoryActivity : AppCompatActivity() {
     private var presentationData: PresentationData? = null
 
+    @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_history)
@@ -27,7 +30,7 @@ class TrainingHistoryActivity : AppCompatActivity() {
             presentationData =SpeechDataBase.getInstance(this)?.PresentationDataDao()?.getPresentationWithId(presId)
         }
         else {
-            Log.d(TEST_DB, "stat_act: wrong ID")
+            Log.d(TEST_DB + ACTIVITY_HISTORY_NAME, "stat_act: wrong ID")
             return
         }
 

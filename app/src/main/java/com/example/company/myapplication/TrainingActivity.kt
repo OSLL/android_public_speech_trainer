@@ -37,8 +37,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
-const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec" // информация о взаимодействии с сервисом распознавания речи
-const val TEST_DB_SLIDE = "test_db_slide"
+const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
+const val TEST_DB_SLIDE = "test_db_slide.TrainingActivity"
+const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -74,6 +75,7 @@ class TrainingActivity : AppCompatActivity() {
 
     var isAudio: Boolean? = null
 
+    @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
@@ -84,7 +86,7 @@ class TrainingActivity : AppCompatActivity() {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
         }
         else {
-            Log.d(TEST_DB, "training_act: wrong ID")
+            Log.d(TEST_DB + ACTIVITY_TRAINING_NAME, "training_act: wrong ID")
             return
         }
 
@@ -232,25 +234,27 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("LongLogTag")
     private fun startRecognizingService(){
-        Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"startRecognizingService called")
+        Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"startRecognizingService called")
         audioManager!!.isMicrophoneMute = false
         try {
             taskServiceAnswer = TaskServiceAnswer()
             taskServiceAnswer!!.execute()
         } catch (e: NullPointerException) {
-            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,  "start service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,  "start service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
         }
     }
 
+    @SuppressLint("LongLogTag")
     fun stopRecognizingService(waitForRecognitionComplete: Boolean){
         if (!waitForRecognitionComplete) {
-            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stopRecognizingService called, without waiting for recognition to finish")
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stopRecognizingService called, without waiting for recognition to finish")
             try {
                 taskServiceAnswer!!.setEXECUTE_FLAG(false)
                 taskServiceAnswer!!.cancel(false)
             } catch (e: NullPointerException) {
-                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
             }
         }
         else {
@@ -292,10 +296,10 @@ class TrainingActivity : AppCompatActivity() {
             val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
             if (list != null) {
                 for (i in 0..(list!!.size - 1)) {
-                    Log.d(TEST_DB, "train act, T $i : ${list[i]}")
+                    Log.d(TEST_DB + ACTIVITY_TRAINING_NAME, "train act, T $i : ${list[i]}")
                 }
             } else {
-                Log.d(TEST_DB, "train act: list == null")
+                Log.d(TEST_DB + ACTIVITY_TRAINING_NAME, "train act: list == null")
             }
 
             audioManager!!.isMicrophoneMute = false
@@ -303,14 +307,15 @@ class TrainingActivity : AppCompatActivity() {
                 taskServiceAnswer!!.setEXECUTE_FLAG(false)
                 taskServiceAnswer!!.cancel(false)
             } catch (e: Exception) {
-                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
             }
         }
     }
 
     private val mConnection = object : ServiceConnection {
+        @SuppressLint("LongLogTag")
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"Service Connection: bind service")
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"Service Connection: bind service")
             val binder = service as SpeechRecognitionService.LocalBinder
             speechRecognitionService = binder.service
             mBound = true
@@ -325,18 +330,20 @@ class TrainingActivity : AppCompatActivity() {
     inner class TaskServiceAnswer : AsyncTask<Void, Void, Void>() {
         private var EXECUTE_FLAG = true
 
+        @SuppressLint("LongLogTag")
         override fun onPreExecute() {
-            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"onPreExecute TaskServiceAnswer")
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"onPreExecute TaskServiceAnswer")
             try {
                 bindService(mIntent, mConnection, Service.BIND_AUTO_CREATE)
                 EXECUTE_FLAG = true
             } catch (e: Exception) {
-                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "onPreExecute Async Task error: " + e.toString())
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onPreExecute Async Task error: " + e.toString())
             }
         }
 
+        @SuppressLint("LongLogTag")
         override fun onPostExecute(aVoid: Void?) {
-            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING,"onPostExecute TaskServiceAnswer")
+            Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"onPostExecute TaskServiceAnswer")
             if (mBound) {
                 unbindService(mConnection)
                 mBound = false
@@ -344,20 +351,22 @@ class TrainingActivity : AppCompatActivity() {
             }
         }
 
+        @SuppressLint("LongLogTag")
         override fun onProgressUpdate(vararg values: Void) {
             try {
                 curText = speechRecognitionService!!.getMESSAGE()
             } catch (e: Exception) {
-                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "onProgressUpdate Async Task error: " + e.toString())
+                Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onProgressUpdate Async Task error: " + e.toString())
             }
         }
 
+        @SuppressLint("LongLogTag")
         override fun doInBackground(vararg voids: Void): Void? {
             while (EXECUTE_FLAG) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(150)
                 } catch (e: InterruptedException) {
-                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "doInBackGround error: " + e.printStackTrace())
+                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "doInBackGround error: " + e.printStackTrace())
                 }
 
                 publishProgress()
@@ -408,6 +417,7 @@ class TrainingActivity : AppCompatActivity() {
                 }
             }
 
+            @SuppressLint("LongLogTag")
             override fun onFinish() {
                 timer(1, 1).cancel()
 
@@ -442,7 +452,7 @@ class TrainingActivity : AppCompatActivity() {
                         dialog.show()
                     }, 2500)
                 } catch (e: Exception) {
-                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "onFinish handler error: " + e.toString())
+                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onFinish handler error: " + e.toString())
                 }
             }
         }
