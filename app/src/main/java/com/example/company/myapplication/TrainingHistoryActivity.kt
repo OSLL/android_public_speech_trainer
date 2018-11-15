@@ -30,7 +30,7 @@ class TrainingHistoryActivity : AppCompatActivity() {
             presentationData =SpeechDataBase.getInstance(this)?.PresentationDataDao()?.getPresentationWithId(presId)
         }
         else {
-            Log.d(TEST_DB + ACTIVITY_HISTORY_NAME, "stat_act: wrong ID")
+            Log.d(APST_TAG + ACTIVITY_HISTORY_NAME, "stat_act: wrong ID")
             return
         }
 
