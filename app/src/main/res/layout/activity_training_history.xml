@@ -6,22 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".TrainingHistoryActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_training_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/training1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/first_training" />
-
-        <Button
-            android:id="@+id/training2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/second_training" />
-    </LinearLayout>
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:paddingBottom="50dp"
+        android:clipToPadding="false"
+        />
 
 </android.support.constraint.ConstraintLayout>
