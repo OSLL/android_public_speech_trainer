@@ -4,17 +4,17 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import com.example.putkovdimi.trainspeech.DBTables.TrainingsSlideData
+import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 
 @Dao
-interface TrainingsSlideDataDao {
+interface TrainingSlideDataDao {
 
-    @Query("SELECT * from trainingsslidedata")
-    fun getAll(): List<TrainingsSlideData>
+    @Query("SELECT * from trainingslidedata")
+    fun getAll(): List<TrainingSlideData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(trainingsSlideData: TrainingsSlideData)
+    fun insert(trainingsSlideData: TrainingSlideData)
 
-    @Query("DELETE from trainingsslidedata")
+    @Query("DELETE from trainingslidedata")
     fun deleteAll()
 }
