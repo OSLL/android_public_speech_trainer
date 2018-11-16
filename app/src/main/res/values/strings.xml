@@ -161,5 +161,6 @@
     <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
     <string name="continue_training">Продолжить тренировку</string>
     <string name="go_to_statistics">Перейти к статистике</string>
+    <string name="training_not_end">Тренировка не окончена !</string>
 
 </resources>
