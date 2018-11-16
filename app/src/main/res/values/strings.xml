@@ -158,4 +158,8 @@
     <!-- Example settings for Tests -->
     <string name="test_time">00:30</string>
 
+    <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
+    <string name="continue_training">Продолжить тренировку</string>
+    <string name="go_to_statistics">Перейти к статистике</string>
+
 </resources>

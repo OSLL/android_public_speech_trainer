@@ -54,12 +54,12 @@ class TrainingHistoryActivity : AppCompatActivity() {
 
             if (!row.trainingEndFlag) {
                 val builder = AlertDialog.Builder(this)
-                builder.setMessage("Вы не завершили данную тренировку.")
-                builder.setPositiveButton("Продолжить тренировку") { _, _ ->
+                builder.setMessage(getString(R.string.you_dont_end_training))
+                builder.setPositiveButton(getString(R.string.continue_training)) { _, _ ->
                     Toast.makeText(this, "coming soon...", Toast.LENGTH_LONG).show()
                 }
 
-                builder.setNegativeButton("Перейти к статистике") { _, _ ->
+                builder.setNegativeButton(getString(R.string.go_to_statistics)) { _, _ ->
                     startActivity(i)
                 }
                 val dialog: AlertDialog = builder.create()
