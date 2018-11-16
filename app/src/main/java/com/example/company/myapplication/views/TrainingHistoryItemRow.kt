@@ -33,7 +33,7 @@ class TrainingHistoryItemRow(private val training: TrainingData, private val sli
         if (slides != null && slides.count() < slidesCount) {
             trainingEndFlag = false
             viewHolder.itemView.training_not_end_view_training_history_row.visibility = View.VISIBLE
-            viewHolder.itemView.training_history_row.background = ctx.getDrawable(R.drawable.training_not_end_item_background)
+            viewHolder.itemView.background= ctx.getDrawable(R.drawable.training_not_end_item_background)
         }
 
         trainingId = training.id
