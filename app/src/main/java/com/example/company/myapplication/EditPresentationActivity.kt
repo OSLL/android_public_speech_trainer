@@ -44,7 +44,7 @@ class EditPresentationActivity : AppCompatActivity() {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
         }
         else {
-            Log.d(TEST_DB, "edit_pres_act: wrong ID")
+            Log.d(APST_TAG, "edit_pres_act: wrong ID")
             return
         }
 

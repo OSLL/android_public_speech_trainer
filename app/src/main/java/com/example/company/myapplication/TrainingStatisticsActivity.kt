@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -9,11 +10,15 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils.split
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
+import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
@@ -28,34 +33,42 @@ var bmpBase: Bitmap? = null
 var url = ""
 var speed_statistics: Int? = null
 
+const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
+
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
 
+    private var trainingData: TrainingData? = null
+
     private var finishBmp: Bitmap? = null
+
+    @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
-        if (presId > 0) {
+        val trainingId = intent.getIntExtra(getString(R.string.CURRENT_TRAINING_ID),-1)
+        if (presId > 0 && trainingId > 0) {
             presentationData = presentationDataDao?.getPresentationWithId(presId)
+            trainingData = SpeechDataBase.getInstance(this)?.TrainingDataDao()?.getTrainingWithId(trainingId)
         }
         else {
-            Log.d(TEST_DB, "training_act: wrong ID")
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "stat_act: wrong ID")
             return
         }
 
+
         try {
-            //share example
             DrawPict()
             url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
 
         }catch (e: Exception) {
-            Log.d("aga_get_it", e.toString())
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
         }
         share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
@@ -63,30 +76,34 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             sharingIntent.type = "image/jpg"
             startActivity(Intent.createChooser(sharingIntent, "Share with friends"))
         }
-        //-------------
 
         returnBut.setOnClickListener{
             val returnIntent = Intent(this, StartPageActivity::class.java)
             startActivity(returnIntent)
         }
 
-        val presentationEntries = intent.getSerializableExtra(getString(R.string.presentationEntries)) as HashMap<Int,Float?>
+        val trainingSlideDBHelper = TrainingSlideDBHelper(this)
+        val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
+
         val presentationSpeedData = mutableListOf<BarEntry>()
-        for (i in 0..(presentationEntries.size-1)) {
-            presentationSpeedData.add(BarEntry((i).toFloat(), presentationEntries.get(i + 1)!!.toFloat()))
+        for (i in 0..(trainingSlideList!!.size-1)) {
+            val slide = trainingSlideList[i]
+            var speed = 0f
+            if (slide.knownWords != "") speed = slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * 60f
+            presentationSpeedData.add(BarEntry((i).toFloat(), speed))
         }
 
         printSpeedLineChart(presentationSpeedData)
 
 
-        val presentationTop10Words = getTop10Words(intent.getStringExtra("allRecognizedText"))
+        val presentationTop10Words = getTop10Words(trainingData!!.allRecognizedText)
         val entries = ArrayList<PieEntry>()
         for (pair in presentationTop10Words){
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
         }
         printPiechart(entries)
 
-        speed_statistics = intent.getStringExtra("allRecognizedText").split(" ").size
+        speed_statistics = trainingData!!.allRecognizedText.split(" ").size
     }
 
     fun DrawPict() {

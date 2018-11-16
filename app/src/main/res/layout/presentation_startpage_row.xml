@@ -98,6 +98,13 @@
             android:gravity="right">
 
             <ImageButton
+                android:id="@+id/training_history_btn_start_page_row"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:drawable/ic_menu_recent_history" />
+
+            <ImageButton
                 android:id="@+id/change_btn_presentation_start_page_row"
                 android:layout_width="31dp"
                 android:layout_height="31dp"

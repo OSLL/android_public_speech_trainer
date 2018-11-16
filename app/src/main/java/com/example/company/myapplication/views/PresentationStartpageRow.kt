@@ -77,6 +77,12 @@ class PresentationStartpageRow(private val presentation: PresentationData,privat
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
+
+        viewHolder.itemView.training_history_btn_start_page_row.setOnClickListener {
+            val i = Intent(ctx, TrainingHistoryActivity::class.java)
+            i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID), presentationId)
+            ctx.startActivity(i)
+        }
     }
 
     @SuppressLint("UseSparseArrays")

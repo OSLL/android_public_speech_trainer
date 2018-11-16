@@ -14,7 +14,8 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import java.io.FileNotFoundException
 
 const val FILE_SYSTEM = "file_system"
-const val TEST_DB = "test_db"
+const val APST_TAG = "APST"
+const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
@@ -70,10 +71,10 @@ class CreatePresentationActivity : AppCompatActivity() {
             speechDataBase?.PresentationDataDao()?.insert(newPresentation)
             currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
 
-            Log.d(TEST_DB, "create new pres: $newPresentation")
+            Log.d(APST_TAG + ACTIVITY_CREATE_PRESENTATION_NAME, "create new pres: $newPresentation")
         }
         else {
-            Log.d(TEST_DB, "open exists presentation: $newPresentation")
+            Log.d(APST_TAG + ACTIVITY_CREATE_PRESENTATION_NAME, "open exists presentation: $newPresentation")
             Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_LONG).show()
         }
 
