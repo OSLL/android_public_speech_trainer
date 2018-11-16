@@ -20,7 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import com.example.company.myapplication.views.PresentationStartpageRow
+import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -107,7 +107,7 @@ class StartPageActivity : AppCompatActivity() {
                     presentationDataDao?.deletePresentationWithId(presentation.id!!)
                     continue
                 }
-                adapter?.add(PresentationStartpageRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
+                adapter?.add(PresentationStartpageItemRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
             } catch (e: Exception) {
                 Toast.makeText(this,"file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!",Toast.LENGTH_LONG).show()
                 presentationDataDao?.deletePresentationWithId(presentation.id!!)
@@ -115,7 +115,7 @@ class StartPageActivity : AppCompatActivity() {
         }
         recyclerview_startpage.adapter = adapter
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
-            val row = item as PresentationStartpageRow
+            val row = item as PresentationStartpageItemRow
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)
             startActivity(i)

@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.company.myapplication.views.PresentationStartpageRow
+import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -37,7 +37,7 @@ class PresentationActivity : AppCompatActivity() {
             return
         }
 
-        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
+        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
         if (changePresentationFlag) {
             training.text = getString(R.string.save)

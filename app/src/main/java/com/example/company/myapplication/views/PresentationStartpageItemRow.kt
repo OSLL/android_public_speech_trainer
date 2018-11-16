@@ -19,7 +19,7 @@ import com.example.company.myapplication.*
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 
 
-class PresentationStartpageRow(private val presentation: PresentationData,private val firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
+class PresentationStartpageItemRow(private val presentation: PresentationData, private val firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
     companion object {
         const val activatedChangePresentationFlag = 1
     }
