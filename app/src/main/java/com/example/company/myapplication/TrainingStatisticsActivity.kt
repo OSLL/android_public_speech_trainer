@@ -1,18 +1,13 @@
 package com.example.company.myapplication
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.*
 import android.net.Uri
-import android.media.AudioManager
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils.split
 import android.util.Log
-import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
@@ -25,9 +20,10 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.github.mikephil.charting.utils.ViewPortHandler
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import java.text.BreakIterator
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 var bmpBase: Bitmap? = null
 var url = ""
@@ -40,6 +36,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
+    private var trainingSlideDBHelper: TrainingSlideDBHelper? = null
+    private var trainingDBHelper: TrainingDBHelper? = null
 
     private var trainingData: TrainingData? = null
 
@@ -62,15 +60,17 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             return
         }
 
+        trainingSlideDBHelper = TrainingSlideDBHelper(this)
+        trainingDBHelper = TrainingDBHelper(this)
 
-        try {
-            DrawPict()
-            url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
-
-        }catch (e: Exception) {
-            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
-        }
         share1.setOnClickListener {
+            try {
+                DrawPict()
+                url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
+
+            }catch (e: Exception) {
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
+            }
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(url))
             sharingIntent.type = "image/jpg"
@@ -82,8 +82,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(returnIntent)
         }
 
-        val trainingSlideDBHelper = TrainingSlideDBHelper(this)
-        val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
+        val trainingSlideList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
 
         val presentationSpeedData = mutableListOf<BarEntry>()
         for (i in 0..(trainingSlideList!!.size-1)) {
@@ -107,6 +106,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     }
 
     fun DrawPict() {
+        val trainingsList = trainingDBHelper?.getAllTrainingsForPresentation(presentationData!!) ?: return
+        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
+
+        val trainingCount = trainingsList.size
+        var currentTrainingTime: Long = 0
+
+        for (slide in trainingSlidesList)
+            currentTrainingTime += slide.spentTimeInSec!!
+
         val width = bmpBase?.width
         val height = bmpBase?.height
         val presName = presentationData?.name
@@ -149,7 +157,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             countPaint.style = Paint.Style.FILL
             countPaint.isAntiAlias = true
             countPaint.textSize = 20f
-            countC.drawText(getString(R.string.count_of_training), 20f, 20f, countPaint)
+            countC.drawText(getString(R.string.count_of_training) + getCase(trainingCount, "раз", "раза", "раз"), 20f, 20f, countPaint)
 
             val statBmp = Bitmap.createBitmap(NWidth, 115, Bitmap.Config.ARGB_8888)
             val statC = Canvas(statBmp)
@@ -161,8 +169,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             statPaint.textSize = 20f
             statC.drawText(getString(R.string.result_of_training), 20f, 20f, statPaint)
             statPaint.textSize = 17f
-            statPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC);
-            statC.drawText(getString(R.string.time_of_training), 30f, 43f, statPaint)
+            statPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+            statC.drawText(getString(R.string.time_of_training) + getStringPresentationTimeLimit(currentTrainingTime), 30f, 43f, statPaint)
             statC.drawText(getString(R.string.record_of_training), 30f, 66f, statPaint)
             statC.drawText(getString(R.string.earnings_of_training), 30f, 99f, statPaint)
 
@@ -177,6 +185,47 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             canvas.drawCircle(185f, NHeight.toFloat() + 161f, 15f, paintCircle)
             canvas.drawCircle(225f, NHeight.toFloat() + 161f, 15f, paintCircle)
             canvas.drawCircle(265f, NHeight.toFloat() + 161f, 15f, paintCircle)
+        }
+    }
+
+    private fun getCase(n: Int? , case1: String, case2: String, case3: String): String {
+        if (n == null || n <= 0) {
+            return "undefined"
+        }
+
+        val titles = arrayOf("$n $case1","$n $case2","$n $case3")
+        val cases = arrayOf(2, 0, 1, 1, 1, 2)
+
+        return " " + titles[if (n % 100 in 5..19) 2 else cases[if (n % 10 < 5) n % 10 else 5]]
+    }
+
+    @SuppressLint("UseSparseArrays")
+    private fun getStringPresentationTimeLimit(t: Long?): String {
+
+        if (t == null)
+            return "undefined"
+
+        var millisUntilFinishedVar: Long = t
+
+
+        val minutes = TimeUnit.SECONDS.toMinutes(millisUntilFinishedVar)
+        millisUntilFinishedVar -= TimeUnit.MINUTES.toSeconds(minutes)
+
+        val seconds = millisUntilFinishedVar
+
+        val min = getCase(minutes.toInt(), "минуту", "минуты", "минут")
+        val sec = getCase(seconds.toInt(), "секунду", "секунды", "секунд")
+
+        val res = String.format(
+                Locale.getDefault(),
+                "%01d $min %01d $sec",
+                minutes, seconds
+        )
+
+        if(minutes.toInt() == 0){
+            return " ${res.substring(res.indexOf("с") - 3)}"
+        } else {
+            return " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 6) + res.substring(res.indexOf("с") - 3)}"
         }
     }
 
