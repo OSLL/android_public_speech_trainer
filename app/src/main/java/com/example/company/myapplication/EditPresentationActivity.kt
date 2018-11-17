@@ -72,6 +72,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
                 i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                 startActivity(i)
+                finish()
             }
             else
                 Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
