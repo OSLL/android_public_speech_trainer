@@ -15,8 +15,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
+data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
+                     val pauseAverageLength: Long, val longPausesAmount: Int)
+
 class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
-    private val silenceLevel = 1.0
+    private val silenceCoefficient = 1.0
 
     private val audioBuffer: ShortArray
     private val countdownRecord: AudioRecord
@@ -25,8 +28,14 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     private val speechVolumesList = mutableListOf<Double>()
     private val byteArrayOutputStream = ByteArrayOutputStream()
 
+    private val slides = mutableListOf<SlideInfo>()
+    private val pausesPerSlide = mutableListOf<Long>()
+
     private lateinit var silenceAndSpeechPercentage: Pair<Double, Double>
     private var speechDuration: Long = 0
+
+    private var isPause = false
+    private var pauseStartTime: Long = 0
 
     init {
         var bufferSize = AudioRecord.getMinBufferSize(
@@ -82,11 +91,16 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
             countdownRecord.stop()
             countdownRecord.release()
 
+            val volumeLevels = getVolumeLevels(countdownVolumesList)
+            Log.wtf(AUDIO_RECORDING, "silence min level: ${volumeLevels.first}")
+            Log.wtf(AUDIO_RECORDING, "silence max level: ${volumeLevels.second}")
+            Log.wtf(AUDIO_RECORDING, "silence average level: ${volumeLevels.third}")
+
             Log.i(AUDIO_RECORDING, "finished countdown audio recording")
         }
     }
 
-    fun recordSpeechAudio(continueCondition: () -> Boolean){
+    fun recordSpeechAudio(continueCondition: () -> Boolean, nextSlide: () -> Boolean){
         thread {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
 
@@ -97,15 +111,46 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
             var totalFragmentsRead: Long = 0
             var silentFragmentsRead: Long = 0
+            var totalFragmentsOnSlide: Long = 0
+            var silentFragmentsOnSlide: Long = 0
+
+            var slideNumber = 1
+
+            val silenceLevel = (getAverageCountdownVolumeLevel() + getMaximalCountdownVolumeLevel()) / 2
 
             while (continueCondition.invoke()) {
                 val shortsRead = speechRecord.read(audioBuffer, 0, audioBuffer.size)
                 val fragmentVolume = calculateVolume(shortsRead)
                 speechVolumesList.add(fragmentVolume)
-                if (fragmentVolume < (getAverageCountdownVolumeLevel() + getMaximalCountdownVolumeLevel()) / 2) {
+                if (fragmentVolume < silenceLevel) {
+                    if (!isPause) {
+                        isPause = true
+                        pauseStartTime = System.currentTimeMillis()
+                    }
                     silentFragmentsRead++
+                    silentFragmentsOnSlide++
+                } else if (isPause) {
+                    pausesPerSlide.add(System.currentTimeMillis() - pauseStartTime)
+                    isPause = false
                 }
+                totalFragmentsOnSlide++
                 totalFragmentsRead++
+
+                if (nextSlide.invoke() || !(continueCondition.invoke())) {
+                    sendBroadcastIntent(Intent(NEXT_SLIDE_BUTTON_ACTION))
+
+                    val silencePercentageOnSlide = silentFragmentsOnSlide.toDouble() /
+                            totalFragmentsOnSlide * silenceCoefficient
+                    val averageSilenceLength = pausesPerSlide.average().toLong()
+                    val longPausesAmount = pausesPerSlide
+                        .filter { it -> it > averageSilenceLength }.size
+
+                    slides.add(SlideInfo(slideNumber++, silencePercentageOnSlide,
+                        averageSilenceLength, longPausesAmount))
+
+                    totalFragmentsOnSlide = 0
+                    silentFragmentsOnSlide = 0
+                }
 
                 val bufferBytes = ByteBuffer.allocate(shortsRead * 2)
                 bufferBytes.order(ByteOrder.LITTLE_ENDIAN)
@@ -120,9 +165,13 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
             speechDuration = duration
 
-            val silencePercentage = silentFragmentsRead.toDouble() / totalFragmentsRead * silenceLevel
+            val silencePercentage = silentFragmentsRead.toDouble() /
+                    totalFragmentsRead * silenceCoefficient
             val speechPercentage = 1 - silencePercentage
             silenceAndSpeechPercentage = silencePercentage to speechPercentage
+
+            Log.wtf(AUDIO_RECORDING, "silence: $silencePercentage")
+            Log.wtf(AUDIO_RECORDING, "speech: $speechPercentage")
 
             val postRecordingIntent = Intent()
             postRecordingIntent.action = POST_SPEECH_ACTION
@@ -139,8 +188,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
         }
     }
 
-    private fun getVolumeLevels(volumesList: DoubleArray?): Triple<Double, Double, Double> {
-        return if (volumesList == null) {
+    private fun getVolumeLevels(volumesList: MutableList<Double>): Triple<Double, Double, Double> {
+        return if (volumesList.isEmpty()) {
             Triple(0.0, 0.0, 0.0)
         } else {
             volumesList.sort()
@@ -149,23 +198,25 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     }
 
     fun getCountdownVolumeLevels(): Triple<Double, Double, Double> {
-        return getVolumeLevels(countdownVolumesList.toDoubleArray())
+        return getVolumeLevels(countdownVolumesList)
     }
 
     fun getSpeechVolumeLevels(): Triple<Double, Double, Double> {
-        return getVolumeLevels(speechVolumesList.toDoubleArray())
+        return getVolumeLevels(speechVolumesList)
     }
 
     fun getSilenceAndSpeechPercentage(): Pair<Double, Double> = silenceAndSpeechPercentage
 
     fun getSpeechDuration(): Long = speechDuration
 
+    fun getSlideInfo(): List<SlideInfo> = slides
+
     private fun getMaximalCountdownVolumeLevel(): Double {
-        return getVolumeLevels(countdownVolumesList.toDoubleArray()).second
+        return getVolumeLevels(countdownVolumesList).second
     }
 
     private fun getAverageCountdownVolumeLevel(): Double {
-        return getVolumeLevels(countdownVolumesList.toDoubleArray()).third
+        return getVolumeLevels(countdownVolumesList).third
     }
 
     private fun saveFile(byteArrayOutputStream: ByteArrayOutputStream) {

@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.method.ScrollingMovementMethod
 import android.text.style.StyleSpan
 import android.view.*
 import android.widget.Button
@@ -29,12 +30,14 @@ const val RECORD_AUDIO_PERMISSION = 200 // change constant?
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
 const val POST_COUNTDOWN_ACTION = "com.example.company.myapplication.ACTION_POST_COUNTDOWN" // TODO: change name later when we get a new package name
 const val POST_SPEECH_ACTION = "com.example.company.myapplication.ACTION_POST_RECORDING"
+const val NEXT_SLIDE_BUTTON_ACTION = "com.example.company.myapplication.ACTION_NEXT_SLIDE_BUTTON"
 const val SAMPLING_RATE = 44100
 
 
 class VoiceAnalysisActivity : AppCompatActivity() {
-    private val postCountdownReceiver = PostCountdownReciever()
+    private val postCountdownReceiver = PostCountdownReceiver()
     private val postSpeechReceiver = PostSpeechReceiver()
+    private val setNextSlideButtonReceiver = SetNextSlideButtonReceiver()
 
     lateinit var audioAnalyzer: AudioAnalyzer
 
@@ -43,10 +46,12 @@ class VoiceAnalysisActivity : AppCompatActivity() {
     private lateinit var resultsTextView: TextView
     private lateinit var stopRecordingButton: Button
 
+    var nextButtonPressed = false
+
     private fun initLayout() {
         val startRecordingButton = findViewById<Button>(R.id.start_recording_button)
         stopRecordingButton = findViewById(R.id.stop_recording_button)
-        //val nextSlideButton = findViewById<Button>(R.id.nextSlideButton)
+        val nextSlideButton = findViewById<Button>(R.id.next_slide_button)
         resultsTextView = findViewById(R.id.voice_analysis_text_view)
 
         stopRecordingButton.isEnabled = false
@@ -64,6 +69,12 @@ class VoiceAnalysisActivity : AppCompatActivity() {
             startRecordingButton.isEnabled = true
             stopRecordingButton.isEnabled = false
         }
+
+        nextSlideButton.setOnClickListener {
+            nextButtonPressed = true
+        }
+
+        resultsTextView.movementMethod = ScrollingMovementMethod()
     }
 
     private fun initCountdown() {
@@ -109,7 +120,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
                 RECORD_AUDIO_PERMISSION
             )
         } else {
-            audioAnalyzer.recordSpeechAudio { stopRecordingButton.isEnabled }
+            audioAnalyzer.recordSpeechAudio({ stopRecordingButton.isEnabled }, { nextButtonPressed })
         }
     }
 
@@ -121,7 +132,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RECORD_AUDIO_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                audioAnalyzer.recordSpeechAudio { stopRecordingButton.isEnabled }
+                audioAnalyzer.recordSpeechAudio({ stopRecordingButton.isEnabled }, { nextButtonPressed })
             }
         }
     }
@@ -139,6 +150,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(postCountdownReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(postSpeechReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(setNextSlideButtonReceiver)
     }
 
     override fun onResume() {
@@ -150,6 +162,9 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(postSpeechReceiver,
                 IntentFilter(POST_SPEECH_ACTION))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(setNextSlideButtonReceiver,
+                IntentFilter(NEXT_SLIDE_BUTTON_ACTION))
     }
 
     abstract inner class AudioAnalyzerReceiver : BroadcastReceiver() {
@@ -172,7 +187,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         }
     }
 
-    inner class PostCountdownReciever : AudioAnalyzerReceiver() {
+    inner class PostCountdownReceiver : AudioAnalyzerReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             outputVolumeLevels(getString(R.string.countdown_volume_levels),
                 audioAnalyzer.getCountdownVolumeLevels())
@@ -181,6 +196,18 @@ class VoiceAnalysisActivity : AppCompatActivity() {
     }
 
     inner class PostSpeechReceiver : AudioAnalyzerReceiver() {
+        private fun outputSlideInformation(slideInfo: SlideInfo) {
+            val margin = "  "
+
+            outputTitleAndContent("${getString(R.string.slide)} ${slideInfo.slideNumber}:\n")
+            resultsTextView.append("$margin${getString(R.string.silence_percentage_on_slide)}: " +
+                    "%.2f".format(slideInfo.silencePercentage) + "%\n")
+            resultsTextView.append("$margin${getString(R.string.average_pause_length)}: " +
+                    "${formatTimeToSeconds(slideInfo.pauseAverageLength)} ${getString(R.string.seconds)}\n")
+            resultsTextView.append("$margin${getString(R.string.long_pauses_amount)}: " +
+                    "${slideInfo.longPausesAmount}\n")
+        }
+
         override fun onReceive(p0: Context?, p1: Intent?) {
             outputVolumeLevels(getString(R.string.speech_volume_levels),
                 audioAnalyzer.getSpeechVolumeLevels())
@@ -193,7 +220,16 @@ class VoiceAnalysisActivity : AppCompatActivity() {
                     .format(silenceAndSpeechPercentage.second* 100) + "%\n" )
 
             outputTitleAndContent(getString(R.string.duration),
-                "\n${formatTime(audioAnalyzer.getSpeechDuration())}")
+                "\n${formatTime(audioAnalyzer.getSpeechDuration())}\n")
+
+            outputTitleAndContent(getString(R.string.breakdown_by_slide))
+            audioAnalyzer.getSlideInfo().forEach { it -> outputSlideInformation(it) }
+        }
+    }
+
+    inner class SetNextSlideButtonReceiver : AudioAnalyzerReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            nextButtonPressed = false
         }
     }
 }
@@ -261,4 +297,8 @@ fun formatTime(timeInMillis: Long): String {
 
 fun formatNumberTwoDigits(number: Long): String {
     return String.format("%02d", number)
+}
+
+fun formatTimeToSeconds(timeInMillis: Long): String {
+    return "%.2f".format(timeInMillis.toDouble() / 1000)
 }

@@ -130,7 +130,12 @@
     <string name="pauses">Паузы</string>
     <string name="voice">Голос</string>
     <string name="duration">Длительность записи</string>
-    <string name="only_silence">Анализатор \"не слышит\" ваш голос. Говорите громче или перейдите в более тихое помещение.</string>
+    <string name="breakdown_by_slide">Информация по слайдам</string>
+    <string name="slide">Слайд</string>
+    <string name="silence_percentage_on_slide">Суммарная доля пауз</string>
+    <string name="average_pause_length">Средняя длина паузы</string>
+    <string name="long_pauses_amount">Количество пауз с длиной выше средней</string>
+    <string name="seconds">сек.</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
 

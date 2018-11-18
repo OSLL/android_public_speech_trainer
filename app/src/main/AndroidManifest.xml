@@ -16,7 +16,8 @@
         android:label="@string/activity_start_page_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
         <activity android:name=".StartPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
