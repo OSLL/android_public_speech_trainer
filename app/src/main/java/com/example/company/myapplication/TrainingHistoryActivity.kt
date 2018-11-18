@@ -20,6 +20,10 @@ import kotlinx.android.synthetic.main.activity_training_history.*
 const val ACTIVITY_HISTORY_NAME = ".TrainingHistoryActivity"
 
 class TrainingHistoryActivity : AppCompatActivity() {
+    companion object {
+        const val launchedFromHistoryActivityFlag = 1
+    }
+
     private var presentationData: PresentationData? = null
 
     @SuppressLint("LongLogTag")
@@ -51,6 +55,7 @@ class TrainingHistoryActivity : AppCompatActivity() {
             val i = Intent(this, TrainingStatisticsActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
             i.putExtra(getString(R.string.CURRENT_TRAINING_ID), row.trainingId)
+            i.putExtra(getString(R.string.launchedFromHistoryActivityFlag), launchedFromHistoryActivityFlag)
 
             if (!row.trainingEndFlag) {
                 val builder = AlertDialog.Builder(this)

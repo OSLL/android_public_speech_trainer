@@ -43,23 +43,6 @@ class PresentationStartpageItemRow(private val presentation: PresentationData, p
         presentationName = presentation.name
         presentationTimeLimit = presentation.timeLimit
 
-        viewHolder.itemView.change_btn_presentation_start_page_row.setOnClickListener {
-            val builder = AlertDialog.Builder(ctx)
-            builder.setMessage(ctx.getString(R.string.change_presentation_task) + "${presentation.name} ?")
-
-            builder.setPositiveButton(ctx.getString(R.string.change)) { _, _ ->
-                val i = Intent(ctx, EditPresentationActivity::class.java)
-                i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID),presentation.id)
-                i.putExtra(ctx.getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
-                startActivity(ctx,i,null)
-            }
-
-            builder.setNegativeButton(ctx.getString(R.string.no)) { _, _ -> }
-
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-        }
-
         viewHolder.itemView.training_history_btn_start_page_row.setOnClickListener {
             try {
                 val i = Intent(ctx, TrainingHistoryActivity::class.java)

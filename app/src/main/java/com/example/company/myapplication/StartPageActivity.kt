@@ -184,11 +184,14 @@ class StartPageActivity : AppCompatActivity() {
                 if (row.presentationId != null)
                     SpeechDataBase.getInstance(this)?.PresentationDataDao()?.deletePresentationWithId(row.presentationId!!)
                 else {
-                    Log.d("presentation_row_test", "error id = ${row.presentationId}")
                 }
             }
 
-            builder.setNegativeButton(getString(R.string.leave)) { _, _ ->
+            builder.setNegativeButton(getString(R.string.change)) { _, _ ->
+                val i = Intent(this, EditPresentationActivity::class.java)
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),row.presentationId)
+                i.putExtra(getString(R.string.changePresentationFlag), PresentationStartpageItemRow.activatedChangePresentationFlag)
+                startActivity(i)
                 view.background = defaultBackGround
             }
             builder.setOnCancelListener {
