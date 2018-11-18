@@ -5,14 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.pdf.PdfRenderer
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
@@ -23,16 +17,13 @@ import android.util.Log
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
+import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
@@ -40,18 +31,17 @@ import kotlin.collections.HashMap
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
 const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
 
+@Suppress("DEPRECATION")
 class TrainingActivity : AppCompatActivity() {
 
-    private var renderer: PdfRenderer? = null
-    private var currentPage: PdfRenderer.Page? = null
-    private var parcelFileDescriptor: ParcelFileDescriptor? = null
+    private var pdfReader: PdfToBitmap? = null
 
     private var isCancelled = false
 
     private var mPlayer: MediaPlayer? = null
 
     @SuppressLint("UseSparseArrays")
-    var TimePerSlide = HashMap<Int, Long>()
+    var timePerSlide = HashMap<Int, Long>()
 
     //speech recognizer part
     private var curPageNum = 1
@@ -62,7 +52,7 @@ class TrainingActivity : AppCompatActivity() {
     private var taskServiceAnswer: TaskServiceAnswer? = null
     private var audioManager: AudioManager? = null
     private var lastSlideTime: String = ""
-    private var ALL_RECOGNIZED_TEXT = "" //Текст для PIE CHART
+    private var allRecognizedText = "" //Текст для PIE CHART
 
     private var time: Long = 0.toLong()
 
@@ -94,15 +84,12 @@ class TrainingActivity : AppCompatActivity() {
 
         time = presentationData?.timeLimit!!
 
-        saveImage()
+        pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
-
         addPermission()
-
-        //finish.isEnabled = false
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         mIntent = Intent(this@TrainingActivity,SpeechRecognitionService::class.java)
@@ -125,12 +112,13 @@ class TrainingActivity : AppCompatActivity() {
             audioManager!!.isMicrophoneMute = true
             Toast.makeText(this, "Saving State, Please Wait", Toast.LENGTH_SHORT).show()
 
-            val index = currentPage?.index
-            if (renderer != null && index != null) {
+            val index = pdfReader?.getPageIndexStatus()
+            if (index != null) {
                 val handler = Handler()
                 handler.postDelayed({
-                    val NIndex: Int = index
-                    renderPage(NIndex + 1)
+                    val nIndex: Int = index
+                    slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
+                    //renderPage(nIndex + 1)
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(
@@ -139,19 +127,23 @@ class TrainingActivity : AppCompatActivity() {
                     )
 
                     time -= min.toLong() * 60 + sec.toLong()
-                    TimePerSlide[index + 1] = time
+                    timePerSlide[index + 1] = time
                     time = min.toLong()*60 + sec.toLong()
 
                     val tsd = TrainingSlideData()
-                    tsd.spentTimeInSec = TimePerSlide[curPageNum]!!
+                    tsd.spentTimeInSec = timePerSlide[curPageNum]!!
                     tsd.knownWords = curText
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
-                    ALL_RECOGNIZED_TEXT += " $curText"
+                    allRecognizedText += " $curText"
                     curText = ""
                     speechRecognitionService!!.setMESSAGE("")
                     audioManager!!.isMicrophoneMute = false
                     finish.isEnabled = true
+
+                    Log.d("test_pr", "page count: ${pdfReader?.getPageCount()!!}, currentPage: ${pdfReader?.getPageIndexStatus()!!}")
+                    if (pdfReader?.getPageCount()!! > (pdfReader?.getPageIndexStatus()!! + 1))
+                        next.isEnabled = true
                 }, 2000)
 
             }
@@ -162,58 +154,22 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("SetWorldReadable")
-    private fun saveImage() {
-
-        val temp = File(this.cacheDir, "tempImage.pdf")
-
-        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_WRITE)
-        renderer = PdfRenderer(parcelFileDescriptor)
-
-        currentPage = renderer?.openPage(0)
-        val width = currentPage?.width
-        val height = currentPage?.height
-        if (width != null && height != null) {
-            val defW = 397f
-            val defH = 298f
-
-            val coeff = height.toFloat()/width.toFloat()
-
-            val curW = defW.toInt()
-            val curH = (defW * coeff).toInt()
-
-            bmpBase = Bitmap.createBitmap(curW, curH, Bitmap.Config.ARGB_8888)
-
-            val whitePaint = Paint()
-            whitePaint.style = Paint.Style.FILL
-            whitePaint.color = Color.WHITE
-
-            val BmpToWhite = Canvas(bmpBase)
-            BmpToWhite.drawPaint(whitePaint)
-
-            currentPage?.render(bmpBase, null,null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
-        }
-
-    }
-
-    //speech recognizer =====
-
     private  fun muteSound(){
-        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
-        amanager.setStreamMute(AudioManager.STREAM_ALARM, true)
-        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true)
-        amanager.setStreamMute(AudioManager.STREAM_RING, true)
-        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+        val mManager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        mManager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true)
+        mManager.setStreamMute(AudioManager.STREAM_ALARM, true)
+        mManager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        mManager.setStreamMute(AudioManager.STREAM_RING, true)
+        mManager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
     }
 
-    private fun unmuteSound(){
-        var amanager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
-        amanager.setStreamMute(AudioManager.STREAM_ALARM, false)
-        amanager.setStreamMute(AudioManager.STREAM_MUSIC, false)
-        amanager.setStreamMute(AudioManager.STREAM_RING, false)
-        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
+    private fun unMuteSound(){
+        val mManager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        mManager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false)
+        mManager.setStreamMute(AudioManager.STREAM_ALARM, false)
+        mManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        mManager.setStreamMute(AudioManager.STREAM_RING, false)
+        mManager.setStreamMute(AudioManager.STREAM_SYSTEM, false)
     }
 
     private fun addPermission() {
@@ -250,7 +206,7 @@ class TrainingActivity : AppCompatActivity() {
         if (!waitForRecognitionComplete) {
             Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stopRecognizingService called, without waiting for recognition to finish")
             try {
-                taskServiceAnswer!!.setEXECUTE_FLAG(false)
+                taskServiceAnswer!!.setExecuteFlag(false)
                 taskServiceAnswer!!.cancel(false)
             } catch (e: NullPointerException) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
@@ -263,10 +219,10 @@ class TrainingActivity : AppCompatActivity() {
                 val sec = lastSlideTime.substring(lastSlideTime.indexOf(":") + 2, lastSlideTime.indexOf("s") - 1)
 
                 time -= min.toLong() * 60 + sec.toLong()
-                TimePerSlide[curPageNum] = time
+                timePerSlide[curPageNum] = time
 
                 val tsd = TrainingSlideData()
-                tsd.spentTimeInSec = TimePerSlide[curPageNum]!!
+                tsd.spentTimeInSec = timePerSlide[curPageNum]!!
                 tsd.knownWords = curText
                 trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
@@ -284,9 +240,9 @@ class TrainingActivity : AppCompatActivity() {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "(stop service) put presentation entry error: " + e.toString())
             }
 
-            ALL_RECOGNIZED_TEXT += curText
+            allRecognizedText += curText
 
-            trainingData?.allRecognizedText = ALL_RECOGNIZED_TEXT
+            trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
 
             val trainingDBHelper = TrainingDBHelper(this)
@@ -294,7 +250,7 @@ class TrainingActivity : AppCompatActivity() {
 
             val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
             if (list != null) {
-                for (i in 0..(list!!.size - 1)) {
+                for (i in 0..(list.size - 1)) {
                     Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act, T $i : ${list[i]}")
                 }
             } else {
@@ -303,7 +259,7 @@ class TrainingActivity : AppCompatActivity() {
 
             audioManager!!.isMicrophoneMute = false
             try {
-                taskServiceAnswer!!.setEXECUTE_FLAG(false)
+                taskServiceAnswer!!.setExecuteFlag(false)
                 taskServiceAnswer!!.cancel(false)
             } catch (e: Exception) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stop service error: " + e.toString() + ", service status: " + taskServiceAnswer!!.status.toString())
@@ -327,14 +283,14 @@ class TrainingActivity : AppCompatActivity() {
 
     @SuppressLint("StaticFieldLeak")
     inner class TaskServiceAnswer : AsyncTask<Void, Void, Void>() {
-        private var EXECUTE_FLAG = true
+        private var executeFlag = true
 
         @SuppressLint("LongLogTag")
         override fun onPreExecute() {
             Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"onPreExecute TaskServiceAnswer")
             try {
                 bindService(mIntent, mConnection, Service.BIND_AUTO_CREATE)
-                EXECUTE_FLAG = true
+                executeFlag = true
             } catch (e: Exception) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onPreExecute Async Task error: " + e.toString())
             }
@@ -361,7 +317,7 @@ class TrainingActivity : AppCompatActivity() {
 
         @SuppressLint("LongLogTag")
         override fun doInBackground(vararg voids: Void): Void? {
-            while (EXECUTE_FLAG) {
+            while (executeFlag) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(150)
                 } catch (e: InterruptedException) {
@@ -374,8 +330,8 @@ class TrainingActivity : AppCompatActivity() {
             return null
         }
 
-        fun setEXECUTE_FLAG(EXECUTE_FLAG: Boolean) {
-            this.EXECUTE_FLAG = EXECUTE_FLAG
+        fun setExecuteFlag(EXECUTE_FLAG: Boolean) {
+            this.executeFlag = EXECUTE_FLAG
         }
     }
 
@@ -393,8 +349,8 @@ class TrainingActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        initRenderer()
-        renderPage(0)
+        slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        //renderPage(0)
 
         //initAudioRecording()
 
@@ -439,10 +395,10 @@ class TrainingActivity : AppCompatActivity() {
                         builder.setPositiveButton(R.string.training_statistics) { _, _ ->
                             val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
                             stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                            stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase?.getInstance(
+                            stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
                                     this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
 
-                            unmuteSound()
+                            unMuteSound()
 
                             startActivity(stat)
                         }
@@ -480,70 +436,11 @@ class TrainingActivity : AppCompatActivity() {
         )
     }
 
-    private fun renderPage(pageIndex: Int) {
-        currentPage?.close()
 
-        currentPage = renderer?.openPage(pageIndex)
-        val width = currentPage?.width
-        val height = currentPage?.height
-        val index = currentPage?.index
-        val pageCount = renderer?.pageCount
-        if (width != null && height != null && index != null && pageCount != null) {
-            val NWidth: Int = width
-            val NHeight: Int = height
-            val NIndex: Int = index
-            val NPageCount: Int = pageCount
-            val bitmap: Bitmap = Bitmap.createBitmap(NWidth, NHeight, Bitmap.Config.ARGB_8888)
-            currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            slide.setImageBitmap(bitmap)
-            next.isEnabled = NIndex + 1 < NPageCount
-        }
-    }
-
-    private fun initRenderer() {
-        val uri = Uri.parse(presentationData?.stringUri)
-
-        try {
-            val temp = File(this.cacheDir, "tempImage.pdf")
-            val fos = FileOutputStream(temp)
-            val ins: InputStream
-            ins = if(presentationData?.debugFlag == 0) {
-                val cr = contentResolver
-                cr.openInputStream(uri)
-            } else {
-                assets.open(getString(R.string.deb_pres_name))
-            }
-
-            val buffer = ByteArray(1024)
-
-            var readBytes = ins.read(buffer)
-            while (readBytes != -1) {
-                fos.write(buffer, 0, readBytes)
-                readBytes = ins.read(buffer)
-            }
-
-            fos.close()
-            ins.close()
-
-            parcelFileDescriptor =
-                    ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
-            renderer = PdfRenderer(parcelFileDescriptor)
-        } catch (e: IOException) {
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
-            Log.d("error", "error in opening presentation file")
-        }
-    }
 
     override fun onPause() {
         if (isFinishing) {
-            currentPage?.close()
-            try {
-                parcelFileDescriptor?.close()
-            } catch (e: IOException) {
-                Toast.makeText(this, "error in closing FileDescriptor", Toast.LENGTH_LONG).show()
-                Log.d("error", "error in closing FileDescriptor")
-            }
-            renderer?.close()
+            pdfReader?.finish()
         }
         super.onPause()
     }

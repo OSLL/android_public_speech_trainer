@@ -10,6 +10,7 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.company.myapplication.views.PresentationStartpageRow
 import com.example.company.myapplication.views.PresentationStartpageRow.Companion.activatedChangePresentationFlag
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
@@ -23,13 +24,7 @@ import java.io.InputStream
 
 
 
-const val DEFAULT_TIME = "DefTime"
-
 class EditPresentationActivity : AppCompatActivity() {
-
-    private var renderer: PdfRenderer? = null
-    private var currentPage: PdfRenderer.Page? = null
-    private var parcelFileDescriptor: ParcelFileDescriptor? = null
 
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
@@ -48,14 +43,20 @@ class EditPresentationActivity : AppCompatActivity() {
             return
         }
 
+        val pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
+        pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
+
         val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
         if (changePresentationFlag)
             addPresentation.text = getString(R.string.further)
 
+        if (presentationData?.name!!.isNullOrEmpty())
+            presentationName.setText(getFileName(Uri.parse(presentationData!!.stringUri),contentResolver))
+        else
+            presentationName.setText(presentationData?.name)
+
 
         addPresentation.setOnClickListener{
-
-            val uri = Uri.parse(presentationData?.stringUri)
 
             if (presentationName.text.toString() == ""){
                 Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
@@ -64,7 +65,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
             if(presentationName.text.length < 48) {
                 val i = Intent(this, PresentationActivity::class.java)
-                presentationData?.pageCount = renderer?.pageCount
+                presentationData?.pageCount = pdfReader.getPageCount()
                 presentationData?.name = presentationName.text.toString()
                 presentationDataDao?.updatePresentation(presentationData!!)
               
@@ -81,65 +82,5 @@ class EditPresentationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        initRenderer()
-        renderPage(0)
-    }
-
-    private fun renderPage(pageIndex: Int){
-
-        currentPage?.close()
-        currentPage = renderer?.openPage(pageIndex)
-        val width = currentPage?.width
-        val height = currentPage?.height
-        val index = currentPage?.index
-        val pageCount = renderer?.pageCount
-
-        if(width != null && height != null && index != null && pageCount != null) {
-            val NWidth: Int = width
-            val NHeight: Int = height
-            val bitmap: Bitmap = Bitmap.createBitmap(NWidth, NHeight, Bitmap.Config.ARGB_8888)
-            currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            pdf_view.setImageBitmap(bitmap)
-        }
-    }
-
-    private fun initRenderer(){
-
-        val uri = Uri.parse(presentationData?.stringUri)
-
-        try{
-            val temp = File(this.cacheDir, "tempImage.pdf")
-            val fos = FileOutputStream(temp)
-            val ins: InputStream
-            ins = if (presentationData?.debugFlag == 0) {
-                val cr = contentResolver
-                cr.openInputStream(uri)
-            } else {
-                assets.open(presentationData?.stringUri)
-            }
-
-            if (presentationData?.name!!.isNullOrEmpty())
-                presentationName.setText(getFileName(uri,contentResolver))
-            else
-                presentationName.setText(presentationData?.name)
-
-
-            val buffer = ByteArray(1024)
-
-            var readBytes = ins.read(buffer)
-            while(readBytes != -1){
-                fos.write(buffer, 0, readBytes)
-                readBytes = ins.read(buffer)
-            }
-
-            fos.close()
-            ins.close()
-
-            parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
-            renderer = PdfRenderer(parcelFileDescriptor)
-        } catch(e: IOException){
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
-            Log.d("error","error in opening presentation file")
-        }
     }
 }
