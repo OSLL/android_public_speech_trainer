@@ -410,7 +410,7 @@ class TrainingActivity : AppCompatActivity() {
                             unmuteSound()
 
                             startActivity(stat)
-                        
+
                         }
 
                         val dialog: AlertDialog = builder.create()
