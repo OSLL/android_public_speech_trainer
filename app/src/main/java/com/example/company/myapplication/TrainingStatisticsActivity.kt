@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
+import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -25,7 +26,6 @@ import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-var bmpBase: Bitmap? = null
 var url = ""
 var speed_statistics: Int? = null
 
@@ -42,6 +42,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var trainingData: TrainingData? = null
 
     private var finishBmp: Bitmap? = null
+    private var pdfReader: PdfToBitmap? = null
+
+    private var bmpBase: Bitmap? = null
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +66,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         trainingSlideDBHelper = TrainingSlideDBHelper(this)
         trainingDBHelper = TrainingDBHelper(this)
 
+        pdfReader = PdfToBitmap(presentationData?.stringUri!!, presentationData?.debugFlag!!, this)
+
         share1.setOnClickListener {
             try {
-                DrawPict()
+                drawPict()
                 url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
 
             }catch (e: Exception) {
@@ -100,12 +105,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         for (pair in presentationTop10Words){
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
         }
+
         printPiechart(entries)
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
     }
 
-    fun DrawPict() {
+    private fun drawPict() {
+        pdfReader?.getBitmapForSlide(0)
+        bmpBase = pdfReader?.saveSlideImage("tempImage.pdf")
+
         val trainingsList = trainingDBHelper?.getAllTrainingsForPresentation(presentationData!!) ?: return
         val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
 
@@ -120,15 +129,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val presName = presentationData?.name
 
         if(width != null && height != null) {
-            val NWidth: Int = width
-            val NHeight: Int = height
-            finishBmp = Bitmap.createBitmap(NWidth, NHeight + 185, Bitmap.Config.ARGB_8888)
+            val nWidth: Int = width
+            val nHeight: Int = height
+            finishBmp = Bitmap.createBitmap(nWidth, nHeight + 185, Bitmap.Config.ARGB_8888)
 
             val whitePaint = Paint()
             whitePaint.style = Paint.Style.FILL
             whitePaint.color = Color.WHITE
 
-            val nameBmp = Bitmap.createBitmap(NWidth, 40, Bitmap.Config.ARGB_8888)
+            val nameBmp = Bitmap.createBitmap(nWidth, 40, Bitmap.Config.ARGB_8888)
             val nameC = Canvas(nameBmp)
             nameC.drawPaint(whitePaint)
             val namePaint = Paint()
@@ -149,7 +158,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             }
 
 
-            val countBmp = Bitmap.createBitmap(NWidth, 30, Bitmap.Config.ARGB_8888)
+            val countBmp = Bitmap.createBitmap(nWidth, 30, Bitmap.Config.ARGB_8888)
             val countC = Canvas(countBmp)
             countC.drawPaint(whitePaint)
             val countPaint = Paint()
@@ -159,7 +168,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             countPaint.textSize = 20f
             countC.drawText(getString(R.string.count_of_training) + getCase(trainingCount, "раз", "раза", "раз"), 20f, 20f, countPaint)
 
-            val statBmp = Bitmap.createBitmap(NWidth, 115, Bitmap.Config.ARGB_8888)
+            val statBmp = Bitmap.createBitmap(nWidth, 115, Bitmap.Config.ARGB_8888)
             val statC = Canvas(statBmp)
             statC.drawPaint(whitePaint)
             val statPaint = Paint()
@@ -177,14 +186,14 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             val canvas = Canvas(finishBmp)
             val paint = Paint()
             canvas.drawBitmap(bmpBase, 0f, 0f, paint)
-            canvas.drawBitmap(nameBmp, 0f, NHeight.toFloat(), paint)
-            canvas.drawBitmap(countBmp, 0f, NHeight.toFloat() + 40f, paint)
-            canvas.drawBitmap(statBmp, 0f, NHeight.toFloat() + 70f, paint)
+            canvas.drawBitmap(nameBmp, 0f, nHeight.toFloat(), paint)
+            canvas.drawBitmap(countBmp, 0f, nHeight.toFloat() + 40f, paint)
+            canvas.drawBitmap(statBmp, 0f, nHeight.toFloat() + 70f, paint)
             val paintCircle = Paint()
             paintCircle.color = Color.YELLOW
-            canvas.drawCircle(185f, NHeight.toFloat() + 161f, 15f, paintCircle)
-            canvas.drawCircle(225f, NHeight.toFloat() + 161f, 15f, paintCircle)
-            canvas.drawCircle(265f, NHeight.toFloat() + 161f, 15f, paintCircle)
+            canvas.drawCircle(185f, nHeight.toFloat() + 161f, 15f, paintCircle)
+            canvas.drawCircle(225f, nHeight.toFloat() + 161f, 15f, paintCircle)
+            canvas.drawCircle(265f, nHeight.toFloat() + 161f, 15f, paintCircle)
         }
     }
 
@@ -222,15 +231,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 minutes, seconds
         )
 
-        if(minutes.toInt() == 0){
-            return " ${res.substring(res.indexOf("с") - 3)}"
+        return if(minutes.toInt() == 0){
+            " ${res.substring(res.indexOf("с") - 3)}"
         } else {
-            return " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 6) + res.substring(res.indexOf("с") - 3)}"
+            " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 6) + res.substring(res.indexOf("с") - 3)}"
         }
     }
 
     //Инициализация графика скорсти чтения
-    fun printSpeedLineChart(lineEntries: List<BarEntry>){
+    private fun printSpeedLineChart(lineEntries: List<BarEntry>){
         val labels = ArrayList<String>()
 
         for(entry in lineEntries)
@@ -269,7 +278,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         speed_bar_chart.invalidate()
     }
 
-    fun printPiechart (lineEntries: List<PieEntry>){
+    private fun printPiechart (lineEntries: List<PieEntry>){
 
         val pieDataSet = PieDataSet(lineEntries, null)
         pieDataSet.valueFormatter = IValueFormatter { value, _, _, _ -> "${value.toInt()}" }
@@ -294,7 +303,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         pie_chart.invalidate()
     }
 
-    fun getTop10Words(text: String) : List<Pair<String, Int>> {
+    private fun getTop10Words(text: String) : List<Pair<String, Int>> {
         val dictionary = HashMap<String, Int>()
 
         val iterator = BreakIterator.getWordInstance()
