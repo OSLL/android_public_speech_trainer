@@ -17,15 +17,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import android.support.test.InstrumentationRegistry
-import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.UiSelector
-import android.support.test.uiautomator.Until.findObject
-import android.support.test.uiautomator.UiObject
-
-
-
-
 
 @RunWith(AndroidJUnit4::class)
 class TestDatabase {
