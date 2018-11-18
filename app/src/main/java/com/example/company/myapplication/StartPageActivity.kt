@@ -124,7 +124,6 @@ class StartPageActivity : AppCompatActivity() {
             recyclerview_startpage.adapter = adapter
         }
         else {
-            Toast.makeText(this, "fast refresh", Toast.LENGTH_LONG).show()
             for (i in 0..(listPresentationData!!.size - 1)) {
                 val presentation = listPresentationData!![i]
 
