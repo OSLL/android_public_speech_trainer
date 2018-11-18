@@ -15,6 +15,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
+import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -29,7 +30,6 @@ import com.github.mikephil.charting.utils.ViewPortHandler
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import java.text.BreakIterator
 
-var bmpBase: Bitmap? = null
 var url = ""
 var speed_statistics: Int? = null
 
@@ -44,6 +44,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var trainingData: TrainingData? = null
 
     private var finishBmp: Bitmap? = null
+    private var pdfReader: PdfToBitmap? = null
+
+    var bmpBase: Bitmap? = null
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +64,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "stat_act: wrong ID")
             return
         }
+
+        pdfReader = PdfToBitmap(presentationData?.stringUri!!, presentationData?.debugFlag!!, this)
 
 
         try {
@@ -107,6 +112,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     }
 
     fun DrawPict() {
+        pdfReader?.getBitmapForSlide(0)
+        bmpBase = pdfReader?.saveSlideImage("tempImage.pdf")
+
         val width = bmpBase?.width
         val height = bmpBase?.height
         val presName = presentationData?.name
