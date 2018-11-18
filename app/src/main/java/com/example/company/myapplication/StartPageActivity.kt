@@ -35,7 +35,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.NullPointerException
+import kotlin.NullPointerException
 
 
 const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
@@ -145,8 +145,8 @@ class StartPageActivity : AppCompatActivity() {
                     adapter?.add(i, PresentationStartpageItemRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
 
                     adapter?.notifyDataSetChanged()
-                    recyclerview_startpage.adapter = adapter
                 }
+                recyclerview_startpage.adapter = adapter
             }
 
         }
@@ -288,7 +288,9 @@ class StartPageActivity : AppCompatActivity() {
         val controller =
                 AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
         recyclerView.layoutAnimation = controller
-        recyclerView.adapter.notifyDataSetChanged()
+        try {
+            recyclerView.adapter.notifyDataSetChanged()
+        }catch (e: NullPointerException) {}
         recyclerView.scheduleLayoutAnimation()
     }
 }
