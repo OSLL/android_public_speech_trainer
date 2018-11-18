@@ -63,7 +63,7 @@ class StartPageActivity : AppCompatActivity() {
 
         if (!checkPermissions())
             checkPermissions()
-        adapter = GroupAdapter<ViewHolder>()
+
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             if (sharedPref.contains(getString(R.string.audio_recording))) {
@@ -102,12 +102,13 @@ class StartPageActivity : AppCompatActivity() {
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         listPresentationData = presentationDataDao?.getAll()
-        if (listPresentationData == null || adapter == null || presentationDataDao == null) {
+        if (listPresentationData == null || presentationDataDao == null) {
             Toast.makeText(this, "fillRecError", Toast.LENGTH_LONG).show()
             return
         }
 
-        if (adapter?.itemCount == 0) {
+        if (adapter == null) {
+            adapter = GroupAdapter<ViewHolder>()
             for (presentation in listPresentationData!!) {
                 try {
                     if (presentation.timeLimit == null || presentation.pageCount == 0) {
@@ -123,8 +124,31 @@ class StartPageActivity : AppCompatActivity() {
             recyclerview_startpage.adapter = adapter
         }
         else {
+            Toast.makeText(this, "fast refresh", Toast.LENGTH_LONG).show()
+            for (i in 0..(listPresentationData!!.size - 1)) {
+                val presentation = listPresentationData!![i]
 
+                if (presentation.timeLimit == null || presentation.pageCount == 0) {
+                    presentationDataDao?.deletePresentationWithId(presentation.id!!)
+                    continue
+                }
 
+                if (i > (adapter!!.itemCount - 1)) {
+                    adapter?.add(PresentationStartpageItemRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
+                    adapter?.notifyDataSetChanged()
+                    recyclerview_startpage.adapter = adapter
+                    continue
+                }
+
+                val row = adapter!!.getItem(i) as PresentationStartpageItemRow
+                if (row.presentationTimeLimit != presentation.timeLimit || row.presentationName != presentation.name) {
+                    adapter?.removeGroup(i)
+                    adapter?.add(i, PresentationStartpageItemRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
+
+                    adapter?.notifyDataSetChanged()
+                    recyclerview_startpage.adapter = adapter
+                }
+            }
 
         }
 

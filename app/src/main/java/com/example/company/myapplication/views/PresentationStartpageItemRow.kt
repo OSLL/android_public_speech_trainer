@@ -59,7 +59,7 @@ class PresentationStartpageItemRow(private val presentation: PresentationData, p
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
-        
+
         viewHolder.itemView.training_history_btn_start_page_row.setOnClickListener {
             try {
                 val i = Intent(ctx, TrainingHistoryActivity::class.java)
