@@ -111,13 +111,6 @@
                 android:background="@android:drawable/ic_menu_edit"
                 android:layout_gravity="center_vertical"/>
 
-            <ImageButton
-                android:id="@+id/rm_presentation_start_page_row"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="@android:drawable/ic_menu_delete"
-                android:layout_marginLeft="10dp"/>
-
         </LinearLayout>
 
     </FrameLayout>
