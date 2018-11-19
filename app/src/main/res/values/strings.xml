@@ -136,6 +136,7 @@
     <string name="only_silence">Анализатор \"не слышит\" ваш голос. Говорите громче или перейдите в более тихое помещение.</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
+    <string name="CURRENT_TRAINING_ID">current_training_id</string>
 
     <!-- For Change Presentation -->
     <string name="changePresentationFlag">change_presentation_flag</string>
