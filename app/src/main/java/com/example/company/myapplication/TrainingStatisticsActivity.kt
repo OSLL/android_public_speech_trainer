@@ -124,6 +124,27 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         for (slide in trainingSlidesList)
             currentTrainingTime += slide.spentTimeInSec!!
 
+        var maxTime = 0L
+        var minTime = 0L
+        var curTime = 0L
+        var totalTime = 0.0
+        var countFlag = true
+        val averageTime:Double
+
+        for (training in trainingsList) {
+            val list = trainingSlideDBHelper?.getAllSlidesForTraining(training) ?: continue
+            for (page in list) {
+                curTime += page.spentTimeInSec!!
+                totalTime += page.spentTimeInSec!!
+            }
+            if (curTime > maxTime) maxTime = curTime
+            if (curTime < minTime) minTime = curTime
+            if(countFlag) minTime = curTime else countFlag = false
+            curTime = 0
+        }
+        averageTime = totalTime / trainingCount
+
+
         val width = bmpBase?.width
         val height = bmpBase?.height
         val presName = presentationData?.name
@@ -131,7 +152,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         if(width != null && height != null) {
             val nWidth: Int = width
             val nHeight: Int = height
-            finishBmp = Bitmap.createBitmap(nWidth, nHeight + 185, Bitmap.Config.ARGB_8888)
+            finishBmp = Bitmap.createBitmap(nWidth, nHeight + 185 + 105, Bitmap.Config.ARGB_8888)
 
             val whitePaint = Paint()
             whitePaint.style = Paint.Style.FILL
@@ -183,12 +204,28 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             statC.drawText(getString(R.string.record_of_training), 30f, 66f, statPaint)
             statC.drawText(getString(R.string.earnings_of_training), 30f, 99f, statPaint)
 
+            val statTrainingTime = Bitmap.createBitmap(nWidth, 105, Bitmap.Config.ARGB_8888)
+            val statTime = Canvas(statTrainingTime)
+            statTime.drawPaint(whitePaint)
+            val timePaint = Paint()
+            timePaint.color = Color.BLACK
+            timePaint.style = Paint.Style.FILL
+            timePaint.isAntiAlias = true
+            timePaint.textSize = 20f
+            statTime.drawText(getString(R.string.stat_training_time), 20f, 20f, timePaint)
+            timePaint.textSize = 17f
+            timePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+            statTime.drawText(getString(R.string.max_training_time) + getStringPresentationTimeLimit(maxTime), 30f, 43f, timePaint)
+            statTime.drawText(getString(R.string.min_training_time) + getStringPresentationTimeLimit(minTime), 30f, 66f, timePaint)
+            statTime.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(averageTime.toLong()), 30f, 89f, timePaint)
+
             val canvas = Canvas(finishBmp)
             val paint = Paint()
             canvas.drawBitmap(bmpBase, 0f, 0f, paint)
             canvas.drawBitmap(nameBmp, 0f, nHeight.toFloat(), paint)
             canvas.drawBitmap(countBmp, 0f, nHeight.toFloat() + 40f, paint)
             canvas.drawBitmap(statBmp, 0f, nHeight.toFloat() + 70f, paint)
+            canvas.drawBitmap(statTrainingTime, 0f, nHeight.toFloat() + 185f, paint)
             val paintCircle = Paint()
             paintCircle.color = Color.YELLOW
             canvas.drawCircle(185f, nHeight.toFloat() + 161f, 15f, paintCircle)
@@ -234,7 +271,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         return if(minutes.toInt() == 0){
             " ${res.substring(res.indexOf("с") - 3)}"
         } else {
-            " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 6) + res.substring(res.indexOf("с") - 3)}"
+            " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 7) + res.substring(res.indexOf("с") - 3)}"
         }
     }
 
