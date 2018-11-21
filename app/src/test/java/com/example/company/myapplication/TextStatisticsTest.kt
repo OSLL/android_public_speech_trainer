@@ -8,11 +8,11 @@ import org.junit.Assert.*
 
 class TextStatisticsTest {
 
-    lateinit var presentationEntries: HashMap<Int, Float?>
+    lateinit var presentationEntries: HashMap<Int, Float>
 
     @Before
     fun setUp() {
-        presentationEntries = HashMap<Int, Float?>()
+        presentationEntries = HashMap<Int, Float>()
     }
 
     @After
@@ -38,13 +38,6 @@ class TextStatisticsTest {
     }
 
     @Test
-    fun getAverageSpeedNull() {
-        presentationEntries[0] = 1f
-        presentationEntries[1] = null
-        assertEquals(0.5,getAverageSpeed(presentationEntries), 1e-6)
-    }
-
-    @Test
     fun getBestSlideEmpty() {
         assertEquals(-1, getBestSlide(presentationEntries))
     }
@@ -63,13 +56,6 @@ class TextStatisticsTest {
     }
 
     @Test
-    fun getBestSlideNull() {
-        presentationEntries[0] = 1f
-        presentationEntries[1] = null
-        assertEquals(0, getBestSlide(presentationEntries))
-    }
-
-    @Test
     fun getWorstSlideEmpty() {
         assertEquals(-1, getWorstSlide(presentationEntries))
     }
@@ -85,12 +71,5 @@ class TextStatisticsTest {
         presentationEntries[0] = 1f
         presentationEntries[1] = 2f
         assertEquals(0, getWorstSlide(presentationEntries))
-    }
-
-    @Test
-    fun getWorstSlideNull() {
-        presentationEntries[0] = 1f
-        presentationEntries[1] = null
-        assertEquals(1, getWorstSlide(presentationEntries))
     }
 }

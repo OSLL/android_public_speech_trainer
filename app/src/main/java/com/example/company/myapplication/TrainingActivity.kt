@@ -36,9 +36,6 @@ import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
 const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
@@ -448,7 +445,6 @@ class TrainingActivity : AppCompatActivity() {
                             unmuteSound()
 
                             startActivity(stat)
-
                         }
 
                         val dialog: AlertDialog = builder.create()

@@ -1,16 +1,14 @@
 package com.example.company.myapplication
 
-
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.*
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils.split
 import android.util.Log
-
-import android.widget.Toast
-import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
@@ -18,17 +16,11 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import android.graphics.Color
-import android.graphics.*
-import android.provider.MediaStore
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.IValueFormatter
 import java.text.BreakIterator
 
 var bmpBase: Bitmap? = null
@@ -74,37 +66,30 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
         share1.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
-            sharingIntent.type = "text/plain"
-            val shareBody = "Your body here"
-            val shareSub = "Your subject here"
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub)
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
-            startActivity(Intent.createChooser(sharingIntent, "Share using"))
+            sharingIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(url))
+            sharingIntent.type = "image/jpg"
+            startActivity(Intent.createChooser(sharingIntent, "Share with friends"))
         }
 
-        returnBut.setOnClickListener{
+        returnTraining.setOnClickListener{
             val returnIntent = Intent(this, StartPageActivity::class.java)
             startActivity(returnIntent)
         }
 
         val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
+        val trainingSpeedData = HashMap<Int, Float>()
 
         val presentationSpeedData = mutableListOf<BarEntry>()
         for (i in 0..(trainingSlideList!!.size-1)) {
             val slide = trainingSlideList[i]
             var speed = 0f
             if (slide.knownWords != "") speed = slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * 60f
+            trainingSpeedData[i] = speed
             presentationSpeedData.add(BarEntry((i).toFloat(), speed))
         }
 
         printSpeedLineChart(presentationSpeedData)
-
-        var averageSpeed = getAverageSpeed(presentationEntries)
-        val bestSlide = getBestSlide(presentationEntries)
-        val worstSlide = getWorstSlide(presentationEntries)
-
-        textView.text = getString(R.string.average_speed) + " %.2f слов/мин\n".format(averageSpeed) + getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) + " $worstSlide"
 
         val presentationTop10Words = getTop10Words(trainingData!!.allRecognizedText)
         val entries = ArrayList<PieEntry>()
@@ -112,6 +97,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
         }
         printPiechart(entries)
+
+        val averageSpeed = getAverageSpeed(trainingSpeedData)
+        val bestSlide = getBestSlide(trainingSpeedData)
+        val worstSlide = getWorstSlide(trainingSpeedData)
+
+        textView.text = getString(R.string.average_speed) + " %.2f слов/мин\n".format(averageSpeed) + getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) + " $worstSlide"
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
     }
