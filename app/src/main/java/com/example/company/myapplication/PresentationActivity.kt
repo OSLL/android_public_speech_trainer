@@ -94,7 +94,12 @@ class PresentationActivity : AppCompatActivity() {
                     val time = min.toLong() * 60 + sec.toLong()
                     presentationData?.timeLimit = time
                     presentationDataDao?.updatePresentation(presentationData!!)
-                    
+
+                    if (!changePresentationFlag) {
+                        val i = Intent(this, TrainingActivity::class.java)
+                        i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                        startActivity(i)
+                    }
                     finish()
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
