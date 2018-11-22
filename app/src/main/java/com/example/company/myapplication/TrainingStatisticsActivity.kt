@@ -258,7 +258,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         millisUntilFinishedVar -= TimeUnit.MINUTES.toSeconds(minutes)
 
         val seconds = millisUntilFinishedVar
-
+/*
         val min = getCase(minutes.toInt(), "минуту", "минуты", "минут")
         val sec = getCase(seconds.toInt(), "секунду", "секунды", "секунд")
 
@@ -267,12 +267,20 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "%01d $min %01d $sec",
                 minutes, seconds
         )
+*/
+        return String.format(
+                Locale.getDefault(),
+                " %02d:%02d",
+                minutes, seconds
+        )
 
+/*
         return if(minutes.toInt() == 0){
             " ${res.substring(res.indexOf("с") - 3)}"
         } else {
             " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 7) + res.substring(res.indexOf("с") - 3)}"
         }
+*/
     }
 
     //Инициализация графика скорсти чтения

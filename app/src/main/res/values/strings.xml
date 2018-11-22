@@ -150,13 +150,13 @@
     <!-- Example settings for Shared Picture -->
     <string name="count_of_training">Вы тренировались</string>
     <string name="result_of_training">Результат тренировки:</string>
-    <string name="time_of_training">---Вы говорили</string>
-    <string name="record_of_training">---Ваш результат на 100% далек от рекордного</string>
-    <string name="earnings_of_training">---Вы заработали:</string>
+    <string name="time_of_training">--- Вы говорили -></string>
+    <string name="record_of_training">--- Ваш результат на 100% далек от рекордного</string>
+    <string name="earnings_of_training">--- Вы заработали:</string>
     <string name="stat_training_time">Статистика времени тренировок:</string>
-    <string name="max_training_time">---Максимальное время:</string>
-    <string name="min_training_time">---Минимальное время:</string>
-    <string name="average_time">---Среднее время:</string>
+    <string name="max_training_time">--- Максимальное время:</string>
+    <string name="min_training_time">--- Минимальное время:</string>
+    <string name="average_time">--- Среднее время:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
 
     <!-- Example settings for Tests -->
