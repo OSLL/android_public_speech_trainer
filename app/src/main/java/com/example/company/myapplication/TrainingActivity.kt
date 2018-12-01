@@ -185,7 +185,7 @@ class TrainingActivity : AppCompatActivity() {
             muteSound()
             mainTimer = timer(timerTimeRemain, 1000)
 
-            //audioManager!!.isMicrophoneMute = true
+            audioManager!!.isMicrophoneMute = true
             Toast.makeText(this, "Pause", Toast.LENGTH_LONG).show()
 
             Handler().postDelayed({
