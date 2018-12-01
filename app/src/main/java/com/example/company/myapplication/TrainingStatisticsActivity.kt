@@ -87,6 +87,13 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(returnIntent)
         }
 
+        returnTraining.setOnClickListener {
+            val i = Intent(this, TrainingActivity::class.java)
+            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+            startActivity(i)
+            finish()
+        }
+
         val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSpeedData = HashMap<Int, Float>()
         val trainingSlideList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
