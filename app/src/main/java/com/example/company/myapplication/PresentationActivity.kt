@@ -101,6 +101,7 @@ class PresentationActivity : AppCompatActivity() {
                         startActivity(i)
                     }
                     finish()
+
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
                     Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
