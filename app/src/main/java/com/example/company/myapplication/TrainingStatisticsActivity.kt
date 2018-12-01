@@ -82,11 +82,13 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(sharingIntent, "Share with friends"))
         }
 
-        returnBut.setOnClickListener{
+        returnTraining.setOnClickListener{
             val returnIntent = Intent(this, StartPageActivity::class.java)
             startActivity(returnIntent)
         }
 
+        val trainingSlideDBHelper = TrainingSlideDBHelper(this)
+        val trainingSpeedData = HashMap<Int, Float>()
         val trainingSlideList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
 
         val presentationSpeedData = mutableListOf<BarEntry>()
@@ -94,11 +96,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             val slide = trainingSlideList[i]
             var speed = 0f
             if (slide.knownWords != "") speed = slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * 60f
+            trainingSpeedData[i] = speed
             presentationSpeedData.add(BarEntry((i).toFloat(), speed))
         }
 
         printSpeedLineChart(presentationSpeedData)
-
 
         val presentationTop10Words = getTop10Words(trainingData!!.allRecognizedText)
         val entries = ArrayList<PieEntry>()
@@ -107,6 +109,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         printPiechart(entries)
+
+        val averageSpeed = getAverageSpeed(trainingSpeedData)
+        val bestSlide = getBestSlide(trainingSpeedData)
+        val worstSlide = getWorstSlide(trainingSpeedData)
+
+        textView.text = getString(R.string.average_speed) +
+                " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
+                getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) +
+                " $worstSlide"
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
     }

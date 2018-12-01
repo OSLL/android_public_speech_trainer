@@ -97,7 +97,7 @@ class PresentationActivity : AppCompatActivity() {
                     
                     val i = Intent(this, TrainingActivity::class.java)
                     i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    //i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(i)
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()

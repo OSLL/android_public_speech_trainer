@@ -27,6 +27,7 @@
         <activity
             android:name=".TrainingActivity"
             android:label="@string/activity_training_name"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".PresentationActivity"
