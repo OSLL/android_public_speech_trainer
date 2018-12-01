@@ -28,7 +28,7 @@
     <string name="average_speed">Средняя скорость: </string>
     <string name="best_slide">Лучший слайд: </string>
     <string name="worst_slide">Худший слайд: </string>
-
+    <string name="speech_speed_units">слов/мин</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
