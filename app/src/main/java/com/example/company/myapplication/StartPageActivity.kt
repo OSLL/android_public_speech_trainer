@@ -20,6 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.company.myapplication.views.PresentationStartpageRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
@@ -50,9 +51,9 @@ class StartPageActivity : AppCompatActivity() {
 
     private var listPresentationData: List<PresentationData>? = null
     private var presentationDataDao: PresentationDataDao? = null
-    private var renderer: PdfRenderer? = null
-    private var currentPage: PdfRenderer.Page? = null
-    private var parcelFileDescriptor: ParcelFileDescriptor? = null
+
+    private var pdfReader: PdfToBitmap? = null
+
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +61,11 @@ class StartPageActivity : AppCompatActivity() {
 
         if (!checkPermissions())
             checkPermissions()
+
         adapter = GroupAdapter<ViewHolder>()
+
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+
         with(sharedPref.edit()) {
             if (sharedPref.contains(getString(R.string.audio_recording))) {
                 return@with
@@ -107,7 +111,9 @@ class StartPageActivity : AppCompatActivity() {
                     presentationDataDao?.deletePresentationWithId(presentation.id!!)
                     continue
                 }
-                adapter?.add(PresentationStartpageRow(presentation, getFirstSlideBitmap(presentation.stringUri, presentation.debugFlag), this@StartPageActivity))
+                pdfReader = PdfToBitmap(presentation.stringUri, presentation.debugFlag, this)
+
+                adapter?.add(PresentationStartpageRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
             } catch (e: Exception) {
                 Toast.makeText(this,"file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!",Toast.LENGTH_LONG).show()
                 presentationDataDao?.deletePresentationWithId(presentation.id!!)
@@ -154,58 +160,7 @@ class StartPageActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
     }
-    private fun renderPage(pageIndex: Int): Bitmap? {
-        currentPage?.close()
-        currentPage = renderer?.openPage(pageIndex)
-        val width = currentPage?.width
-        val height = currentPage?.height
-        val index = currentPage?.index
-        val pageCount = renderer?.pageCount
-        if(width != null && height != null && index != null && pageCount != null) {
-            val NWidth: Int = width
-            val NHeight: Int = height
-            val bitmap: Bitmap = Bitmap.createBitmap(NWidth, NHeight, Bitmap.Config.ARGB_8888)
-            currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            return  bitmap
-        }
-        return null
-    }
-    private fun initRenderer(strUri: String, debugFlag: Int){
-        val uri = Uri.parse(strUri)
-        try{
-            val temp = File(cacheDir, "tempImage.pdf")
-            val fos = FileOutputStream(temp)
-            val isChecked = debugFlag == 1
-            val ins: InputStream
-            ins = if(!isChecked) {
-                try {
-                    val cr = contentResolver
-                    cr.openInputStream(uri)
-                }catch (e: Exception) {
-                    Log.d("test_row", "editPres cr:" + e.toString())
-                } as InputStream
-            } else {
-                assets.open(strUri)
-            }
-            val buffer = ByteArray(1024)
-            var readBytes = ins.read(buffer)
-            while(readBytes != -1){
-                fos.write(buffer, 0, readBytes)
-                readBytes = ins.read(buffer)
-            }
-            fos.close()
-            ins.close()
-            parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
-            renderer = PdfRenderer(parcelFileDescriptor)
-        } catch(e: IOException){
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
-            Log.d("error","error in opening presentation file")
-        }
-    }
-    private fun getFirstSlideBitmap(strUri: String, debugFlag: Int): Bitmap? {
-        initRenderer(strUri,debugFlag)
-        return renderPage(0)
-    }
+
     private fun runLayoutAnimation(recyclerView: RecyclerView) {
         val context: Context = recyclerView.context
         val controller =
