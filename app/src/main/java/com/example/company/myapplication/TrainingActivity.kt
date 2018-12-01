@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
@@ -24,6 +25,7 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
+import kotlinx.android.synthetic.main.activity_voice_analysis.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
@@ -61,6 +63,9 @@ class TrainingActivity : AppCompatActivity() {
 
     private var trainingData: TrainingData? = null
     private var trainingSlideDBHelper: TrainingSlideDBHelper? = null
+
+    private var mainTimer: CountDownTimer? = null
+    private var timerTimeRemain: Long = 0
 
     var isAudio: Boolean? = null
 
@@ -108,6 +113,7 @@ class TrainingActivity : AppCompatActivity() {
 
         next.setOnClickListener {
             next.isEnabled = false
+            pause_button_training_activity.isEnabled = false
             finish.isEnabled = false
             audioManager!!.isMicrophoneMute = true
             Toast.makeText(this, "Saving State, Please Wait", Toast.LENGTH_SHORT).show()
@@ -118,7 +124,6 @@ class TrainingActivity : AppCompatActivity() {
                 handler.postDelayed({
                     val nIndex: Int = index
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
-                    //renderPage(nIndex + 1)
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(
@@ -142,8 +147,10 @@ class TrainingActivity : AppCompatActivity() {
                     finish.isEnabled = true
 
                     Log.d("test_pr", "page count: ${pdfReader?.getPageCount()!!}, currentPage: ${pdfReader?.getPageIndexStatus()!!}")
-                    if (pdfReader?.getPageCount()!! > (pdfReader?.getPageIndexStatus()!! + 1))
+                    if (pdfReader?.getPageCount()!! > (pdfReader?.getPageIndexStatus()!! + 1)) {
                         next.isEnabled = true
+                        pause_button_training_activity.isEnabled = true
+                    }
                 }, 2000)
 
             }
@@ -151,6 +158,41 @@ class TrainingActivity : AppCompatActivity() {
 
         finish.setOnClickListener{
             timer(1,1).onFinish()
+        }
+
+        pause_button_training_activity.setOnClickListener {
+            if (pause_button_training_activity.text.toString() == getString(R.string.continue_)) {
+                next.visibility = View.VISIBLE
+                finish.visibility = View.VISIBLE
+                pause_button_training_activity.text = getString(R.string.pause)
+
+                mainTimer?.start()
+                startRecognizingService()
+
+                if (isAudio!!) { mPlayer?.start(); unMuteSound()}
+                else muteSound()
+                return@setOnClickListener
+            }
+
+            if (isAudio!!) mPlayer?.pause()
+
+            next.visibility = View.GONE
+            finish.visibility = View.GONE
+            pause_button_training_activity.text = getString(R.string.continue_)
+            pause_button_training_activity.isEnabled = false
+
+            mainTimer?.cancel()
+            muteSound()
+            mainTimer = timer(timerTimeRemain, 1000)
+
+            //audioManager!!.isMicrophoneMute = true
+            Toast.makeText(this, "Pause", Toast.LENGTH_LONG).show()
+
+            Handler().postDelayed({
+                stopRecognizingService(true)
+                audioManager!!.isMicrophoneMute = false
+                pause_button_training_activity.isEnabled = true
+            }, 2000)
         }
     }
 
@@ -353,14 +395,15 @@ class TrainingActivity : AppCompatActivity() {
         //renderPage(0)
 
         //initAudioRecording()
-
-        timer(time * 1000, 1000).start()
+        mainTimer = timer(time * 1000, 1000)
+        mainTimer?.start()
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
         return object : CountDownTimer(millisInFuture, countDownInterval) {
 
             override fun onTick(millisUntilFinished: Long) {
+                timerTimeRemain = millisUntilFinished
                 val timeRemaining = timeString(millisUntilFinished)
                 if (isCancelled) {
                     if (lastSlideTime.isEmpty())
@@ -374,11 +417,10 @@ class TrainingActivity : AppCompatActivity() {
 
             @SuppressLint("LongLogTag")
             override fun onFinish() {
-                timer(1, 1).cancel()
-
                 isCancelled = true
                 finish.isEnabled = false
                 next.isEnabled = false
+                pause_button_training_activity.isEnabled = false
                 audioManager!!.isMicrophoneMute = true
                 Toast.makeText(this@TrainingActivity, "Completion...", Toast.LENGTH_SHORT).show()
 
@@ -437,8 +479,6 @@ class TrainingActivity : AppCompatActivity() {
         )
     }
 
-
-
     override fun onPause() {
         if (isFinishing) {
             pdfReader?.finish()
@@ -448,6 +488,7 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         stopRecognizingService(false)
+        unMuteSound()
         super.onDestroy()
     }
 }
