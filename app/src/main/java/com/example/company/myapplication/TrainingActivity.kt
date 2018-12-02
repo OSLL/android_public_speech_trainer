@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
@@ -194,6 +195,8 @@ class TrainingActivity : AppCompatActivity() {
                 pause_button_training_activity.isEnabled = true
             }, 2000)
         }
+        mainTimer = timer(time * 1000, 1000)
+        mainTimer?.start()
     }
 
     private  fun muteSound(){
@@ -392,11 +395,6 @@ class TrainingActivity : AppCompatActivity() {
         super.onStart()
 
         slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
-        //renderPage(0)
-
-        //initAudioRecording()
-        mainTimer = timer(time * 1000, 1000)
-        mainTimer?.start()
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
@@ -480,15 +478,17 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (isFinishing) {
-            pdfReader?.finish()
-        }
+        if (pause_button_training_activity.text.toString() != getString(R.string.continue_))
+            pause_button_training_activity.performClick()
+
         super.onPause()
     }
 
     override fun onDestroy() {
         stopRecognizingService(false)
         unMuteSound()
+        pdfReader?.finish()
         super.onDestroy()
     }
+
 }
