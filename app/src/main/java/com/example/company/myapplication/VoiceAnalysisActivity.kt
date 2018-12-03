@@ -61,8 +61,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
             stopRecordingButton.isEnabled = true
             resultsTextView.text = ""
 
-            audioAnalyzer = AudioAnalyzer(this)
-            initCountdown()
+            addPermissionsForAudioRecording()
         }
 
         stopRecordingButton.setOnClickListener {
@@ -94,7 +93,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         val isRecordingOn = sharedPref.getBoolean(getString(R.string.audio_recording), defaultValue)
 
         if (isRecordingOn) {
-            addPermissionsForAudioRecording()
+            audioAnalyzer.recordSpeechAudio({ stopRecordingButton.isEnabled }, { nextButtonPressed })
         } else {
             finishedRecording = true
         }
@@ -120,7 +119,8 @@ class VoiceAnalysisActivity : AppCompatActivity() {
                 RECORD_AUDIO_PERMISSION
             )
         } else {
-            audioAnalyzer.recordSpeechAudio({ stopRecordingButton.isEnabled }, { nextButtonPressed })
+            audioAnalyzer = AudioAnalyzer(this)
+            initCountdown()
         }
     }
 
@@ -132,7 +132,8 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RECORD_AUDIO_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                audioAnalyzer.recordSpeechAudio({ stopRecordingButton.isEnabled }, { nextButtonPressed })
+                audioAnalyzer = AudioAnalyzer(this)
+                initCountdown()
             }
         }
     }

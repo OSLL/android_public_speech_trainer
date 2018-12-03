@@ -84,6 +84,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                 countdownVolumesList.add(calculateVolume(shortsRead))
             }
 
+            countdownVolumesList.sort()
+
             val postCountdownIntent = Intent()
             postCountdownIntent.action = POST_COUNTDOWN_ACTION
             sendBroadcastIntent(postCountdownIntent)
@@ -173,6 +175,11 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
             Log.wtf(AUDIO_RECORDING, "silence: $silencePercentage")
             Log.wtf(AUDIO_RECORDING, "speech: $speechPercentage")
 
+            speechVolumesList.sort()
+
+            speechRecord.stop()
+            speechRecord.release()
+
             val postRecordingIntent = Intent()
             postRecordingIntent.action = POST_SPEECH_ACTION
             sendBroadcastIntent(postRecordingIntent)
@@ -192,7 +199,6 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
         return if (volumesList.isEmpty()) {
             Triple(0.0, 0.0, 0.0)
         } else {
-            volumesList.sort()
             Triple(volumesList[0], volumesList.last(), volumesList.average())
         }
     }
@@ -252,5 +258,4 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
         return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date())
     }
 }
-
 
