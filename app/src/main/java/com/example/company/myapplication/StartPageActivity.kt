@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -20,8 +22,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.company.myapplication.appSupport.PdfToBitmap
-import com.example.company.myapplication.views.PresentationStartpageRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -29,11 +31,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-
+import kotlin.NullPointerException
 
 
 const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
@@ -61,8 +59,6 @@ class StartPageActivity : AppCompatActivity() {
 
         if (!checkPermissions())
             checkPermissions()
-
-        adapter = GroupAdapter<ViewHolder>()
 
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
 
@@ -98,40 +94,112 @@ class StartPageActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-    private fun fillRecyclerView() {
+
+    private fun refreshRecyclerView() {
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         listPresentationData = presentationDataDao?.getAll()
-        if (listPresentationData == null || adapter == null || presentationDataDao == null) {
-            Toast.makeText(this, "fillRecError",Toast.LENGTH_LONG).show()
+        if (listPresentationData == null || presentationDataDao == null) {
+            Toast.makeText(this, "fillRecError", Toast.LENGTH_LONG).show()
             return
         }
-        for (presentation in listPresentationData!!) {
-            try {
+
+        if (adapter == null) {
+            adapter = GroupAdapter<ViewHolder>()
+            for (presentation in listPresentationData!!) {
+                try {
+                    if (presentation.timeLimit == null || presentation.pageCount == 0) {
+                        presentationDataDao?.deletePresentationWithId(presentation.id!!)
+                        continue
+                    }
+                    pdfReader = PdfToBitmap(presentation.stringUri, presentation.debugFlag, this)
+                    adapter?.add(PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
+                } catch (e: Exception) {
+                    Toast.makeText(this, "file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!", Toast.LENGTH_LONG).show()
+                    presentationDataDao?.deletePresentationWithId(presentation.id!!)
+                }
+            }
+            recyclerview_startpage.adapter = adapter
+        }
+        else {
+            for (i in 0..(listPresentationData!!.size - 1)) {
+                val presentation = listPresentationData!![i]
+                pdfReader = PdfToBitmap(presentation.stringUri, presentation.debugFlag, this)
+
                 if (presentation.timeLimit == null || presentation.pageCount == 0) {
                     presentationDataDao?.deletePresentationWithId(presentation.id!!)
                     continue
                 }
-                pdfReader = PdfToBitmap(presentation.stringUri, presentation.debugFlag, this)
+                if (i > (adapter!!.itemCount - 1)) {
+                    adapter?.add(PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
+                    adapter?.notifyDataSetChanged()
+                    recyclerview_startpage.adapter = adapter
+                    continue
+                }
 
-                adapter?.add(PresentationStartpageRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
-            } catch (e: Exception) {
-                Toast.makeText(this,"file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!",Toast.LENGTH_LONG).show()
-                presentationDataDao?.deletePresentationWithId(presentation.id!!)
+                val row = adapter!!.getItem(i) as PresentationStartpageItemRow
+                if (row.presentationTimeLimit != presentation.timeLimit || row.presentationName != presentation.name) {
+                    adapter?.removeGroup(i)
+                    adapter?.add(i, PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
+
+                    adapter?.notifyDataSetChanged()
+                }
+                recyclerview_startpage.adapter = adapter
             }
+
         }
-        recyclerview_startpage.adapter = adapter
+
+        recyclerview_startpage.isLongClickable = true
+
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
-            val row = item as PresentationStartpageRow
+            val row = item as PresentationStartpageItemRow
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)
             startActivity(i)
         }
+
+        adapter?.setOnItemLongClickListener { item: Item<ViewHolder>, view ->
+            val row = item as PresentationStartpageItemRow
+
+            val defaultBackGround = view.background
+            view.background = getDrawable(R.drawable.training_not_end_item_background)
+
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(getString(R.string.request_for_remove_presentation) + "${row.presentationName} ?")
+            builder.setPositiveButton(getString(R.string.remove)) { _, _ ->
+                val position = StartPageActivity.adapter?.getAdapterPosition(item)
+                StartPageActivity.adapter?.remove(item)
+                StartPageActivity.adapter?.notifyItemRemoved(position!!)
+                recyclerview_startpage.adapter = adapter
+
+                try {
+                    recyclerview_startpage.scrollToPosition(position!!)
+                } catch (e: NullPointerException) {
+
+                }
+
+                if (row.presentationId != null)
+                    SpeechDataBase.getInstance(this)?.PresentationDataDao()?.deletePresentationWithId(row.presentationId!!)
+                else {
+                }
+            }
+
+            builder.setNegativeButton(getString(R.string.change)) { _, _ ->
+                val i = Intent(this, EditPresentationActivity::class.java)
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),row.presentationId)
+                i.putExtra(getString(R.string.changePresentationFlag), PresentationStartpageItemRow.activatedChangePresentationFlag)
+                startActivity(i)
+                view.background = defaultBackGround
+            }
+            builder.setOnCancelListener {
+                view.background = defaultBackGround
+            }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+            true
+        }
+
     }
-    private fun refreshRecyclerView() {
-        adapter?.clear()
-        adapter?.notifyDataSetChanged()
-        fillRecyclerView()
-    }
+
     fun checkPermissions(): Boolean {
         val permissions = ArrayList<String>()
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -166,7 +234,9 @@ class StartPageActivity : AppCompatActivity() {
         val controller =
                 AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
         recyclerView.layoutAnimation = controller
-        recyclerView.adapter.notifyDataSetChanged()
+        try {
+            recyclerView.adapter.notifyDataSetChanged()
+        }catch (e: NullPointerException) {}
         recyclerView.scheduleLayoutAnimation()
     }
 }

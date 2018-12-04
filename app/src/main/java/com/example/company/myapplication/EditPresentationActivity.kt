@@ -1,27 +1,18 @@
 package com.example.company.myapplication
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.views.PresentationStartpageItemRow
+import com.example.company.myapplication.views.PresentationStartpageItemRow.Companion.activatedChangePresentationFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
-import com.example.company.myapplication.views.PresentationStartpageRow
-import com.example.company.myapplication.views.PresentationStartpageRow.Companion.activatedChangePresentationFlag
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-
 
 
 class EditPresentationActivity : AppCompatActivity() {
@@ -43,10 +34,11 @@ class EditPresentationActivity : AppCompatActivity() {
             return
         }
 
+        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
+
         val pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
         pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
-        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
         if (changePresentationFlag)
             addPresentation.text = getString(R.string.further)
 
@@ -74,6 +66,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
                 i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                 startActivity(i)
+                finish()
             }
             else
                 Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()

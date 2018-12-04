@@ -8,8 +8,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
+import com.example.company.myapplication.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
@@ -62,6 +65,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "stat_act: wrong ID")
             return
         }
+
+        if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
         trainingSlideDBHelper = TrainingSlideDBHelper(this)
         trainingDBHelper = TrainingDBHelper(this)

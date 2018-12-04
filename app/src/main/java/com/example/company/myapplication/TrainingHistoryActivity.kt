@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
-import com.example.company.myapplication.views.TrainingHistoryItem
+import com.example.company.myapplication.views.TrainingHistoryItemRow
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
@@ -18,6 +20,10 @@ import kotlinx.android.synthetic.main.activity_training_history.*
 const val ACTIVITY_HISTORY_NAME = ".TrainingHistoryActivity"
 
 class TrainingHistoryActivity : AppCompatActivity() {
+    companion object {
+        const val launchedFromHistoryActivityFlag = 1
+    }
+
     private var presentationData: PresentationData? = null
 
     @SuppressLint("LongLogTag")
@@ -39,17 +45,34 @@ class TrainingHistoryActivity : AppCompatActivity() {
         val adapter = GroupAdapter<ViewHolder>()
 
         for (training in list) {
-            adapter.add(TrainingHistoryItem(training, this))
+            adapter.add(TrainingHistoryItemRow(training, presentationData?.pageCount!!, this))
         }
 
         recyclerview_training_history.adapter = adapter
 
         adapter.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
-            val row = item as TrainingHistoryItem
+            val row = item as TrainingHistoryItemRow
             val i = Intent(this, TrainingStatisticsActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
             i.putExtra(getString(R.string.CURRENT_TRAINING_ID), row.trainingId)
-            startActivity(i)
+            i.putExtra(getString(R.string.launchedFromHistoryActivityFlag), launchedFromHistoryActivityFlag)
+
+            if (!row.trainingEndFlag) {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage(getString(R.string.you_dont_end_training))
+                builder.setPositiveButton(getString(R.string.continue_training)) { _, _ ->
+                    Toast.makeText(this, "coming soon...", Toast.LENGTH_LONG).show()
+                }
+
+                builder.setNegativeButton(getString(R.string.go_to_statistics)) { _, _ ->
+                    startActivity(i)
+                }
+                val dialog: AlertDialog = builder.create()
+                dialog.show()
+            }
+            else {
+                startActivity(i)
+            }
         }
     }
 }
