@@ -25,7 +25,6 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
-import kotlinx.android.synthetic.main.activity_voice_analysis.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
@@ -136,8 +135,9 @@ class TrainingActivity : AppCompatActivity() {
                     time = min.toLong()*60 + sec.toLong()
 
                     val tsd = TrainingSlideData()
-                    tsd.spentTimeInSec = timePerSlide[curPageNum]!!
+                    tsd.spentTimeInSec = timePerSlide[curPageNum++]!!
                     tsd.knownWords = curText
+
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
                     allRecognizedText += " $curText"

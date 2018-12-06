@@ -40,7 +40,7 @@ class TimeOnEachSlideChartFragment: Fragment() {
         if (trainingList == null) { Log.d(APST_TAG + FRAGMENT_TIME_ON_EACH_SLIDE, "trainingList == null"); return }
 
         val entries = ArrayList<BarEntry>()
-
+        
         for (i in 0..(trainingList.size - 1)) {
             entries.add(BarEntry(i.toFloat(), trainingList[i].spentTimeInSec!!.toFloat()))
         }
