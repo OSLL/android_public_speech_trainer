@@ -171,5 +171,6 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
+    <string name="time_on_each_slide">Время на каждом слайде</string>
 
 </resources>
