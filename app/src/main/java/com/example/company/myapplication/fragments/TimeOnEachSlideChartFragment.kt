@@ -56,7 +56,7 @@ class TimeOnEachSlideChartFragment: Fragment() {
             labels.add((entry.x +1).toInt().toString())
 
         val barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds))
-        barDataSet.color = R.color.timeOncEachSlideCharColor
+        barDataSet.color = R.color.timeOncEachSlideChartColor
 
         val data = BarData(barDataSet)
         data.setValueTextSize(0f)
