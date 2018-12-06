@@ -17,8 +17,6 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
-import kotlinx.android.synthetic.main.activity_training_statistics.*
 import kotlinx.android.synthetic.main.time_on_each_slide_chart_fragment.*
 
 const val FRAGMENT_TIME_ON_EACH_SLIDE = ".FragmentTimeOnEachSlide"
@@ -57,8 +55,8 @@ class TimeOnEachSlideChartFragment: Fragment() {
         for(entry in entries)
             labels.add((entry.x +1).toInt().toString())
 
-        val barDataSet = BarDataSet(entries, getString(R.string.time_on_each_slide))
-        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
+        val barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds))
+        barDataSet.color = R.color.timeOncEachSlideCharColor
 
         val data = BarData(barDataSet)
         data.setValueTextSize(0f)
@@ -71,8 +69,9 @@ class TimeOnEachSlideChartFragment: Fragment() {
         time_on_each_slide_chart.legend.position = Legend.LegendPosition.ABOVE_CHART_LEFT
         time_on_each_slide_chart.legend.formSize = 0f
         time_on_each_slide_chart.legend.xEntrySpace = 0f
+        time_on_each_slide_chart.description.text = getString(R.string.slide_number)
+        time_on_each_slide_chart.description.textSize = 15f
 
-        time_on_each_slide_chart.description.isEnabled = false
         time_on_each_slide_chart.setTouchEnabled(false)
         time_on_each_slide_chart.setScaleEnabled(false)//выкл возможность зумить
         time_on_each_slide_chart.xAxis.setDrawGridLines(false)//отключение горизонтальных линии сетки
