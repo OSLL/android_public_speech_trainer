@@ -37,6 +37,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             val i = Intent(this, EditPresentationActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),checkForPresentationInDB(getString(R.string.deb_pres_name)))
             startActivity(i)
+            finish()
         }
     }
 
@@ -49,6 +50,7 @@ class CreatePresentationActivity : AppCompatActivity() {
                     i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),checkForPresentationInDB(selectedFile.toString()))
                     Log.d(FILE_SYSTEM, selectedFile.toString())
                     startActivity(i)
+                    finish()
                 } catch (e: FileNotFoundException) {
                     Log.d(FILE_SYSTEM, "file not found")
                 }

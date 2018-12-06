@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.company.myapplication.views.PresentationStartpageRow
+import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -37,7 +37,7 @@ class PresentationActivity : AppCompatActivity() {
             return
         }
 
-        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
+        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
         if (changePresentationFlag) {
             training.text = getString(R.string.save)
@@ -94,11 +94,14 @@ class PresentationActivity : AppCompatActivity() {
                     val time = min.toLong() * 60 + sec.toLong()
                     presentationData?.timeLimit = time
                     presentationDataDao?.updatePresentation(presentationData!!)
-                    
-                    val i = Intent(this, TrainingActivity::class.java)
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                    //i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(i)
+
+                    if (!changePresentationFlag) {
+                        val i = Intent(this, TrainingActivity::class.java)
+                        i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                        startActivity(i)
+                    }
+                    finish()
+
                 } else {
                     Toast.makeText(this, MESSAGE_ABOUT_FORMAT_INCORRECTNESS, Toast.LENGTH_SHORT).show()
                     Log.d("error", MESSAGE_ABOUT_FORMAT_INCORRECTNESS)
