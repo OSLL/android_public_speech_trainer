@@ -19,6 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
         <android.support.v7.widget.RecyclerView
+            android:longClickable="true"
             android:id="@+id/recyclerview_startpage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

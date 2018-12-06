@@ -25,8 +25,13 @@
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
     <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
+
     <string name="the_next">Следующий</string>
 
+    <string name="average_speed">Средняя скорость: </string>
+    <string name="best_slide">Лучший слайд: </string>
+    <string name="worst_slide">Худший слайд: </string>
+    <string name="speech_speed_units">слов/мин</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
@@ -149,14 +154,27 @@
 
 
     <!-- Example settings for Shared Picture -->
-    <string name="count_of_training">Вы тренировались 1 раз(а)</string>
+    <string name="count_of_training">Вы тренировались</string>
     <string name="result_of_training">Результат тренировки:</string>
-    <string name="time_of_training">---Вы говорили 1 секунд(у)</string>
-    <string name="record_of_training">---Ваш результат на 100% далек от рекордного</string>
-    <string name="earnings_of_training">---Вы заработали:</string>
+    <string name="time_of_training">--- Вы говорили -></string>
+    <string name="record_of_training">--- Ваш результат на 100% далек от рекордного</string>
+    <string name="earnings_of_training">--- Вы заработали:</string>
+    <string name="stat_training_time">Статистика времени тренировок:</string>
+    <string name="max_training_time">--- Максимальное время:</string>
+    <string name="min_training_time">--- Минимальное время:</string>
+    <string name="average_time">--- Среднее время:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
 
     <!-- Example settings for Tests -->
     <string name="test_time">00:30</string>
+    <string name="pause">Пауза</string>
+    <string name="continue_">Продолжить</string>
+
+    <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
+    <string name="continue_training">Продолжить тренировку</string>
+    <string name="go_to_statistics">Перейти к статистике</string>
+    <string name="training_not_end">Тренировка не окончена !</string>
+
+    <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
 
 </resources>

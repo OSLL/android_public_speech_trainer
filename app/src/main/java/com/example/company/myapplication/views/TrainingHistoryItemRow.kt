@@ -3,6 +3,8 @@ package com.example.company.myapplication.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.DateUtils
+import android.view.View
+import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.R
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.xwray.groupie.Item
@@ -10,8 +12,9 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.training_history_row.view.*
 
 
-class TrainingHistoryItem(private val training: TrainingData, private val ctx: Context): Item<ViewHolder>() {
+class TrainingHistoryItemRow(private val training: TrainingData, private val slidesCount: Int, private val ctx: Context): Item<ViewHolder>() {
     var trainingId: Int? = null
+    var trainingEndFlag: Boolean = true
 
     override fun getLayout(): Int {
         return R.layout.training_history_row
@@ -23,6 +26,15 @@ class TrainingHistoryItem(private val training: TrainingData, private val ctx: C
                 ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_DATE) + " | " +
                 DateUtils.formatDateTime(
                         ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_TIME)
+
+        val helper = TrainingSlideDBHelper(ctx)
+        val slides = helper.getAllSlidesForTraining(training)
+
+        if (slides != null && slides.count() < slidesCount) {
+            trainingEndFlag = false
+            viewHolder.itemView.training_not_end_view_training_history_row.visibility = View.VISIBLE
+            viewHolder.itemView.background= ctx.getDrawable(R.drawable.training_not_end_item_background)
+        }
 
         trainingId = training.id
     }

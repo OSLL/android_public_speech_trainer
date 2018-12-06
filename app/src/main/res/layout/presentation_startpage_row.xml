@@ -92,31 +92,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="10dp"
             android:layout_gravity="bottom|center_horizontal"
             android:gravity="right">
 
             <ImageButton
                 android:id="@+id/training_history_btn_start_page_row"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginRight="10dp"
                 android:background="@android:drawable/ic_menu_recent_history" />
-
-            <ImageButton
-                android:id="@+id/change_btn_presentation_start_page_row"
-                android:layout_width="31dp"
-                android:layout_height="31dp"
-                android:background="@android:drawable/ic_menu_edit"
-                android:layout_gravity="center_vertical"/>
-
-            <ImageButton
-                android:id="@+id/rm_presentation_start_page_row"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="@android:drawable/ic_menu_delete"
-                android:layout_marginLeft="10dp"/>
 
         </LinearLayout>
 

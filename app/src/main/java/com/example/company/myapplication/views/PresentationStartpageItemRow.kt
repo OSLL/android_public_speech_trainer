@@ -17,14 +17,17 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.example.company.myapplication.*
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import java.lang.Exception
 
 
-class PresentationStartpageRow(private val presentation: PresentationData,private val firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
+class PresentationStartpageItemRow(private val presentation: PresentationData, private val firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
     companion object {
         const val activatedChangePresentationFlag = 1
     }
 
     var presentationId: Int? = null
+    var presentationName: String? = null
+    var presentationTimeLimit: Long? = null
 
     override fun getLayout(): Int {
         return R.layout.presentation_startpage_row
@@ -37,51 +40,17 @@ class PresentationStartpageRow(private val presentation: PresentationData,privat
         viewHolder.itemView.image_view_presentation_start_page_row.setImageBitmap(firstPageBitmap)
 
         presentationId = presentation.id
-
-        viewHolder.itemView.change_btn_presentation_start_page_row.setOnClickListener {
-            val builder = AlertDialog.Builder(ctx)
-            builder.setMessage(ctx.getString(R.string.change_presentation_task) + "${presentation.name} ?")
-
-            builder.setPositiveButton(ctx.getString(R.string.change)) { _, _ ->
-                val i = Intent(ctx, EditPresentationActivity::class.java)
-                i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID),presentation.id)
-                i.putExtra(ctx.getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
-                startActivity(ctx,i,null)
-            }
-
-            builder.setNegativeButton(ctx.getString(R.string.no)) { _, _ -> }
-
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-        }
-
-        viewHolder.itemView.rm_presentation_start_page_row.setOnClickListener {
-
-            val builder = AlertDialog.Builder(ctx)
-            builder.setMessage(ctx.getString(R.string.request_for_remove_presentation) + "${presentation.name} ?")
-            builder.setPositiveButton(ctx.getString(R.string.remove)) { _, _ ->
-                val position = StartPageActivity.adapter?.getAdapterPosition(this)
-                StartPageActivity.adapter?.remove(this)
-                StartPageActivity.adapter?.notifyItemRemoved(position!!)
-
-                if (presentationId != null)
-                    SpeechDataBase.getInstance(ctx)?.PresentationDataDao()?.deletePresentationWithId(presentationId!!)
-                else {
-                    Log.d("presentation_row_test", "error id = $presentationId")
-                }
-            }
-
-            builder.setNegativeButton(ctx.getString(R.string.leave)) { _, _ ->
-
-            }
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-        }
+        presentationName = presentation.name
+        presentationTimeLimit = presentation.timeLimit
 
         viewHolder.itemView.training_history_btn_start_page_row.setOnClickListener {
-            val i = Intent(ctx, TrainingHistoryActivity::class.java)
-            i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID), presentationId)
-            ctx.startActivity(i)
+            try {
+                val i = Intent(ctx, TrainingHistoryActivity::class.java)
+                i.putExtra(ctx.getString(R.string.CURRENT_PRESENTATION_ID), presentationId)
+                ctx.startActivity(i)
+            } catch (e: Exception) {
+                Log.d("adapter_test", "row err: $e")
+            }
         }
     }
 
