@@ -119,7 +119,7 @@ class TrainingActivity : AppCompatActivity() {
             mPlayer?.setOnCompletionListener { stopPlay() }
         }
 
-        next.text = "Следующий 1/${presentationData?.pageCount}"
+        next.text = "${getString(R.string.the_next)} 1/${presentationData?.pageCount}"
         next.setOnClickListener {
             next.isEnabled = false
             finish.isEnabled = false
@@ -133,7 +133,7 @@ class TrainingActivity : AppCompatActivity() {
                     val NIndex: Int = index
                     renderPage(NIndex + 1)
 
-                    next.text = "Следующий ${NIndex + 2}/${presentationData?.pageCount}"
+                    next.text = "${getString(R.string.the_next)} ${NIndex + 2}/${presentationData?.pageCount}"
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(

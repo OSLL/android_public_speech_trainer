@@ -25,6 +25,7 @@
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
     <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
+    <string name="the_next">Следующий</string>
 
     <!-- Strings related to Settings -->
 
