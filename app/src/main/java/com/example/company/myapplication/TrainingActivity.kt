@@ -68,6 +68,8 @@ class TrainingActivity : AppCompatActivity() {
     private var mainTimer: CountDownTimer? = null
     private var timerTimeRemain: Long = 0
 
+    private var nIndex: Int = -1
+
     var isAudio: Boolean? = null
 
     @SuppressLint("LongLogTag")
@@ -123,7 +125,7 @@ class TrainingActivity : AppCompatActivity() {
             if (index != null) {
                 val handler = Handler()
                 handler.postDelayed({
-                    val nIndex: Int = index
+                    nIndex = index
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
@@ -394,7 +396,11 @@ class TrainingActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
+
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
