@@ -67,6 +67,8 @@ class TrainingActivity : AppCompatActivity() {
     private var mainTimer: CountDownTimer? = null
     private var timerTimeRemain: Long = 0
 
+    private var nIndex: Int = -1
+
     var isAudio: Boolean? = null
 
     @SuppressLint("LongLogTag")
@@ -122,7 +124,7 @@ class TrainingActivity : AppCompatActivity() {
             if (index != null) {
                 val handler = Handler()
                 handler.postDelayed({
-                    val nIndex: Int = index
+                    nIndex = index
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
@@ -390,8 +392,11 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
-        slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
         //renderPage(0)
 
         //initAudioRecording()
@@ -439,6 +444,7 @@ class TrainingActivity : AppCompatActivity() {
                             stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                             stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
                                     this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
+                            stat.putExtra(getString(R.string.count_of_slides),nIndex)
 
                             unMuteSound()
 
