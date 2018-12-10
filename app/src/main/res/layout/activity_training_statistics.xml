@@ -12,22 +12,49 @@
         android:orientation="vertical">
 
         <com.github.mikephil.charting.charts.BarChart
+            android:layout_marginVertical="10dp"
             android:id="@+id/speed_bar_chart"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_weight="1"
             android:visibility="visible" />
 
+        <View
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:alpha="0.2"
+            android:layout_height="1dp"
+            android:background="@android:color/black"/>
+
+        <FrameLayout
+            android:layout_marginVertical="10dp"
+            android:id="@+id/time_on_each_slide_chart_box_activity_training_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"/>
+
+        <View
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:alpha="0.2"
+            android:layout_height="1dp"
+            android:background="@android:color/black"/>
+
         <!--Вывод pieChart https://github.com/OSLL/android_public_speech_trainer/issues/33-->
 
         <com.github.mikephil.charting.charts.PieChart
+            android:layout_marginVertical="10dp"
             android:id="@+id/pie_chart"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_weight="1"
-            android:visibility="visible">
+            android:visibility="visible"/>
 
-        </com.github.mikephil.charting.charts.PieChart>
+        <View
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:alpha="0.2"
+            android:layout_height="1dp"
+            android:background="@android:color/black"/>
 
         <TextView
             android:id="@+id/textView"
