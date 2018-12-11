@@ -37,7 +37,7 @@ class ScrollViewTest {
         onView(withText(mIntentsTestRule.activity.getString(R.string.share))).check(matches(isDisplayed()))
     }
 
-    fun isNotDisplayed(): ViewAssertion {
+    private fun isNotDisplayed(): ViewAssertion {
         return ViewAssertion { view, _ ->
             if (view != null && isDisplayed().matches(view)) {
                 throw AssertionError("View is present in the hierarchy and Displayed: " + HumanReadables.describe(view))
