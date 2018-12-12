@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -52,6 +53,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var bmpBase: Bitmap? = null
 
+    private var currentTrainingTime: Long = 0
+
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +78,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         trainingDBHelper = TrainingDBHelper(this)
 
         pdfReader = PdfToBitmap(presentationData?.stringUri!!, presentationData?.debugFlag!!, this)
+
+        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
+
+        for (slide in trainingSlidesList)
+            currentTrainingTime += slide.spentTimeInSec!!
 
         share1.setOnClickListener {
             try {
@@ -104,7 +112,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSpeedData = HashMap<Int, Float>()
-        val trainingSlideList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
+        val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
 
         val presentationSpeedData = mutableListOf<BarEntry>()
         for (i in 0..(trainingSlideList!!.size-1)) {
@@ -126,13 +134,20 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         printPiechart(entries)
 
         val averageSpeed = getAverageSpeed(trainingSpeedData)
-        val bestSlide = getBestSlide(trainingSpeedData)
-        val worstSlide = getWorstSlide(trainingSpeedData)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+
+        val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
+        val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
-                getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) +
-                " $worstSlide"
+                getString(R.string.best_slide) + " $bestSlide\n" +
+                getString(R.string.worst_slide) + " $worstSlide\n" +
+                getString(R.string.training_time) + " ${getStringPresentationTimeLimit(currentTrainingTime)}\n" +
+                getString(R.string.count_of_slides) + " ${intent.getIntExtra(getString(R.string.count_of_slides),1)+2}"
+
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
     }
@@ -142,13 +157,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         bmpBase = pdfReader?.saveSlideImage("tempImage.pdf")
 
         val trainingsList = trainingDBHelper?.getAllTrainingsForPresentation(presentationData!!) ?: return
-        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
 
         val trainingCount = trainingsList.size
-        var currentTrainingTime: Long = 0
-
-        for (slide in trainingSlidesList)
-            currentTrainingTime += slide.spentTimeInSec!!
 
         var maxTime = 0L
         var minTime = 0L
@@ -313,14 +323,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private fun printSpeedLineChart(lineEntries: List<BarEntry>){
         val labels = ArrayList<String>()
         val colors = ArrayList<Int>()
+        val optimalSpeed = PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.speed_key), "120").toString().toInt()
 
         for(entry in lineEntries) {
             labels.add((entry.x + 1).toInt().toString())
 
             colors.add(
                     when (entry.y) {
-                        in OPTIMAL_SPEED.toFloat() * 0.9f .. OPTIMAL_SPEED.toFloat() * 1.1f -> ContextCompat.getColor(this, android.R.color.holo_green_dark)
-                        in Float.MIN_VALUE .. OPTIMAL_SPEED.toFloat() * 0.9f -> ContextCompat.getColor(this, android.R.color.holo_blue_dark)
+                        in optimalSpeed.toFloat() * 0.9f .. optimalSpeed.toFloat() * 1.1f -> ContextCompat.getColor(this, android.R.color.holo_green_dark)
+                        in Float.MIN_VALUE .. optimalSpeed.toFloat() * 0.9f -> ContextCompat.getColor(this, android.R.color.holo_blue_dark)
                         else -> ContextCompat.getColor(this, android.R.color.holo_red_dark)
                     }
             )
@@ -332,6 +343,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val data = BarData(barDataSet)
         data.setValueTextSize(0f)
 
+        speed_bar_chart.setTouchEnabled(false)
         speed_bar_chart.setFitBars(true)
         speed_bar_chart.data = data
         speed_bar_chart.description.text = getString(R.string.slide_number)
@@ -350,7 +362,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         speed_bar_chart.axisLeft.textSize = 15f
         speed_bar_chart.axisLeft.axisMinimum = 0f // минимальное значение оси y = 0
 
-        val ll = LimitLine(OPTIMAL_SPEED.toFloat(), getString(R.string.speech_speed))
+        val ll = LimitLine(optimalSpeed.toFloat(), getString(R.string.speech_speed))
         ll.lineWidth = 2f
         ll.lineColor = Color.GREEN
         ll.textSize = 10f

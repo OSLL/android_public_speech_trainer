@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
@@ -66,6 +67,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private var mainTimer: CountDownTimer? = null
     private var timerTimeRemain: Long = 0
+
+    private var nIndex: Int = -1
 
     var isAudio: Boolean? = null
 
@@ -122,7 +125,7 @@ class TrainingActivity : AppCompatActivity() {
             if (index != null) {
                 val handler = Handler()
                 handler.postDelayed({
-                    val nIndex: Int = index
+                    nIndex = index
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
@@ -136,7 +139,7 @@ class TrainingActivity : AppCompatActivity() {
                     time = min.toLong()*60 + sec.toLong()
 
                     val tsd = TrainingSlideData()
-                    tsd.spentTimeInSec = timePerSlide[curPageNum]!!
+                    tsd.spentTimeInSec = timePerSlide[curPageNum++]!!
                     tsd.knownWords = curText
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
@@ -194,6 +197,8 @@ class TrainingActivity : AppCompatActivity() {
                 pause_button_training_activity.isEnabled = true
             }, 2000)
         }
+        mainTimer = timer(time * 1000, 1000)
+        mainTimer?.start()
     }
 
     private  fun muteSound(){
@@ -390,13 +395,17 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
-        slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
         //renderPage(0)
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
-        //initAudioRecording()
-        mainTimer = timer(time * 1000, 1000)
-        mainTimer?.start()
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
@@ -439,6 +448,7 @@ class TrainingActivity : AppCompatActivity() {
                             stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                             stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
                                     this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
+                            stat.putExtra(getString(R.string.count_of_slides),nIndex)
 
                             unMuteSound()
 
@@ -480,15 +490,17 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (isFinishing) {
-            pdfReader?.finish()
-        }
+        if (pause_button_training_activity.text.toString() != getString(R.string.continue_))
+            pause_button_training_activity.performClick()
+
         super.onPause()
     }
 
     override fun onDestroy() {
         stopRecognizingService(false)
         unMuteSound()
+        pdfReader?.finish()
         super.onDestroy()
     }
+
 }
