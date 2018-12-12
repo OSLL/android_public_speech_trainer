@@ -178,5 +178,4 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
-    <string name="speech_speed">Требуемая скорость речи</string>
 </resources>
