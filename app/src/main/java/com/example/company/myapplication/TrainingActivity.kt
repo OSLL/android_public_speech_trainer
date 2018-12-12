@@ -111,7 +111,7 @@ class TrainingActivity : AppCompatActivity() {
             mPlayer?.setOnCompletionListener { stopPlay() }
         }
 
-        next.text = "${getString(R.string.the_next)} 1/${presentationData?.pageCount}"
+        curSlide.text = "1/${presentationData?.pageCount}"
         next.setOnClickListener {
             next.isEnabled = false
             pause_button_training_activity.isEnabled = false
@@ -126,7 +126,7 @@ class TrainingActivity : AppCompatActivity() {
                     val nIndex: Int = index
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
 
-                    next.text = "${getString(R.string.the_next)} ${NIndex + 2}/${presentationData?.pageCount}"
+                    curSlide.text = "${nIndex + 2}/${presentationData?.pageCount}"
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(
