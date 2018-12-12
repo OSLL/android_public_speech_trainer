@@ -395,7 +395,12 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
+        //renderPage(0)
         if(nIndex == -1)
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
         else
@@ -443,6 +448,7 @@ class TrainingActivity : AppCompatActivity() {
                             stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                             stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
                                     this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
+                            stat.putExtra(getString(R.string.count_of_slides),nIndex)
 
                             unMuteSound()
 

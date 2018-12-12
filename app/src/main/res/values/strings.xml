@@ -29,6 +29,8 @@
     <string name="best_slide">Лучший слайд: </string>
     <string name="worst_slide">Худший слайд: </string>
     <string name="speech_speed_units">слов/мин</string>
+    <string name="training_time">Время тренировки:</string>
+    <string name="count_of_slides">Слайдов рассказано:</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
