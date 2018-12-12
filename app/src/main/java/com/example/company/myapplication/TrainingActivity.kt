@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
@@ -72,6 +73,8 @@ class TrainingActivity : AppCompatActivity() {
     private var extraTimeTimer: Timer? = null
     private var timerTimeRemain: Long = 1
 
+    private var nIndex: Int = -1
+
     var isAudio: Boolean? = null
 
     @SuppressLint("LongLogTag")
@@ -127,7 +130,7 @@ class TrainingActivity : AppCompatActivity() {
             if (index != null) {
                 val handler = Handler()
                 handler.postDelayed({
-                    val nIndex: Int = index
+                    nIndex = index
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
 
                     val tsd = TrainingSlideData()
@@ -225,6 +228,8 @@ class TrainingActivity : AppCompatActivity() {
                 pause_button_training_activity.isEnabled = true
             }, 2000)
         }
+        mainTimer = timer(time * 1000, 1000)
+        mainTimer?.start()
     }
 
     private  fun muteSound(){
@@ -415,11 +420,22 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
         slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
 
         mainTimer = timer(time * 1000, 1000)
         mainTimer?.start()
+
+      //renderPage(0)
+        if(nIndex == -1)
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
+        else
+            slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
+
     }
 
     private fun timer(millisInFuture: Long, countDownInterval: Long): CountDownTimer {
@@ -460,6 +476,36 @@ class TrainingActivity : AppCompatActivity() {
             @SuppressLint("LongLogTag")
             override fun onFinish() {
 
+
+                try {
+                    val handler = Handler()
+                    handler.postDelayed({
+                        if(isAudio!!) {
+                            mPlayer?.stop()
+                        }
+                        stopRecognizingService(true)
+
+                        val builder = AlertDialog.Builder(this@TrainingActivity)
+                        builder.setMessage(R.string.training_completed)
+                        builder.setPositiveButton(R.string.training_statistics) { _, _ ->
+                            val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
+                            stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
+                            stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
+                                    this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
+                            stat.putExtra(getString(R.string.count_of_slides),nIndex)
+
+                            unMuteSound()
+
+                            startActivity(stat)
+                            finish()
+                        }
+
+                        val dialog: AlertDialog = builder.create()
+                        dialog.show()
+                    }, 2500)
+                } catch (e: Exception) {
+                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onFinish handler error: " + e.toString())
+                }
             }
         }
     }
@@ -488,15 +534,17 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (isFinishing) {
-            pdfReader?.finish()
-        }
+        if (pause_button_training_activity.text.toString() != getString(R.string.continue_))
+            pause_button_training_activity.performClick()
+
         super.onPause()
     }
 
     override fun onDestroy() {
         stopRecognizingService(false)
         unMuteSound()
+        pdfReader?.finish()
         super.onDestroy()
     }
+
 }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -49,6 +50,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var bmpBase: Bitmap? = null
 
+    private var currentTrainingTime: Long = 0
+
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         trainingDBHelper = TrainingDBHelper(this)
 
         pdfReader = PdfToBitmap(presentationData?.stringUri!!, presentationData?.debugFlag!!, this)
+
+        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
+
+        for (slide in trainingSlidesList)
+            currentTrainingTime += slide.spentTimeInSec!!
 
         share1.setOnClickListener {
             try {
@@ -101,7 +109,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSpeedData = HashMap<Int, Float>()
-        val trainingSlideList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
+        val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
 
         val presentationSpeedData = mutableListOf<BarEntry>()
         for (i in 0..(trainingSlideList!!.size-1)) {
@@ -123,13 +131,20 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         printPiechart(entries)
 
         val averageSpeed = getAverageSpeed(trainingSpeedData)
-        val bestSlide = getBestSlide(trainingSpeedData)
-        val worstSlide = getWorstSlide(trainingSpeedData)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+
+        val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
+        val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
-                getString(R.string.best_slide) + " $bestSlide\n" + getString(R.string.worst_slide) +
-                " $worstSlide"
+                getString(R.string.best_slide) + " $bestSlide\n" +
+                getString(R.string.worst_slide) + " $worstSlide\n" +
+                getString(R.string.training_time) + " ${getStringPresentationTimeLimit(currentTrainingTime)}\n" +
+                getString(R.string.count_of_slides) + " ${intent.getIntExtra(getString(R.string.count_of_slides),1)+2}"
+
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
     }
@@ -139,13 +154,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         bmpBase = pdfReader?.saveSlideImage("tempImage.pdf")
 
         val trainingsList = trainingDBHelper?.getAllTrainingsForPresentation(presentationData!!) ?: return
-        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
 
         val trainingCount = trainingsList.size
-        var currentTrainingTime: Long = 0
-
-        for (slide in trainingSlidesList)
-            currentTrainingTime += slide.spentTimeInSec!!
 
         var maxTime = 0L
         var minTime = 0L

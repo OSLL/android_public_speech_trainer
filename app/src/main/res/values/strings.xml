@@ -29,6 +29,8 @@
     <string name="best_slide">Лучший слайд: </string>
     <string name="worst_slide">Худший слайд: </string>
     <string name="speech_speed_units">слов/мин</string>
+    <string name="training_time">Время тренировки:</string>
+    <string name="count_of_slides">Слайдов рассказано:</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
@@ -39,6 +41,7 @@
     </string>
     <string name="pref_title_enable_deb_pres">Включить тестовые презентации</string>
     <string name="deb_speech_audio_key">deb_speech_audio</string>
+    <string name="speed_key">speed_key</string>
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочня презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
@@ -117,6 +120,8 @@
     <string name="DEBUG_SLIDES">debug_slides</string>
     <string name="audio_recording">audio recording</string>
     <string name="presentationEntries">presentationEntries</string>
+    <string name="speech_speed">Комфортная скорость речи, слов в минуту</string>
+    <string name="pref_default_speed">120</string>
 
     <!-- Strings related to speech recording and analysis -->
     <string name="start_recording">Начать запись</string>
