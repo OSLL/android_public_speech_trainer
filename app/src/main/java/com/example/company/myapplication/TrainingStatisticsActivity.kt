@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -130,8 +131,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         printPiechart(entries)
 
         val averageSpeed = getAverageSpeed(trainingSpeedData)
-        val bestSlide = getBestSlide(trainingSpeedData)
-        val worstSlide = getWorstSlide(trainingSpeedData)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+
+        val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
+        val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
