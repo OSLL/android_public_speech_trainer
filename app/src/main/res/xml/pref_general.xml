@@ -31,4 +31,16 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_add_friends_to_messages" />
 
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_speed"
+        android:inputType="number"
+        android:key="@string/speed_key"
+        android:maxLines="1"
+        android:numeric="integer"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/speech_speed" />
+
+
 </PreferenceScreen>
