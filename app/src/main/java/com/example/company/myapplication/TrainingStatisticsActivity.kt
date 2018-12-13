@@ -10,11 +10,11 @@ import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
+import com.example.company.myapplication.fragments.TimeOnEachSlideChartFragment
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -68,6 +68,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "stat_act: wrong ID")
             return
         }
+
+        printTimeOnEachSlideChart(trainingId)
 
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
@@ -172,7 +174,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             }
             if (curTime > maxTime) maxTime = curTime
             if (curTime < minTime) minTime = curTime
-            if(countFlag) minTime = curTime else countFlag = false
+            if (countFlag) {
+                minTime = curTime
+                countFlag = false
+            }
             curTime = 0
         }
         averageTime = totalTime / trainingCount
@@ -340,6 +345,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         speed_bar_chart.legend.xEntrySpace = 0f
 
 
+        speed_bar_chart.setTouchEnabled(false)
         speed_bar_chart.setScaleEnabled(false)//выкл возможность зумить
         speed_bar_chart.xAxis.setDrawGridLines(false)//отключение горизонтальных линии сетки
         speed_bar_chart.axisRight.isEnabled = false// ось У справа невидимая
@@ -419,5 +425,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         return list.size
     }
 
+    private fun printTimeOnEachSlideChart(trainingId: Int) {
+        val timeOnEachSlideChartFragment = TimeOnEachSlideChartFragment()
+        val bundle = Bundle()
+
+        bundle.putInt(getString(R.string.CURRENT_TRAINING_ID), trainingId)
+        timeOnEachSlideChartFragment.arguments = bundle
+
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.time_on_each_slide_chart_box_activity_training_statistics, timeOnEachSlideChartFragment)
+                .commit()
+    }
 
 }

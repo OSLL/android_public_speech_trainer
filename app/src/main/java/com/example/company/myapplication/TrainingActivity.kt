@@ -7,7 +7,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.net.wifi.p2p.WifiP2pManager
 import android.os.*
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
@@ -27,13 +26,11 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
-import kotlinx.android.synthetic.main.activity_voice_analysis.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.concurrent.fixedRateTimer
-import kotlin.concurrent.timerTask
-import kotlin.math.abs
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
 const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
@@ -47,9 +44,16 @@ class TrainingActivity : AppCompatActivity() {
     private var isCancelled = false
 
     private var timeIsOver = false
+
     private var extraTime: Long = 0
 
+    private var isTrainingFinish = false
+
     private var mPlayer: MediaPlayer? = null
+
+    private var finishFlag = false
+
+    @SuppressLint("UseSparseArrays")
 
     //speech recognizer part
     private var curText = ""
@@ -71,7 +75,7 @@ class TrainingActivity : AppCompatActivity() {
 
     private var mainTimer: CountDownTimer? = null
     private var extraTimeTimer: Timer? = null
-    private var timerTimeRemain: Long = 1
+    private var timerTimeRemain: Long = 0
 
     private var nIndex: Int = -1
 
@@ -136,6 +140,7 @@ class TrainingActivity : AppCompatActivity() {
                     val tsd = TrainingSlideData()
                     tsd.spentTimeInSec = timeOfSlide
                     tsd.knownWords = curText
+
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
                     allRecognizedText += " $curText"
@@ -156,14 +161,15 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+            finishFlag = true
+            mainTimer?.cancel()
+            extraTimeTimer?.cancel()
             time_left.setText(R.string.training_completed)
-            isCancelled = true
             finish.isEnabled = false
             next.isEnabled = false
             pause_button_training_activity.isEnabled = false
             audioManager!!.isMicrophoneMute = true
             Toast.makeText(this@TrainingActivity, "Completion...", Toast.LENGTH_SHORT).show()
-            extraTimeTimer?.cancel()
 
             try {
                 val handler = Handler()
@@ -176,12 +182,14 @@ class TrainingActivity : AppCompatActivity() {
                     val builder = AlertDialog.Builder(this@TrainingActivity)
                     builder.setMessage(R.string.training_completed)
                     builder.setPositiveButton(R.string.training_statistics) { _, _ ->
-                        val stat = Intent(this, TrainingStatisticsActivity::class.java)
+                        val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
                         stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
                         stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
                                 this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
+                        stat.putExtra(getString(R.string.count_of_slides),nIndex)
 
                         unMuteSound()
+
                         startActivity(stat)
                         finish()
                     }
@@ -192,6 +200,7 @@ class TrainingActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onFinish handler error: " + e.toString())
             }
+            isTrainingFinish = true
         }
 
         pause_button_training_activity.setOnClickListener {
@@ -201,6 +210,8 @@ class TrainingActivity : AppCompatActivity() {
                 pause_button_training_activity.text = getString(R.string.pause)
 
                 mainTimer?.start()
+                if(timeIsOver)
+                    extraTimerFun()
                 startRecognizingService()
 
                 if (isAudio!!) { mPlayer?.start(); unMuteSound()}
@@ -216,6 +227,7 @@ class TrainingActivity : AppCompatActivity() {
             pause_button_training_activity.isEnabled = false
 
             mainTimer?.cancel()
+            extraTimeTimer?.cancel()
             muteSound()
             mainTimer = timer(timerTimeRemain, 1000)
 
@@ -425,12 +437,7 @@ class TrainingActivity : AppCompatActivity() {
         else
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
-        slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
-
-        mainTimer = timer(time * 1000, 1000)
-        mainTimer?.start()
-
-      //renderPage(0)
+        //renderPage(0)
         if(nIndex == -1)
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
         else
@@ -442,71 +449,54 @@ class TrainingActivity : AppCompatActivity() {
         return object : CountDownTimer(millisInFuture, countDownInterval) {
 
             override fun onTick(millisUntilFinished: Long) {
-
                 timeOfSlide++
-
                 timerTimeRemain = millisUntilFinished
                 val timeRemaining = timeString(millisUntilFinished)
-
-                if (isCancelled && !timeIsOver) {
+                if (isCancelled) {
                     if (lastSlideTime.isEmpty())
                         lastSlideTime = time_left.text.toString()
                     cancel()
-                } else if (!timeIsOver){
+                } else {
                     time_left.text = timeRemaining
                 }
 
-                if(time_left.text == "00 min: 00 sec"){
+                if(time_left.text == getString(R.string.first_sec)){
+                    val handler = Handler()
                     timeIsOver = true
-                    time_left.setTextColor(resources.getColor(android.R.color.holo_red_light))
 
-
-                    extraTimeTimer = fixedRateTimer(name = "extraTime-timer",
-                            initialDelay = 0, period = 1000) {
-                        time_left.text = timeString(extraTime*1000)
-                        extraTime += 1
+                    handler.postDelayed({
                         timeOfSlide++
-                    }
+                        if(!finishFlag) {
+                            time_left.text = getString(R.string.zero_sec)
+                        }
+                    },1000)
 
+                    handler.postDelayed({
+                        timeOfSlide += 2
+                        time_left.setTextColor(resources.getColor(android.R.color.holo_red_light))
+                        extraTimerFun()
+                    },2000)
 
                 }
-
             }
 
             @SuppressLint("LongLogTag")
             override fun onFinish() {
+                isCancelled = true
+            }
+        }
+    }
 
-
-                try {
-                    val handler = Handler()
-                    handler.postDelayed({
-                        if(isAudio!!) {
-                            mPlayer?.stop()
-                        }
-                        stopRecognizingService(true)
-
-                        val builder = AlertDialog.Builder(this@TrainingActivity)
-                        builder.setMessage(R.string.training_completed)
-                        builder.setPositiveButton(R.string.training_statistics) { _, _ ->
-                            val stat = Intent(this@TrainingActivity, TrainingStatisticsActivity::class.java)
-                            stat.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                            stat.putExtra(getString(R.string.CURRENT_TRAINING_ID),SpeechDataBase.getInstance(
-                                    this@TrainingActivity)?.TrainingDataDao()?.getLastTraining()?.id)
-                            stat.putExtra(getString(R.string.count_of_slides),nIndex)
-
-                            unMuteSound()
-
-                            startActivity(stat)
-                            finish()
-                        }
-
-                        val dialog: AlertDialog = builder.create()
-                        dialog.show()
-                    }, 2500)
-                } catch (e: Exception) {
-                    Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME, "onFinish handler error: " + e.toString())
+    private fun extraTimerFun(){
+        extraTimeTimer = fixedRateTimer(name = "extraTime-timer",
+                initialDelay = 0, period = 1000) {
+            runOnUiThread {
+                if(!finishFlag) {
+                    time_left.text = timeString(extraTime * 1000)
                 }
             }
+            extraTime += 1
+            timeOfSlide++
         }
     }
 
@@ -534,8 +524,9 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (pause_button_training_activity.text.toString() != getString(R.string.continue_))
+        if (pause_button_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
+        }
 
         super.onPause()
     }
