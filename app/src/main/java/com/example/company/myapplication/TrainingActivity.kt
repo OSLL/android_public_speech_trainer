@@ -496,7 +496,6 @@ class TrainingActivity : AppCompatActivity() {
 
         if (pause_button_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
-            Log.d("jghjghrjgh", "pause")
         }
 
         super.onPause()
