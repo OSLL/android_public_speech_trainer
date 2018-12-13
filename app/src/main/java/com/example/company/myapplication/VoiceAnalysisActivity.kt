@@ -20,9 +20,11 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.ScrollingMovementMethod
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"
@@ -32,6 +34,8 @@ const val POST_COUNTDOWN_ACTION = "com.example.company.myapplication.ACTION_POST
 const val POST_SPEECH_ACTION = "com.example.company.myapplication.ACTION_POST_RECORDING"
 const val NEXT_SLIDE_BUTTON_ACTION = "com.example.company.myapplication.ACTION_NEXT_SLIDE_BUTTON"
 const val SAMPLING_RATE = 44100
+
+val obj = Object()
 
 
 class VoiceAnalysisActivity : AppCompatActivity() {
@@ -202,7 +206,7 @@ class VoiceAnalysisActivity : AppCompatActivity() {
 
             outputTitleAndContent("${getString(R.string.slide)} ${slideInfo.slideNumber}:\n")
             resultsTextView.append("$margin${getString(R.string.silence_percentage_on_slide)}: " +
-                    "%.2f".format(slideInfo.silencePercentage) + "%\n")
+                    "%.2f".format(slideInfo.silencePercentage * 100) + "%\n")
             resultsTextView.append("$margin${getString(R.string.average_pause_length)}: " +
                     "${formatTimeToSeconds(slideInfo.pauseAverageLength)} ${getString(R.string.seconds)}\n")
             resultsTextView.append("$margin${getString(R.string.long_pauses_amount)}: " +
@@ -231,6 +235,9 @@ class VoiceAnalysisActivity : AppCompatActivity() {
     inner class SetNextSlideButtonReceiver : AudioAnalyzerReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             nextButtonPressed = false
+            synchronized(obj) {
+                obj.notifyAll()
+            }
         }
     }
 }

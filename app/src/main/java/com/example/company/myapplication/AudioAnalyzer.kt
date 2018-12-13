@@ -94,9 +94,9 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
             countdownRecord.release()
 
             val volumeLevels = getVolumeLevels(countdownVolumesList)
-            Log.wtf(AUDIO_RECORDING, "silence min level: ${volumeLevels.first}")
-            Log.wtf(AUDIO_RECORDING, "silence max level: ${volumeLevels.second}")
-            Log.wtf(AUDIO_RECORDING, "silence average level: ${volumeLevels.third}")
+            Log.d(AUDIO_RECORDING, "silence min level: ${volumeLevels.first}")
+            Log.d(AUDIO_RECORDING, "silence max level: ${volumeLevels.second}")
+            Log.d(AUDIO_RECORDING, "silence average level: ${volumeLevels.third}")
 
             Log.i(AUDIO_RECORDING, "finished countdown audio recording")
         }
@@ -139,7 +139,13 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                 totalFragmentsRead++
 
                 if (nextSlide.invoke() || !(continueCondition.invoke())) {
+                    Log.d(AUDIO_RECORDING, "next slide")
+
                     sendBroadcastIntent(Intent(NEXT_SLIDE_BUTTON_ACTION))
+
+                    synchronized(obj) {
+                        obj.wait()
+                    }
 
                     val silencePercentageOnSlide = silentFragmentsOnSlide.toDouble() /
                             totalFragmentsOnSlide * silenceCoefficient
@@ -162,8 +168,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
             }
 
             val duration = System.currentTimeMillis() - startTime
-            Log.wtf(AUDIO_RECORDING, "finished audio recording at ${getCurrentDateForLog()}")
-            Log.wtf(AUDIO_RECORDING, "audio file length: " + formatTime(duration))
+            Log.i(AUDIO_RECORDING, "finished audio recording at ${getCurrentDateForLog()}")
+            Log.i(AUDIO_RECORDING, "audio file length: " + formatTime(duration))
 
             speechDuration = duration
 
@@ -172,8 +178,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
             val speechPercentage = 1 - silencePercentage
             silenceAndSpeechPercentage = silencePercentage to speechPercentage
 
-            Log.wtf(AUDIO_RECORDING, "silence: $silencePercentage")
-            Log.wtf(AUDIO_RECORDING, "speech: $speechPercentage")
+            Log.i(AUDIO_RECORDING, "silence: $silencePercentage")
+            Log.i(AUDIO_RECORDING, "speech: $speechPercentage")
 
             speechVolumesList.sort()
 
@@ -241,8 +247,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
             audioFile.createNewFile()
             byteArrayOutputStream.writeTo(FileOutputStream(audioFile))
 
-            Log.wtf(AUDIO_RECORDING, "audio file path: ${directory.absolutePath}")
-            Log.wtf(AUDIO_RECORDING, "audio file name: ${audioFile.name}")
+            Log.i(AUDIO_RECORDING, "audio file path: ${directory.absolutePath}")
+            Log.i(AUDIO_RECORDING, "audio file name: ${audioFile.name}")
         } catch (e: IOException) {
             Log.e("error", "unable to create audio file for recording")
         }
