@@ -41,6 +41,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private var isCancelled = false
 
+    private var isTrainingFinish = false
+
     private var mPlayer: MediaPlayer? = null
 
     @SuppressLint("UseSparseArrays")
@@ -139,7 +141,7 @@ class TrainingActivity : AppCompatActivity() {
                     time = min.toLong()*60 + sec.toLong()
 
                     val tsd = TrainingSlideData()
-                    tsd.spentTimeInSec = timePerSlide[curPageNum]!!
+                    tsd.spentTimeInSec = timePerSlide[curPageNum++]!!
                     tsd.knownWords = curText
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
@@ -160,6 +162,7 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+            isTrainingFinish = true
             timer(1,1).onFinish()
         }
 
@@ -490,8 +493,11 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (pause_button_training_activity.text.toString() != getString(R.string.continue_))
+
+        if (pause_button_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
+            Log.d("jghjghrjgh", "pause")
+        }
 
         super.onPause()
     }
