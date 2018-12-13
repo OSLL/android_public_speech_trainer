@@ -138,7 +138,9 @@ class TrainingActivity : AppCompatActivity() {
                     slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex + 1))
 
                     val tsd = TrainingSlideData()
+
                     tsd.spentTimeInSec = timeOfSlide
+
                     tsd.knownWords = curText
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
