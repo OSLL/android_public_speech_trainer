@@ -178,5 +178,6 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
+    <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
 
 </resources>
