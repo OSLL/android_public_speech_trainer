@@ -132,7 +132,10 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                     silentFragmentsRead++
                     silentFragmentsOnSlide++
                 } else if (isPause) {
-                    pausesPerSlide.add(System.currentTimeMillis() - pauseStartTime)
+                    val pauseLength = System.currentTimeMillis() - pauseStartTime
+                    if (millisecondsToSeconds(pauseLength) >= 0.1) {
+                        pausesPerSlide.add(pauseLength)
+                    }
                     isPause = false
                 }
                 totalFragmentsOnSlide++
@@ -262,6 +265,10 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     // used for logging
     private fun getCurrentDateForLog(): String {
         return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date())
+    }
+
+    private fun millisecondsToSeconds(timeInMillis: Long): Double {
+        return timeInMillis / 1000.toDouble()
     }
 }
 

@@ -298,9 +298,9 @@ class CountdownDialogFragment : DialogFragment() {
 }
 
 fun formatTime(timeInMillis: Long): String {
-    return "${formatNumberTwoDigits(timeInMillis / 1000 / 60 / 60)}:" +
-            "${formatNumberTwoDigits(timeInMillis / 1000 / 60 % 60)}:" +
-            formatNumberTwoDigits(timeInMillis / 1000 % 60)
+    return "${formatNumberTwoDigits(TimeUnit.MILLISECONDS.toMinutes(timeInMillis) / 60)}:" +
+            "${formatNumberTwoDigits(TimeUnit.MILLISECONDS.toMinutes(timeInMillis) % 60)}:" +
+            formatNumberTwoDigits(TimeUnit.MILLISECONDS.toSeconds(timeInMillis) % 60)
 }
 
 fun formatNumberTwoDigits(number: Long): String {
@@ -310,3 +310,4 @@ fun formatNumberTwoDigits(number: Long): String {
 fun formatTimeToSeconds(timeInMillis: Long): String {
     return "%.2f".format(timeInMillis.toDouble() / 1000)
 }
+
