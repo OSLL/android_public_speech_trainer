@@ -15,6 +15,7 @@ import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
+import com.example.company.myapplication.vocabulary.PrepositionsAndConjunctions
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -122,7 +123,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printSpeedLineChart(presentationSpeedData)
 
-        val presentationTop10Words = getTop10Words(trainingData!!.allRecognizedText)
+        val editedTextForTop10WordsChart = PrepositionsAndConjunctions()
+                .removeConjunctionsAndPrepositionsFromText(trainingData!!.allRecognizedText)
+
+        val presentationTop10Words = getTop10Words(editedTextForTop10WordsChart)
         val entries = ArrayList<PieEntry>()
         for (pair in presentationTop10Words){
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
@@ -156,6 +160,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val trainingsList = trainingDBHelper?.getAllTrainingsForPresentation(presentationData!!) ?: return
 
         val trainingCount = trainingsList.size
+
+        Log.d(ACTIVITY_TRAINING_STATISTIC_NAME, "training count: $trainingCount")
 
         var maxTime = 0L
         var minTime = 0L
