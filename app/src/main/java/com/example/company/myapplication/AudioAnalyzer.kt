@@ -20,6 +20,8 @@ data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
 
 class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     private val silenceCoefficient = 1.0
+    private val shortPauseLength = 0.1
+    private val shortSpeechLength = 0.05
 
     private val audioBuffer: ShortArray
     private val countdownRecord: AudioRecord
@@ -133,8 +135,9 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                     silentFragmentsOnSlide++
                 } else if (isPause) {
                     val pauseLength = System.currentTimeMillis() - pauseStartTime
-                    if (millisecondsToSeconds(pauseLength) >= 0.1) {
+                    if (millisecondsToSeconds(pauseLength) >= shortPauseLength) {
                         pausesPerSlide.add(pauseLength)
+                        Log.d(AUDIO_RECORDING, "pause time $pauseLength")
                     }
                     isPause = false
                 }
@@ -161,6 +164,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
                     totalFragmentsOnSlide = 0
                     silentFragmentsOnSlide = 0
+                    pausesPerSlide.clear()
                 }
 
                 val bufferBytes = ByteBuffer.allocate(shortsRead * 2)
