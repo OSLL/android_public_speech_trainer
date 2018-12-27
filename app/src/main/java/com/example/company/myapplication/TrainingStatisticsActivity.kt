@@ -177,7 +177,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             }
             if (curTime > maxTime) maxTime = curTime
             if (curTime < minTime) minTime = curTime
-            if(countFlag) minTime = curTime else countFlag = false
+            if (countFlag) {
+                minTime = curTime
+                countFlag = false
+            }
             curTime = 0
         }
         averageTime = totalTime / trainingCount
