@@ -25,12 +25,17 @@
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
     <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
+
+    <string name="the_next">Следующий</string>
+
     <string name="average_speed">Средняя скорость: </string>
     <string name="best_slide">Лучший слайд: </string>
     <string name="worst_slide">Худший слайд: </string>
     <string name="speech_speed_units">слов/мин</string>
     <string name="training_time">Время тренировки:</string>
     <string name="count_of_slides">Слайдов рассказано:</string>
+    <string name="zero_sec">00 min: 00 sec</string>
+    <string name="first_sec">00 min: 01 sec</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
@@ -178,5 +183,6 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
-
+    <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
+    
 </resources>

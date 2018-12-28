@@ -7,19 +7,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.MediaStore
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
+import com.example.company.myapplication.fragments.TimeOnEachSlideChartFragment
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
 import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
@@ -29,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_training_statistics.*
 import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 var url = ""
 var speed_statistics: Int? = null
@@ -68,6 +71,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "stat_act: wrong ID")
             return
         }
+
+        printTimeOnEachSlideChart(trainingId)
 
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
@@ -322,16 +327,28 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     //Инициализация графика скорсти чтения
     private fun printSpeedLineChart(lineEntries: List<BarEntry>){
         val labels = ArrayList<String>()
+        val colors = ArrayList<Int>()
+        val optimalSpeed = PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.speed_key), "120").toString().toInt()
 
-        for(entry in lineEntries)
-            labels.add((entry.x +1).toInt().toString())
+        for(entry in lineEntries) {
+            labels.add((entry.x + 1).toInt().toString())
+
+            colors.add(
+                    when (entry.y) {
+                        in optimalSpeed.toFloat() * 0.9f .. optimalSpeed.toFloat() * 1.1f -> ContextCompat.getColor(this, android.R.color.holo_green_dark)
+                        in Float.MIN_VALUE .. optimalSpeed.toFloat() * 0.9f -> ContextCompat.getColor(this, android.R.color.holo_blue_dark)
+                        else -> ContextCompat.getColor(this, android.R.color.holo_red_dark)
+                    }
+            )
+        }
 
         val barDataSet = BarDataSet(lineEntries, getString(R.string.words_count))
-        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS,255)
+        barDataSet.colors = colors
 
         val data = BarData(barDataSet)
         data.setValueTextSize(0f)
 
+        speed_bar_chart.setTouchEnabled(false)
         speed_bar_chart.setFitBars(true)
         speed_bar_chart.data = data
         speed_bar_chart.description.text = getString(R.string.slide_number)
@@ -343,12 +360,19 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         speed_bar_chart.legend.xEntrySpace = 0f
 
 
+        speed_bar_chart.setTouchEnabled(false)
         speed_bar_chart.setScaleEnabled(false)//выкл возможность зумить
         speed_bar_chart.xAxis.setDrawGridLines(false)//отключение горизонтальных линии сетки
         speed_bar_chart.axisRight.isEnabled = false// ось У справа невидимая
         speed_bar_chart.axisLeft.setDrawGridLines(false)//откл вертикальных линий сетки
         speed_bar_chart.axisLeft.textSize = 15f
         speed_bar_chart.axisLeft.axisMinimum = 0f // минимальное значение оси y = 0
+
+        val ll = LimitLine(optimalSpeed.toFloat(), getString(R.string.speech_speed))
+        ll.lineWidth = 2f
+        ll.lineColor = Color.GREEN
+        ll.textSize = 10f
+        speed_bar_chart.axisLeft.addLimitLine(ll)
 
         val xAxis = speed_bar_chart.xAxis
         xAxis.textSize = 12f
@@ -422,5 +446,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         return list.size
     }
 
+    private fun printTimeOnEachSlideChart(trainingId: Int) {
+        val timeOnEachSlideChartFragment = TimeOnEachSlideChartFragment()
+        val bundle = Bundle()
+
+        bundle.putInt(getString(R.string.CURRENT_TRAINING_ID), trainingId)
+        timeOnEachSlideChartFragment.arguments = bundle
+
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.time_on_each_slide_chart_box_activity_training_statistics, timeOnEachSlideChartFragment)
+                .commit()
+    }
 
 }
