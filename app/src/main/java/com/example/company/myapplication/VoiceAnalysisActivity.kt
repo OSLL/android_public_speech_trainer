@@ -146,6 +146,8 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voice_analysis)
 
+        setTitle(R.string.voice_analysis)
+
         audioAnalyzer = AudioAnalyzer(this)
         initLayout()
     }
