@@ -116,8 +116,8 @@
     <string name="presentationEntries">presentationEntries</string>
 
     <!-- Strings related to speech recording and analysis -->
-    <string name="start_recording">Начать запись</string>
-    <string name="stop_recording">Закончить запись</string>
+    <string name="start_recording">Начать тренировку</string>
+    <string name="stop_recording">Закончить тренировку</string>
     <string name="voice_analysis_instructions">После нажатия кнопки \"Начать запись\" подождите, пока остановится обратный отсчёт, и начните говорить после этого.\n\nПосле нажатия кнопки \"Закончить запись\" будет произведён анализ звуковой дорожки, результаты которого выведутся в этом текстовом поле.</string>
     <string name="settings">Настройки</string>
     <string name="voice_analysis">Анализ речи</string>
