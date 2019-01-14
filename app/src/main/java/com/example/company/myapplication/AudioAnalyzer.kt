@@ -113,6 +113,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
             val startTime = System.currentTimeMillis()
 
+            var speechStartTime: Long = 0
+
             var totalFragmentsRead: Long = 0
             var silentFragmentsRead: Long = 0
             var totalFragmentsOnSlide: Long = 0
@@ -129,7 +131,14 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                 if (fragmentVolume < silenceLevel) {
                     if (!isPause) {
                         isPause = true
-                        pauseStartTime = System.currentTimeMillis()
+                        if (millisecondsToSeconds(System.currentTimeMillis() - speechStartTime) < shortSpeechLength) {
+                            // the pause is still continuing, so we remove the pause in the list
+                            // and later it will be replaced with the current, longer pause
+                            // which has the same start time
+                            pausesPerSlide.dropLast(1)
+                        } else {
+                            pauseStartTime = System.currentTimeMillis()
+                        }
                     }
                     silentFragmentsRead++
                     silentFragmentsOnSlide++
@@ -137,9 +146,9 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                     val pauseLength = System.currentTimeMillis() - pauseStartTime
                     if (millisecondsToSeconds(pauseLength) >= shortPauseLength) {
                         pausesPerSlide.add(pauseLength)
-                        Log.d(AUDIO_RECORDING, "pause time $pauseLength")
                     }
                     isPause = false
+                    speechStartTime = System.currentTimeMillis()
                 }
                 totalFragmentsOnSlide++
                 totalFragmentsRead++
