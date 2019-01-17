@@ -20,11 +20,9 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.ScrollingMovementMethod
 import android.text.style.StyleSpan
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"
@@ -48,12 +46,13 @@ class VoiceAnalysisActivity : AppCompatActivity() {
     private var finishedRecording = false
 
     private lateinit var resultsTextView: TextView
+    private lateinit var startRecordingButton: Button
     private lateinit var stopRecordingButton: Button
 
     var nextButtonPressed = false
 
     private fun initLayout() {
-        val startRecordingButton = findViewById<Button>(R.id.start_recording_button)
+        startRecordingButton = findViewById(R.id.start_recording_button)
         stopRecordingButton = findViewById(R.id.stop_recording_button)
         val nextSlideButton = findViewById<Button>(R.id.next_slide_button)
         resultsTextView = findViewById(R.id.voice_analysis_text_view)
@@ -180,10 +179,18 @@ class VoiceAnalysisActivity : AppCompatActivity() {
             val spannableStringBuilder = SpannableStringBuilder(title)
             for (string in content) {
                 spannableStringBuilder.append(string)
+                spannableStringBuilder.append("\n")
             }
             spannableStringBuilder.setSpan(StyleSpan(BOLD), 0, title.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             resultsTextView.append(spannableStringBuilder)
+        }
+
+        protected fun outputText(vararg content: String) {
+            for (string in content) {
+                resultsTextView.append(string)
+                resultsTextView.append("\n")
+            }
         }
 
         protected fun outputVolumeLevels(title: String, volumeLevels: Triple<Double, Double, Double>) {
@@ -196,17 +203,42 @@ class VoiceAnalysisActivity : AppCompatActivity() {
 
     inner class PostCountdownReceiver : AudioAnalyzerReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            outputVolumeLevels(getString(R.string.countdown_volume_levels),
-                audioAnalyzer.getCountdownVolumeLevels())
-            initAudioRecording()
+            if (audioAnalyzer.isRoomNoisy()) {
+                outputText(getString(R.string.noisy_room))
+                startRecordingButton.isEnabled = true
+                stopRecordingButton.isEnabled = false
+            } else {
+                outputText(getString(R.string.start_speaking))
+                initAudioRecording()
+            }
         }
     }
 
     inner class PostSpeechReceiver : AudioAnalyzerReceiver() {
+        private fun outputPausesInfo(silencePercentage: Double) {
+            when {
+                audioAnalyzer.tooMuchPauses(silencePercentage) -> {
+                    if (audioAnalyzer.tooMuchPausesWarning(silencePercentage)) {
+                        outputText(getString(R.string.too_much_pauses),
+                            getString(R.string.revise_text_recommendation))
+                    } else {
+                        outputText(getString(R.string.overly_many_pauses),
+                            getString(R.string.revise_text))
+                    }
+
+                    outputText(getString(R.string.speak_faster))
+                }
+                audioAnalyzer.notEnoughPauses(silencePercentage) ->
+                    outputText(getString(R.string.speak_slower))
+                else -> outputText(getString(R.string.good_speech))
+            }
+        }
+
         private fun outputSlideInformation(slideInfo: SlideInfo) {
             val margin = "  "
 
             outputTitleAndContent("${getString(R.string.slide)} ${slideInfo.slideNumber}:\n")
+            outputPausesInfo(slideInfo.silencePercentage)
             resultsTextView.append("$margin${getString(R.string.silence_percentage_on_slide)}: " +
                     "%.2f".format(slideInfo.silencePercentage * 100) + "%\n")
             resultsTextView.append("$margin${getString(R.string.average_pause_length)}: " +
@@ -216,15 +248,22 @@ class VoiceAnalysisActivity : AppCompatActivity() {
         }
 
         override fun onReceive(p0: Context?, p1: Intent?) {
-            outputVolumeLevels(getString(R.string.speech_volume_levels),
-                audioAnalyzer.getSpeechVolumeLevels())
+            /*outputVolumeLevels(getString(R.string.speech_volume_levels),
+                audioAnalyzer.getSpeechVolumeLevels())*/
+            if (audioAnalyzer.speechTooSilent()) {
+                if (audioAnalyzer.speechTooSilentWarning()) {
+                    outputText(getString(R.string.quiet_speech))
+                } else {
+                    outputText(getString(R.string.overly_quiet_speech))
+                }
 
-            val silenceAndSpeechPercentage = audioAnalyzer.getSilenceAndSpeechPercentage()
-            outputTitleAndContent(getString(R.string.silence_and_speech_time),
-                "\n${getString(R.string.pauses)}: %.2f"
-                    .format(silenceAndSpeechPercentage.first * 100) + "%",
-                "\n${getString(R.string.voice)}: %.2f"
-                    .format(silenceAndSpeechPercentage.second* 100) + "%\n" )
+                outputText(getString(R.string.speak_louder))
+            } else {
+                outputText(getString(R.string.good_volume))
+            }
+
+            outputPausesInfo(audioAnalyzer.getSilencePercentage())
+
 
             outputTitleAndContent(getString(R.string.duration),
                 "\n${formatTime(audioAnalyzer.getSpeechDuration())}\n")
@@ -273,8 +312,7 @@ class CountdownDialogFragment : DialogFragment() {
         }
 
         val activity = activity as? VoiceAnalysisActivity
-            ?: // TODO log mistake? exit?
-            return null
+            ?: return null
         val audioAnalyzer = activity.audioAnalyzer
         audioAnalyzer.recordCountdownAudio { continueRecording }
 
