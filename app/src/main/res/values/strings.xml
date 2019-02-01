@@ -184,7 +184,7 @@
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
     <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
-    
+
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>

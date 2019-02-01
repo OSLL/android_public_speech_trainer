@@ -149,7 +149,7 @@ class TrainingActivity : AppCompatActivity() {
                     )
 
                     tsd.spentTimeInSec = timeOfSlide
-
+                  
                     tsd.knownWords = curText
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
@@ -535,6 +535,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+
         if (pause_button_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
         }
