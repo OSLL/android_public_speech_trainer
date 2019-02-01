@@ -125,7 +125,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printSpeedLineChart(presentationSpeedData)
 
-        val editedTextForTop10WordsChart = PrepositionsAndConjunctions()
+        val editedTextForTop10WordsChart = PrepositionsAndConjunctions(this)
                 .removeConjunctionsAndPrepositionsFromText(trainingData!!.allRecognizedText)
 
         val presentationTop10Words = getTop10Words(editedTextForTop10WordsChart)
