@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    android:id="@+id/start_page_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/activityBackground"
     tools:context=".StartPageActivity">
 
     <Button
+        android:layout_gravity="right|bottom"
         android:id="@+id/addBtn"
-        android:layout_width="53dp"
-        android:layout_height="49dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/oval_button"
@@ -27,4 +31,4 @@
             android:paddingBottom="100dp"
             android:clipToPadding="false"
             />
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>

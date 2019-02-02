@@ -33,10 +33,10 @@ public class SpeechRecognitionService: Service() {
 
 
     override fun onCreate() {
-
         super.onCreate()
         Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "SERVICE: onCreate called")
         mAudioManager = (getSystemService(Context.AUDIO_SERVICE) as AudioManager?)!!
+
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         mSpeechRecognizer!!.setRecognitionListener(SpeechRecognitionListener())
         mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -79,7 +79,7 @@ public class SpeechRecognitionService: Service() {
                 MSG_RECOGNIZER_CANCEL -> {
                     if (mIsStreamSolo) {
                         mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false)
-                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0)
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 0)
                         mIsStreamSolo = false
                     }
                     target!!.mSpeechRecognizer!!.cancel()
@@ -90,10 +90,11 @@ public class SpeechRecognitionService: Service() {
     }
 
     // Count down timer for Jelly Bean work around
-    protected var mNoSpeechCountDown: CountDownTimer = object : CountDownTimer(5000, 5000) {
+    protected var mNoSpeechCountDown: CountDownTimer = object : CountDownTimer(5000, 500) {
 
         override fun onTick(millisUntilFinished: Long) {
-
+            if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0)
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
         }
 
         override fun onFinish() {
@@ -122,6 +123,11 @@ public class SpeechRecognitionService: Service() {
 
         Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "SERVICE: onDestroy called")
         MESSAGE = ""
+
+        Handler().postDelayed({
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 0)
+        }, 2000)
+
     }
 
     protected inner class SpeechRecognitionListener : RecognitionListener {
@@ -212,7 +218,6 @@ public class SpeechRecognitionService: Service() {
 
     override fun onUnbind(i: Intent): Boolean {
         Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "SERVICE: onUnbind called")
-        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0)
         return super.onUnbind(i)
     }
 

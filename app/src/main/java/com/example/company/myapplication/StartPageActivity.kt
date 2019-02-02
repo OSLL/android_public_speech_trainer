@@ -5,12 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.pdf.PdfRenderer
-import android.net.Uri
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -20,10 +15,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.company.myapplication.appSupport.PdfToBitmap
+import com.example.company.myapplication.appSupport.ProgressHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -49,6 +46,7 @@ class StartPageActivity : AppCompatActivity() {
 
     private var listPresentationData: List<PresentationData>? = null
     private var presentationDataDao: PresentationDataDao? = null
+    private lateinit var progressHelper: ProgressHelper
 
     private var pdfReader: PdfToBitmap? = null
 
@@ -56,6 +54,9 @@ class StartPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
+
+        progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
+        progressHelper.show()
 
         if (!checkPermissions())
             checkPermissions()
@@ -74,10 +75,17 @@ class StartPageActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        progressHelper.hide()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.itemId
         when (id) {
@@ -151,6 +159,8 @@ class StartPageActivity : AppCompatActivity() {
         recyclerview_startpage.isLongClickable = true
 
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
+            progressHelper.show()
+
             val row = item as PresentationStartpageItemRow
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)

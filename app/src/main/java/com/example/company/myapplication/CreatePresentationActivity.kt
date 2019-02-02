@@ -26,7 +26,7 @@ class CreatePresentationActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
         super.onCreate(savedInstanceState)
-        if(!isChecked) {
+        if (!isChecked) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
             val intent = Intent(ACTION_OPEN_DOCUMENT)
@@ -35,52 +35,57 @@ class CreatePresentationActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),checkForPresentationInDB(getString(R.string.deb_pres_name)))
+            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
             startActivity(i)
             finish()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-            if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
-                val selectedFile = data.data //The uri with the location of the file
-                try {
-                    val i = Intent(this, EditPresentationActivity::class.java)
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID),checkForPresentationInDB(selectedFile.toString()))
-                    Log.d(FILE_SYSTEM, selectedFile.toString())
-                    startActivity(i)
-                    finish()
-                } catch (e: FileNotFoundException) {
-                    Log.d(FILE_SYSTEM, "file not found")
-                }
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
+            val selectedFile = data.data //The uri with the location of the file
+            try {
+                val i = Intent(this, EditPresentationActivity::class.java)
+                val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
+                Log.d(FILE_SYSTEM, selectedFile.toString())
+                startActivity(i)
+            } catch (e: FileNotFoundException) {
+                Log.d(FILE_SYSTEM, "file not found")
             }
+        }
+
+        finish()
     }
 
-    private fun checkForPresentationInDB(stringUri: String): Int {
-        speechDataBase = SpeechDataBase.getInstance(this)
+    private fun checkForPresentationInDB(stringUri: String): Int? {
+        try {
+            speechDataBase = SpeechDataBase.getInstance(this)
 
-        var newPresentation: PresentationData? = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)
-        var currentPresID: Int? = newPresentation?.id
+            var newPresentation: PresentationData? = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)
+            var currentPresID: Int? = newPresentation?.id
 
-        if (newPresentation == null) {
-            newPresentation = PresentationData()
-            newPresentation.stringUri = stringUri
+            if (newPresentation == null) {
+                newPresentation = PresentationData()
+                newPresentation.stringUri = stringUri
 
-            if (stringUri == getString(R.string.deb_pres_name))
-                newPresentation.debugFlag = 1
+                if (stringUri == getString(R.string.deb_pres_name))
+                    newPresentation.debugFlag = 1
 
-            speechDataBase?.PresentationDataDao()?.insert(newPresentation)
-            currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
+                speechDataBase?.PresentationDataDao()?.insert(newPresentation)
+                currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
 
-            Log.d(APST_TAG + ACTIVITY_CREATE_PRESENTATION_NAME, "create new pres: $newPresentation")
+                Log.d(APST_TAG + ACTIVITY_CREATE_PRESENTATION_NAME, "create new pres: $newPresentation")
+            } else {
+                Log.d(APST_TAG + ACTIVITY_CREATE_PRESENTATION_NAME, "open exists presentation: $newPresentation")
+                Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_LONG).show()
+            }
+
+            return currentPresID
+        } catch (e: Exception) {
+            return null
         }
-        else {
-            Log.d(APST_TAG + ACTIVITY_CREATE_PRESENTATION_NAME, "open exists presentation: $newPresentation")
-            Toast.makeText(this, "This presentation has already been added!", Toast.LENGTH_LONG).show()
-        }
-
-        return currentPresID!!
     }
 }
 

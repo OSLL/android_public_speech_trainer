@@ -10,11 +10,13 @@ import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
+import com.example.company.myapplication.appSupport.ProgressHelper
 import com.example.company.myapplication.vocabulary.PrepositionsAndConjunctions
 import com.example.company.myapplication.fragments.TimeOnEachSlideChartFragment
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
@@ -27,7 +29,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import java.text.BreakIterator
 import java.util.*
@@ -55,11 +56,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var bmpBase: Bitmap? = null
 
     private var currentTrainingTime: Long = 0
+    private val activityRequestCode = 101
 
-    @SuppressLint("LongLogTag")
+    private lateinit var progressHelper: ProgressHelper
+
+    @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        progressHelper = ProgressHelper(this, root_view_training_statistics, listOf(share1, returnTraining))
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
@@ -98,15 +106,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(url))
             sharingIntent.type = "image/jpg"
-            startActivity(Intent.createChooser(sharingIntent, "Share with friends"))
-        }
-
-        returnTraining.setOnClickListener{
-            val returnIntent = Intent(this, StartPageActivity::class.java)
-            startActivity(returnIntent)
+            startActivityForResult(Intent.createChooser(sharingIntent, "Share with friends"), activityRequestCode)
         }
 
         returnTraining.setOnClickListener {
+            progressHelper.show()
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
             startActivity(i)
@@ -152,10 +156,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${intent.getIntExtra(getString(R.string.count_of_slides),1)+2}"
+                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            super.onBackPressed()
+            return true
+        }
+        return false
     }
 
     private fun drawPict() {

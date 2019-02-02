@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
@@ -30,6 +31,8 @@ class TrainingHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_history)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         if (presId > 0) {
@@ -74,5 +77,13 @@ class TrainingHistoryActivity : AppCompatActivity() {
                 startActivity(i)
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            super.onBackPressed()
+            return true
+        }
+        return false
     }
 }

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/constraintLayout"
-    android:background="@drawable/rounded_item_row"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="15dp"
+    app:cardCornerRadius="8dp"
+    android:background="@android:color/white"
+    android:foreground="@drawable/card_foreground"
+    app:cardElevation="4dp"
     android:layout_marginHorizontal="10dp">
 
     <ImageView
@@ -89,24 +92,19 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:gravity="right">
 
             <ImageButton
+                android:layout_gravity="bottom|right"
+                android:foreground="@drawable/card_foreground"
                 android:id="@+id/training_history_btn_start_page_row"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:background="@android:drawable/ic_menu_recent_history" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/calendar" />
 
-        </LinearLayout>
 
     </FrameLayout>
 
 
 
-</android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

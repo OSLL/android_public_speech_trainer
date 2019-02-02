@@ -10,12 +10,12 @@
     <string name="activity_start_page_name">Начальная страница</string>
     <string name="activity_create_presentation_name">Добавление презентации</string>
     <string name="activity_edit_presentation_name">Добавление новой презентации</string>
-    <string name="time_limit">Ограничение времени на доклад:</string>
+    <string name="time_limit">Ограничение времени на доклад</string>
     <string name="share">Поделиться</string>
     <string name="activity_train_name">Тренироваться</string>
     <string name="check_text">Check Presentation Text</string>
     <string name="add_presentation">Добавить презентацию</string>
-    <string name="enter_presentation_name">Введите название презентации</string>
+    <string name="enter_presentation_name">Название презентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
     <string name="add_presentation_symbol">+</string>
@@ -184,6 +184,7 @@
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
     <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
+    <string name="presentationEditing">Редактирование презентации</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

@@ -44,6 +44,7 @@ class PresentationActivity : AppCompatActivity() {
             share.visibility = View.INVISIBLE
             trainingHistory.visibility = View.INVISIBLE
             training.visibility = View.GONE
+            title = getString(R.string.presentationEditing)
         }
 
         if (presentationData?.timeLimit == null) {
