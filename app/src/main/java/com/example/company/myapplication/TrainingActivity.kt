@@ -14,12 +14,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.appSupport.PdfToBitmap
+import com.example.company.myapplication.appSupport.ProgressHelper
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -28,9 +29,7 @@ import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.HashMap
 import kotlin.concurrent.fixedRateTimer
-import kotlin.concurrent.scheduleAtFixedRate
 
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
 const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
@@ -81,10 +80,14 @@ class TrainingActivity : AppCompatActivity() {
 
     var isAudio: Boolean? = null
 
+    private lateinit var progressHelper: ProgressHelper
+
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+
+        progressHelper = ProgressHelper(this, training_activity_root_view, listOf())
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
@@ -123,11 +126,25 @@ class TrainingActivity : AppCompatActivity() {
             mPlayer?.setOnCompletionListener { stopPlay() }
         }
 
+        if (presentationData?.pageCount == 1) {
+            next.isEnabled = false
+            next.alpha = 0.3f
+
+            pause_button_training_activity.isEnabled = false
+            pause_button_training_activity.alpha = 0.3f
+        }
+
         curSlide.text = "1/${presentationData?.pageCount}"
         next.setOnClickListener {
             next.isEnabled = false
+            next.alpha = 0.3f
+
             pause_button_training_activity.isEnabled = false
+            pause_button_training_activity.alpha = 0.3f
+
             finish.isEnabled = false
+            finish.alpha = 0.3f
+
             audioManager!!.isMicrophoneMute = true
             Toast.makeText(this, "Saving State, Please Wait", Toast.LENGTH_SHORT).show()
 
@@ -149,7 +166,7 @@ class TrainingActivity : AppCompatActivity() {
                     )
 
                     tsd.spentTimeInSec = timeOfSlide
-
+                  
                     tsd.knownWords = curText
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
@@ -158,12 +175,17 @@ class TrainingActivity : AppCompatActivity() {
                     curText = ""
                     speechRecognitionService!!.setMESSAGE("")
                     audioManager!!.isMicrophoneMute = false
+
                     finish.isEnabled = true
+                    finish.alpha = 1f
 
                     Log.d("test_pr", "page count: ${pdfReader?.getPageCount()!!}, currentPage: ${pdfReader?.getPageIndexStatus()!!}")
                     if (pdfReader?.getPageCount()!! > (pdfReader?.getPageIndexStatus()!! + 1)) {
                         next.isEnabled = true
+                        next.alpha = 1f
+
                         pause_button_training_activity.isEnabled = true
+                        pause_button_training_activity.alpha = 1f
                     }
                     timeOfSlide = 0
                 }, 2000)
@@ -176,9 +198,16 @@ class TrainingActivity : AppCompatActivity() {
             mainTimer?.cancel()
             extraTimeTimer?.cancel()
             time_left.setText(R.string.training_completed)
+
             finish.isEnabled = false
+            finish.alpha = 0.3f
+
             next.isEnabled = false
+            next.alpha = 0.3f
+
             pause_button_training_activity.isEnabled = false
+            pause_button_training_activity.alpha = 0.3f
+
             audioManager!!.isMicrophoneMute = true
             Toast.makeText(this@TrainingActivity, "Completion...", Toast.LENGTH_SHORT).show()
 
@@ -189,6 +218,7 @@ class TrainingActivity : AppCompatActivity() {
                         mPlayer?.stop()
                     }
                     stopRecognizingService(true)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
                     val builder = AlertDialog.Builder(this@TrainingActivity)
                     builder.setMessage(R.string.training_completed)
@@ -215,10 +245,10 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         pause_button_training_activity.setOnClickListener {
-            if (pause_button_training_activity.text.toString() == getString(R.string.continue_)) {
+            if (pause_button_text_training_activity.text.toString() == getString(R.string.continue_)) {
                 next.visibility = View.VISIBLE
                 finish.visibility = View.VISIBLE
-                pause_button_training_activity.text = getString(R.string.pause)
+                pause_button_text_training_activity.text = getString(R.string.pause)
 
                 mainTimer?.start()
                 if(timeIsOver)
@@ -234,8 +264,10 @@ class TrainingActivity : AppCompatActivity() {
 
             next.visibility = View.GONE
             finish.visibility = View.GONE
-            pause_button_training_activity.text = getString(R.string.continue_)
+            pause_button_text_training_activity.text = getString(R.string.continue_)
+
             pause_button_training_activity.isEnabled = false
+            pause_button_training_activity.alpha = 0.3f
 
             mainTimer?.cancel()
             extraTimeTimer?.cancel()
@@ -248,7 +280,9 @@ class TrainingActivity : AppCompatActivity() {
             Handler().postDelayed({
                 stopRecognizingService(true)
                 audioManager!!.isMicrophoneMute = false
+
                 pause_button_training_activity.isEnabled = true
+                pause_button_training_activity.alpha = 1f
             }, 2000)
         }
         mainTimer = timer(time * 1000, 1000)
@@ -288,6 +322,14 @@ class TrainingActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arr,
                     1)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            super.onBackPressed()
+            return true
+        }
+        return false
     }
 
     @SuppressLint("LongLogTag")
@@ -448,7 +490,6 @@ class TrainingActivity : AppCompatActivity() {
         else
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
-        //renderPage(0)
         if(nIndex == -1)
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
         else
@@ -516,11 +557,6 @@ class TrainingActivity : AppCompatActivity() {
 
         var millisUntilFinishedVar: Long = millisUntilFinished
 
-/*
-        val hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-        millisUntilFinished -= TimeUnit.HOURS.toMillis(hours)
-*/
-
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinishedVar)
         millisUntilFinishedVar -= TimeUnit.MINUTES.toMillis(minutes)
 
@@ -535,11 +571,16 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (pause_button_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
+        progressHelper.show()
+        if (pause_button_text_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
         }
-
         super.onPause()
+    }
+
+    override fun onResume() {
+        progressHelper.hide()
+        super.onResume()
     }
 
     override fun onDestroy() {

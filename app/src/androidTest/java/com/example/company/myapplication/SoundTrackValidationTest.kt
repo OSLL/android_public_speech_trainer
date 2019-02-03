@@ -33,9 +33,9 @@ class SoundTrackValidationTest {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.addPresentation)).perform(click())
 
-        onView(withId(R.id.trainingTime)).perform(clearText(), typeText(mIntentsTestRule.activity.getString(R.string.test_time)), closeSoftKeyboard())
+        //onView(withId(R.id.trainingTime)).perform(clearText(), typeText(mIntentsTestRule.activity.getString(R.string.test_time)), closeSoftKeyboard())
 
-        onView(withId(R.id.training)).perform(click())
+        //onView(withId(R.id.training)).perform(click())
 
         onView(withId(android.R.id.button1)).perform(click())
 

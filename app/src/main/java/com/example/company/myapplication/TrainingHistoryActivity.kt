@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
+import com.example.company.myapplication.appSupport.ProgressHelper
 import com.example.company.myapplication.views.TrainingHistoryItemRow
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -24,12 +26,16 @@ class TrainingHistoryActivity : AppCompatActivity() {
         const val launchedFromHistoryActivityFlag = 1
     }
 
+    private lateinit var progressHelper: ProgressHelper
     private var presentationData: PresentationData? = null
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_history)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        progressHelper = ProgressHelper(this, root_view_training_history, listOf(recyclerview_training_history))
 
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         if (presId > 0) {
@@ -74,5 +80,23 @@ class TrainingHistoryActivity : AppCompatActivity() {
                 startActivity(i)
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            super.onBackPressed()
+            return true
+        }
+        return false
+    }
+
+    override fun onPause() {
+        progressHelper.show()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        progressHelper.hide()
+        super.onResume()
     }
 }

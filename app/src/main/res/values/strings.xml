@@ -10,12 +10,12 @@
     <string name="activity_start_page_name">Начальная страница</string>
     <string name="activity_create_presentation_name">Добавление презентации</string>
     <string name="activity_edit_presentation_name">Добавление новой презентации</string>
-    <string name="time_limit">Ограничение времени на доклад:</string>
+    <string name="time_limit">Ограничение времени на доклад (минут)</string>
     <string name="share">Поделиться</string>
     <string name="activity_train_name">Тренироваться</string>
     <string name="check_text">Check Presentation Text</string>
     <string name="add_presentation">Добавить презентацию</string>
-    <string name="enter_presentation_name">Введите название презентации</string>
+    <string name="enter_presentation_name">Название презентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
     <string name="add_presentation_symbol">+</string>
@@ -184,5 +184,369 @@
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
     <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
-    
+    <string name="presentationEditing">Редактирование презентации</string>
+
+    <string-array name="prepositionsAndConjunctions">
+        <item>а именно</item>
+        <item>а не то</item>
+        <item>благодаря тому что</item>
+        <item>благодаря чему</item>
+        <item>в результате чего</item>
+        <item>до тех пор пока не</item>
+        <item>как бы не</item>
+        <item>не прошло и, как</item>
+        <item>лишь только</item>
+        <item>перед тем как</item>
+        <item>по мере того как</item>
+        <item>потому что</item>
+        <item>в соответствии с</item>
+        <item>в течение</item>
+        <item>а ведь</item>
+        <item>вследствие чего</item>
+        <item>всё-таки</item>
+        <item>где-то</item>
+        <item>из-за того, что</item>
+        <item>из-за этого</item>
+        <item>как бы</item>
+        <item>как-то</item>
+        <item>однако же</item>
+        <item>потому как</item>
+        <item>прежде чем</item>
+        <item>словно бы</item>
+        <item>то есть</item>
+        <item>а-ля</item>
+        <item>без ведома</item>
+        <item>близко от</item>
+        <item>в виде</item>
+        <item>в зависимости от</item>
+        <item>в интересах</item>
+        <item>в качестве</item>
+        <item>в лице</item>
+        <item>в отличие от</item>
+        <item>в отношении</item>
+        <item>в пандан</item>
+        <item>в пользу</item>
+        <item>в преддверии</item>
+        <item>в продолжение</item>
+        <item>в результате</item>
+        <item>в роли</item>
+        <item>в связи с</item>
+        <item>в силу</item>
+        <item>в случае</item>
+        <item>в целях</item>
+        <item>в честь</item>
+        <item>вдоль по</item>
+        <item>во славу</item>
+        <item>вплоть до</item>
+        <item>впредь до</item>
+        <item>для-ради</item>
+        <item>во имя</item>
+        <item>за счёт</item>
+        <item>из-за</item>
+        <item>из-под</item>
+        <item>из-подо</item>
+        <item>на благо</item>
+        <item>на виду у</item>
+        <item>на глазах у</item>
+        <item>наряду с</item>
+        <item>на предмет</item>
+        <item>начиная с</item>
+        <item>не без</item>
+        <item>не считая</item>
+        <item>невзирая на</item>
+        <item>независимо от</item>
+        <item>от имени</item>
+        <item>от лица</item>
+        <item>по линии</item>
+        <item>по мере</item>
+        <item>по направлению к</item>
+        <item>по причине</item>
+        <item>по случаю</item>
+        <item>по сравнению с</item>
+        <item>по-за</item>
+        <item>по-над</item>
+        <item>по-под</item>
+        <item>под видом</item>
+        <item>под эгидой</item>
+        <item>применительно к</item>
+        <item>рядом с</item>
+        <item>с ведома</item>
+        <item>с помощью</item>
+        <item>с прицелом на</item>
+        <item>с точки зрения</item>
+        <item>с целью</item>
+        <item>а то</item>
+        <item>до тех пор</item>
+        <item>как и</item>
+        <item>пока не</item>
+        <item>как то</item>
+        <item>с тем чтобы</item>
+        <item>так как</item>
+        <item>то ли</item>
+        <item>вслед за</item>
+        <item>за вычетом</item>
+        <item>за исключением</item>
+        <item>исходя из</item>
+        <item>недалеко от</item>
+        <item>несмотря на</item>
+        <item>по поводу</item>
+        <item>поблизости от</item>
+        <item>при помощи</item>
+        <item>а</item>
+        <item>абы</item>
+        <item>аж</item>
+        <item>ажно</item>
+        <item>ай</item>
+        <item>аки</item>
+        <item>ако</item>
+        <item>али</item>
+        <item>аль</item>
+        <item>ан</item>
+        <item>аще</item>
+        <item>благо</item>
+        <item>бо</item>
+        <item>буде</item>
+        <item>будто</item>
+        <item>ведь</item>
+        <item>впрочем</item>
+        <item>всё</item>
+        <item>где</item>
+        <item>да</item>
+        <item>дабы</item>
+        <item>даже</item>
+        <item>пока</item>
+        <item>докуда</item>
+        <item>дотоле</item>
+        <item>егда</item>
+        <item>едва</item>
+        <item>еже</item>
+        <item>ежели</item>
+        <item>ежель</item>
+        <item>если</item>
+        <item>ж</item>
+        <item>же</item>
+        <item>зане</item>
+        <item>занеже</item>
+        <item>зато</item>
+        <item>зачем</item>
+        <item>значит</item>
+        <item>и</item>
+        <item>ибо</item>
+        <item>или</item>
+        <item>иль</item>
+        <item>именно</item>
+        <item>имже</item>
+        <item>инако</item>
+        <item>иначе</item>
+        <item>инда</item>
+        <item>ино</item>
+        <item>итак</item>
+        <item>кабы</item>
+        <item>как</item>
+        <item>каков</item>
+        <item>какой</item>
+        <item>ковда</item>
+        <item>ковды</item>
+        <item>когда</item>
+        <item>когды</item>
+        <item>коли</item>
+        <item>коль</item>
+        <item>который</item>
+        <item>куда</item>
+        <item>ли</item>
+        <item>либо</item>
+        <item>лишь</item>
+        <item>ль</item>
+        <item>настолько</item>
+        <item>нежели</item>
+        <item>незомь</item>
+        <item>ни</item>
+        <item>ниже</item>
+        <item>нижли</item>
+        <item>но</item>
+        <item>обаче</item>
+        <item>однако</item>
+        <item>одначе</item>
+        <item>отколь</item>
+        <item>откуда</item>
+        <item>откудова</item>
+        <item>оттого</item>
+        <item>отчего</item>
+        <item>поелику</item>
+        <item>пока</item>
+        <item>покамест</item>
+        <item>покаместь</item>
+        <item>покеда</item>
+        <item>поколева</item>
+        <item>поколику</item>
+        <item>поколь</item>
+        <item>покуль</item>
+        <item>покуля</item>
+        <item>понеже</item>
+        <item>поскольку</item>
+        <item>пота</item>
+        <item>потому</item>
+        <item>почём</item>
+        <item>почему</item>
+        <item>правда</item>
+        <item>преж</item>
+        <item>притом</item>
+        <item>причём</item>
+        <item>просто</item>
+        <item>пускай</item>
+        <item>пусть</item>
+        <item>равно</item>
+        <item>раз</item>
+        <item>разве</item>
+        <item>ровно</item>
+        <item>сиречь</item>
+        <item>сколько</item>
+        <item>следовательно</item>
+        <item>словно</item>
+        <item>столько</item>
+        <item>также</item>
+        <item>то</item>
+        <item>тож</item>
+        <item>тоже</item>
+        <item>только</item>
+        <item>хоть</item>
+        <item>хотя</item>
+        <item>чем</item>
+        <item>чи</item>
+        <item>что</item>
+        <item>чтоб</item>
+        <item>чтобы</item>
+        <item>чуть</item>
+        <item>штоб</item>
+        <item>штобы</item>
+        <item>яко</item>
+        <item>якобы</item>
+        <item>без</item>
+        <item>безо</item>
+        <item>благодаря</item>
+        <item>близ</item>
+        <item>в</item>
+        <item>вблизи</item>
+        <item>ввиду</item>
+        <item>вглубь</item>
+        <item>вдогон</item>
+        <item>вдоль</item>
+        <item>взамен</item>
+        <item>включая</item>
+        <item>вкруг</item>
+        <item>вместо</item>
+        <item>вне</item>
+        <item>внизу</item>
+        <item>внутри</item>
+        <item>внутрь</item>
+        <item>во</item>
+        <item>вовнутрь</item>
+        <item>возле</item>
+        <item>вокруг</item>
+        <item>вопреки</item>
+        <item>вослед</item>
+        <item>впереди</item>
+        <item>вразрез</item>
+        <item>вроде</item>
+        <item>вслед</item>
+        <item>вследствие</item>
+        <item>встречу</item>
+        <item>выключая</item>
+        <item>для</item>
+        <item>до</item>
+        <item>за</item>
+        <item>замест</item>
+        <item>заместо</item>
+        <item>из</item>
+        <item>изнутри</item>
+        <item>изо</item>
+        <item>исключая</item>
+        <item>касаемо</item>
+        <item>касательно</item>
+        <item>ко</item>
+        <item>кончая</item>
+        <item>кроме</item>
+        <item>кругом</item>
+        <item>к</item>
+        <item>меж</item>
+        <item>между</item>
+        <item>мимо</item>
+        <item>на</item>
+        <item>наверху</item>
+        <item>навроде</item>
+        <item>навстречу</item>
+        <item>над</item>
+        <item>надо</item>
+        <item>назад</item>
+        <item>назади</item>
+        <item>накануне</item>
+        <item>наместо</item>
+        <item>наперекор</item>
+        <item>наперерез</item>
+        <item>наперехват</item>
+        <item>наподобие</item>
+        <item>наподобье</item>
+        <item>напротив</item>
+        <item>насупротив</item>
+        <item>несмотря</item>
+        <item>насчёт</item>
+        <item>ниже</item>
+        <item>о</item>
+        <item>об</item>
+        <item>обо</item>
+        <item>обок</item>
+        <item>обочь</item>
+        <item>около</item>
+        <item>окрест</item>
+        <item>окроме</item>
+        <item>окромя</item>
+        <item>округ</item>
+        <item>опосля</item>
+        <item>опричь</item>
+        <item>от</item>
+        <item>относительно</item>
+        <item>ото</item>
+        <item>перед</item>
+        <item>передо</item>
+        <item>повдоль</item>
+        <item>поверх</item>
+        <item>под</item>
+        <item>подле</item>
+        <item>подо</item>
+        <item>подобно</item>
+        <item>позади</item>
+        <item>позадь</item>
+        <item>позднее</item>
+        <item>помимо</item>
+        <item>поперёд</item>
+        <item>поперёк</item>
+        <item>порядка</item>
+        <item>посверху</item>
+        <item>посереди</item>
+        <item>посередине</item>
+        <item>посерёдке</item>
+        <item>посередь</item>
+        <item>после</item>
+        <item>посреди</item>
+        <item>посредине</item>
+        <item>посредством</item>
+        <item>пред</item>
+        <item>предо</item>
+        <item>преж</item>
+        <item>прежде</item>
+        <item>при</item>
+        <item>про</item>
+        <item>промеж</item>
+        <item>промежду</item>
+        <item>против</item>
+        <item>противно</item>
+        <item>противу</item>
+        <item>путём</item>
+        <item>ради</item>
+        <item>с</item>
+        <item>сверх</item>
+        <item>сверху</item>
+        <item>свыше</item>
+        <item>по</item>
+    </string-array>
 </resources>

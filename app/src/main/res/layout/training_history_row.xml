@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    app:cardElevation="4dp"
+    app:cardCornerRadius="16dp"
+    android:foreground="@drawable/card_foreground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
@@ -7,7 +11,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
     android:layout_marginTop="10dp"
-    android:background="@drawable/rounded_item_row">
+    android:background="@android:color/white">
 
 
     <ImageView
@@ -48,4 +52,4 @@
         android:visibility="invisible" />
 
 
-</FrameLayout>
+</android.support.v7.widget.CardView>
