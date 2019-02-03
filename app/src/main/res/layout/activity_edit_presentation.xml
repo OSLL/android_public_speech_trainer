@@ -72,21 +72,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <TextView
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/black_35_alpha"
-                    android:textSize="16dp"
-                    android:text="@string/min_per_sec"
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
                 <LinearLayout
                     android:layout_marginTop="10dp"
                     android:descendantFocusability="blocksDescendants"
                     android:clickable="false"
                     android:focusable="false"
-                    android:weightSum="2"
+                    android:weightSum="1"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -95,14 +86,6 @@
                         android:focusable="false"
                         android:clickable="false"
                         android:id="@+id/numberPicker1"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-
-                    <NumberPicker
-                        android:focusable="false"
-                        android:clickable="false"
-                        android:id="@+id/numberPicker2"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>

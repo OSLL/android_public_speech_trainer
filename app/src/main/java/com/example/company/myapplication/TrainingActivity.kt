@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
 import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
@@ -30,9 +29,7 @@ import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.HashMap
 import kotlin.concurrent.fixedRateTimer
-import kotlin.concurrent.scheduleAtFixedRate
 
 const val SPEECH_RECOGNITION_SERVICE_DEBUGGING = "test_speech_rec.TrainingActivity" // информация о взаимодействии с сервисом распознавания речи
 const val ACTIVITY_TRAINING_NAME = ".TrainingActivity"
@@ -129,7 +126,6 @@ class TrainingActivity : AppCompatActivity() {
             mPlayer?.setOnCompletionListener { stopPlay() }
         }
 
-        Log.d("dsfgfh", presentationData?.pageCount.toString())
         if (presentationData?.pageCount == 1) {
             next.isEnabled = false
             next.alpha = 0.3f
@@ -494,7 +490,6 @@ class TrainingActivity : AppCompatActivity() {
         else
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(nIndex+1))
 
-        //renderPage(0)
         if(nIndex == -1)
             slide.setImageBitmap(pdfReader?.getBitmapForSlide(0))
         else
@@ -561,11 +556,6 @@ class TrainingActivity : AppCompatActivity() {
     private fun timeString(millisUntilFinished: Long): String {
 
         var millisUntilFinishedVar: Long = millisUntilFinished
-
-/*
-        val hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-        millisUntilFinished -= TimeUnit.HOURS.toMillis(hours)
-*/
 
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinishedVar)
         millisUntilFinishedVar -= TimeUnit.MINUTES.toMillis(minutes)

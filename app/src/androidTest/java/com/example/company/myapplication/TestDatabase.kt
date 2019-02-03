@@ -47,7 +47,6 @@ class TestDatabase {
         // Добавление новой презентации
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.addPresentation)).perform(click())
-        onView(withId(R.id.main_btn_activity_presentation)).perform(click())
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
@@ -67,7 +66,6 @@ class TestDatabase {
         for (i in 0..1) {
             onView(withId(R.id.addBtn)).perform(click())
             onView(withId(R.id.addPresentation)).perform(click())
-            onView(withId(R.id.main_btn_activity_presentation)).perform(click())
         }
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
@@ -87,7 +85,6 @@ class TestDatabase {
         // Добавление новой презентации
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.addPresentation)).perform(click())
-        onView(withId(R.id.main_btn_activity_presentation)).perform(click())
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV

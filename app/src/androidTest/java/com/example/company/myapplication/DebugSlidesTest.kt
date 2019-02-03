@@ -33,9 +33,8 @@ class DebugSlidesTest {
         debSl.apply()
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         onView(withText(PresName.substring(0, PresName.indexOf(".pdf")))).check(matches(isDisplayed()))
+        onView(withText("26")).check(matches(isDisplayed()))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
-        onView(withText(PresName.substring(0, PresName.indexOf(".pdf")))).check(matches(isDisplayed()))
-        onView(withText("26"+":00")).check(matches(isDisplayed()))
         debSl.putBoolean(OnMode, false)
         debSl.apply()
     }

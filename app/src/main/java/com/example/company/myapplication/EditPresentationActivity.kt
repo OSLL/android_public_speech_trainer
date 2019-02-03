@@ -1,6 +1,5 @@
 package com.example.company.myapplication
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -33,14 +32,10 @@ class EditPresentationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, numberPicker2, presentationName))
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
 
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
-
-        numberPicker2.minValue = 0
-        numberPicker2.maxValue = 5
-        numberPicker2.setFormatter(formatter)
 
         try {
             presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
@@ -62,7 +57,6 @@ class EditPresentationActivity : AppCompatActivity() {
                 title = getString(R.string.presentationEditing)
 
                 numberPicker1.value = (presentationData?.timeLimit!! / 60).toInt()
-                numberPicker2.value = (presentationData?.timeLimit!! % 60 / 10).toInt()
             } else {
                 val defTime = pdfReader.getPageCount()
                 if (defTime == null || defTime < 1) {
@@ -89,17 +83,11 @@ class EditPresentationActivity : AppCompatActivity() {
                 }
 
                 if (presentationName.text.length < 48) {
-                    val i = Intent(this, PresentationActivity::class.java)
                     presentationData?.pageCount = pdfReader.getPageCount()
                     presentationData?.name = presentationName.text.toString()
-                    presentationData?.timeLimit = numberPicker1.value.toLong() * 60L + numberPicker2.value.toLong() * 10L
+                    presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
                     presentationDataDao?.updatePresentation(presentationData!!)
 
-                    /*if (changePresentationFlag)
-                        i.putExtra(getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
-
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                    startActivity(i)*/
                     finish()
                 } else
                     Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
