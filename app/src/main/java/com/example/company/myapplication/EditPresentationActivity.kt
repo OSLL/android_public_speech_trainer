@@ -3,36 +3,24 @@ package com.example.company.myapplication
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import com.example.company.myapplication.views.PresentationStartpageItemRow
-import com.example.company.myapplication.views.PresentationStartpageItemRow.Companion.activatedChangePresentationFlag
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import android.widget.NumberPicker
-import android.text.InputFilter
-import android.widget.EditText
-import org.w3c.dom.Text
-import java.lang.reflect.AccessibleObject.setAccessible
-import java.lang.reflect.AccessibleObject.setAccessible
-
-
-
-
-
-
-
+import com.example.company.myapplication.appSupport.ProgressHelper
 
 class EditPresentationActivity : AppCompatActivity() {
 
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
+    private lateinit var progressHelper: ProgressHelper
 
     private var formatter: NumberPicker.Formatter = NumberPicker.Formatter { value ->
         val temp = value * 10
@@ -45,11 +33,13 @@ class EditPresentationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, numberPicker2, presentationName))
+
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
 
         numberPicker2.minValue = 0
-        numberPicker2.maxValue = 6
+        numberPicker2.maxValue = 5
         numberPicker2.setFormatter(formatter)
 
         try {
@@ -125,6 +115,16 @@ class EditPresentationActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+    override fun onPause() {
+        progressHelper.show()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        progressHelper.hide()
+        super.onResume()
     }
 
     override fun onStart() {

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -15,7 +16,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.example.company.myapplication.views.PresentationStartpageItemRow
@@ -56,7 +56,7 @@ class StartPageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_start_page)
 
         progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
-        progressHelper.show()
+        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
 
         if (!checkPermissions())
             checkPermissions()
@@ -76,9 +76,14 @@ class StartPageActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        progressHelper.show()
+        super.onPause()
+    }
+
     override fun onResume() {
-        super.onResume()
         progressHelper.hide()
+        super.onResume()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -104,7 +109,6 @@ class StartPageActivity : AppCompatActivity() {
     }
 
     private fun refreshRecyclerView() {
-        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         listPresentationData = presentationDataDao?.getAll()
         if (listPresentationData == null || presentationDataDao == null) {
             Toast.makeText(this, "fillRecError", Toast.LENGTH_LONG).show()
@@ -159,7 +163,7 @@ class StartPageActivity : AppCompatActivity() {
         recyclerview_startpage.isLongClickable = true
 
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
-            progressHelper.show()
+            //progressHelper.show()
 
             val row = item as PresentationStartpageItemRow
             val i = Intent(this, TrainingActivity::class.java)
@@ -234,6 +238,10 @@ class StartPageActivity : AppCompatActivity() {
         super.onStart()
         refreshRecyclerView()
         runLayoutAnimation(recyclerview_startpage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
     override fun onStop() {
         super.onStop()

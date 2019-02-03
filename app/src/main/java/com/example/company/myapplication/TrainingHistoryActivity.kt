@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
+import com.example.company.myapplication.appSupport.ProgressHelper
 import com.example.company.myapplication.views.TrainingHistoryItemRow
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -25,6 +26,7 @@ class TrainingHistoryActivity : AppCompatActivity() {
         const val launchedFromHistoryActivityFlag = 1
     }
 
+    private lateinit var progressHelper: ProgressHelper
     private var presentationData: PresentationData? = null
 
     @SuppressLint("LongLogTag")
@@ -33,6 +35,7 @@ class TrainingHistoryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_training_history)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        progressHelper = ProgressHelper(this, root_view_training_history, listOf(recyclerview_training_history))
 
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         if (presId > 0) {
@@ -85,5 +88,15 @@ class TrainingHistoryActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+    override fun onPause() {
+        progressHelper.show()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        progressHelper.hide()
+        super.onResume()
     }
 }

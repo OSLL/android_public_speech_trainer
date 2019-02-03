@@ -110,7 +110,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         returnTraining.setOnClickListener {
-            progressHelper.show()
             val i = Intent(this, TrainingActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
             startActivity(i)
@@ -168,6 +167,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+    override fun onPause() {
+        progressHelper.show()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        progressHelper.hide()
+        super.onResume()
     }
 
     private fun drawPict() {
