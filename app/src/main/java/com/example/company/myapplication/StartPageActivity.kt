@@ -5,14 +5,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,6 +26,9 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
 import kotlin.NullPointerException
 
 
@@ -165,10 +166,16 @@ class StartPageActivity : AppCompatActivity() {
         adapter?.setOnItemClickListener{ item: Item<ViewHolder>, view: View ->
             //progressHelper.show()
 
-            val row = item as PresentationStartpageItemRow
-            val i = Intent(this, TrainingActivity::class.java)
-            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)
-            startActivity(i)
+            if (isOnline()) {
+                val row = item as PresentationStartpageItemRow
+                val i = Intent(this, TrainingActivity::class.java)
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)
+                startActivity(i)
+            }
+            else
+                Toast.makeText(
+                        applicationContext, R.string.no_internet_connection, Toast.LENGTH_SHORT
+                ).show()
         }
 
         adapter?.setOnItemLongClickListener { item: Item<ViewHolder>, view ->
@@ -214,6 +221,24 @@ class StartPageActivity : AppCompatActivity() {
 
     }
 
+    private fun isOnline(): Boolean {
+        var connection = false
+        val thread = Thread(Runnable {
+            connection = try {
+                val socket = Socket()
+                socket.connect(InetSocketAddress("8.8.8.8", 53), 1500)
+                socket.close()
+                true
+            } catch (e: IOException) {
+                false
+            }
+        })
+        thread.start()
+        thread.join()
+
+        return connection
+    }
+
     fun checkPermissions(): Boolean {
         val permissions = ArrayList<String>()
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -234,6 +259,7 @@ class StartPageActivity : AppCompatActivity() {
         }
         return true
     }
+
     override fun onStart() {
         super.onStart()
         refreshRecyclerView()
