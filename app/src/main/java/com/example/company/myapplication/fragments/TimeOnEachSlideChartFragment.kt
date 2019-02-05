@@ -3,6 +3,7 @@ package com.example.company.myapplication.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -51,12 +52,28 @@ class TimeOnEachSlideChartFragment: Fragment() {
     private fun printChart(entries: ArrayList<BarEntry>) {
 
         val labels = java.util.ArrayList<String>()
+        val colors = ArrayList<Int>()
 
-        for(entry in entries)
-            labels.add((entry.x +1).toInt().toString())
+        var averageTimeOnEachSlide = 0
+        for (entry in entries) {
+            averageTimeOnEachSlide += entry.y.toInt()
+        }
+        averageTimeOnEachSlide /= entries.size
+
+        for(entry in entries) {
+            labels.add((entry.x + 1).toInt().toString())
+
+            colors.add(
+                    when(entry.y) {
+                        in averageTimeOnEachSlide * 0.9f .. averageTimeOnEachSlide * 1.1f -> ContextCompat.getColor(context!!, R.color.inTheAverageRange)
+                        in Float.MIN_VALUE .. averageTimeOnEachSlide * 0.9f -> ContextCompat.getColor(context!!, R.color.slowerThanAverageRange)
+                        else -> ContextCompat.getColor(context!!, R.color.fasterThanAverageRange)
+                    }
+            )
+        }
 
         val barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds))
-        barDataSet.color = R.color.timeOncEachSlideChartColor
+        barDataSet.colors = colors
 
         val data = BarData(barDataSet)
         data.setValueTextSize(0f)
