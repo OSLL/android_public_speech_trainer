@@ -22,6 +22,10 @@ import kotlinx.android.synthetic.main.time_on_each_slide_chart_fragment.*
 
 const val FRAGMENT_TIME_ON_EACH_SLIDE = ".FragmentTimeOnEachSlide"
 
+const val LOWER_RANGE_LIMIT = 0.9f
+const val UPPER_RANGE_LIMIT = 1.1f
+
+
 class TimeOnEachSlideChartFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.time_on_each_slide_chart_fragment, container, false)
@@ -49,6 +53,7 @@ class TimeOnEachSlideChartFragment: Fragment() {
         printChart(entries)
     }
 
+    @SuppressLint("LongLogTag")
     private fun printChart(entries: ArrayList<BarEntry>) {
 
         val labels = java.util.ArrayList<String>()
@@ -59,14 +64,16 @@ class TimeOnEachSlideChartFragment: Fragment() {
             averageTimeOnEachSlide += entry.y.toInt()
         }
         averageTimeOnEachSlide /= entries.size
+        Log.d(FRAGMENT_TIME_ON_EACH_SLIDE, "averageTime = $averageTimeOnEachSlide")
+
 
         for(entry in entries) {
             labels.add((entry.x + 1).toInt().toString())
 
             colors.add(
                     when(entry.y) {
-                        in averageTimeOnEachSlide * 0.9f .. averageTimeOnEachSlide * 1.1f -> ContextCompat.getColor(context!!, R.color.inTheAverageRange)
-                        in Float.MIN_VALUE .. averageTimeOnEachSlide * 0.9f -> ContextCompat.getColor(context!!, R.color.slowerThanAverageRange)
+                        in averageTimeOnEachSlide * LOWER_RANGE_LIMIT .. averageTimeOnEachSlide * UPPER_RANGE_LIMIT -> ContextCompat.getColor(context!!, R.color.inTheAverageRange)
+                        in Float.MIN_VALUE .. averageTimeOnEachSlide * LOWER_RANGE_LIMIT -> ContextCompat.getColor(context!!, R.color.slowerThanAverageRange)
                         else -> ContextCompat.getColor(context!!, R.color.fasterThanAverageRange)
                     }
             )
