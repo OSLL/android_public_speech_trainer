@@ -22,7 +22,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     private val silenceCoefficient = 1.0
     private val shortPauseLength = 0.1
     private val shortSpeechLength = 0.05
-    private val maxAcceptableSilenceLevel = 33
+    private val maxAcceptableSilenceLevel = 40
     private val minWarningSilencePercentage = 0.085
     private val maxWarningSilencePercentage = 0.18
     private val maxSilencePercentage = 0.26
