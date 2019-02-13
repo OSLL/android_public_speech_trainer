@@ -130,9 +130,14 @@
     <string name="pref_default_speed">120</string>
 
     <!-- Strings related to speech recording and analysis -->
-    <string name="start_recording">Начать запись</string>
-    <string name="stop_recording">Закончить запись</string>
-    <string name="voice_analysis_instructions">После нажатия кнопки \"Начать запись\" подождите, пока остановится обратный отсчёт, и начните говорить после этого.\n\nПосле нажатия кнопки \"Закончить запись\" будет произведён анализ звуковой дорожки, результаты которого выведутся в этом текстовом поле.</string>
+    <string name="start_recording">Начать тренировку</string>
+    <string name="stop_recording">Закончить тренировку</string>
+    <string name="voice_analysis_instructions">После нажатия кнопки \"Начать тренировку\" подождите,
+        пока остановится обратный отсчёт, и начните говорить после этого.\n\n
+        После нажатия кнопки \"Закончить тренировку\" будет произведён анализ звуковой дорожки,
+        результаты которого выведутся в этом текстовом поле.\n\n
+        Минимизируйте уровень шума в помещении для повышения точности результатов анализа.
+    </string>
     <string name="settings">Настройки</string>
     <string name="voice_analysis">Анализ речи</string>
     <string name="countdown_volume_levels">Уровни громкости при обратном отсчёте</string>
@@ -144,7 +149,26 @@
     <string name="pauses">Паузы</string>
     <string name="voice">Голос</string>
     <string name="duration">Длительность записи</string>
-    <string name="only_silence">Анализатор \"не слышит\" ваш голос. Говорите громче или перейдите в более тихое помещение.</string>
+    <string name="breakdown_by_slide">Информация по слайдам</string>
+    <string name="slide">Слайд</string>
+    <string name="silence_percentage_on_slide">Суммарная доля пауз</string>
+    <string name="average_pause_length">Средняя длина паузы</string>
+    <string name="long_pauses_amount">Количество пауз с длиной выше средней</string>
+    <string name="seconds">сек.</string>
+    <string name="noisy_room">Перейдите в менее шумное помещение.</string>
+    <string name="speak_louder">Попробуйте говорить громче.</string>
+    <string name="speak_slower">Попробуйте говорить медленнее.</string>
+    <string name="speak_faster">Попробуйте говорить быстрее.</string>
+    <string name="revise_text">Повторите текст Вашего выступления.</string>
+    <string name="revise_text_recommendation">Возможно, стоит повторить текст выступления.</string>
+    <string name="too_much_pauses">Вы делаете очень много пауз.</string>
+    <string name="overly_many_pauses">Вы делаете слишком много пауз.</string>
+    <string name="not_enough_pauses">Вы делаете недостаточно много пауз.</string>
+    <string name="start_speaking">Начинайте говорить.</string>
+    <string name="quiet_speech">Вы говорите тихо.</string>
+    <string name="overly_quiet_speech">Вы говорите слишком тихо.</string>
+    <string name="good_volume">Вы достаточно громко говорите; отлично!</string>
+    <string name="good_speech">Вы делаете достаточное количество пауз; отлично!</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
     <string name="CURRENT_TRAINING_ID">current_training_id</string>
