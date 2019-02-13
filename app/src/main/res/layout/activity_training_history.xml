@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    android:id="@+id/root_view_training_history"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/activityBackground"
     tools:context=".TrainingHistoryActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_training_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:paddingBottom="50dp"
+        android:clipToPadding="false"
+        />
 
-        <Button
-            android:id="@+id/training1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/first_training" />
-
-        <Button
-            android:id="@+id/training2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/second_training" />
-    </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>

@@ -1,55 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    android:id="@+id/edit_presentation_activity_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".EditPresentationActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true">
-
+        android:orientation="vertical"
+        android:weightSum="2">
 
         <ImageView
+            android:layout_marginTop="10dp"
             android:id="@+id/pdf_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:background="@android:color/white"
             android:scaleType="fitCenter" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1.2"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/presentationName"
+            <android.support.design.widget.TextInputLayout
+                android:textColorHint="@color/black_35_alpha"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:hint="@string/enter_presentation_name"
-                android:textAlignment="center"
-                tools:ignore="NestedWeights" />
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp">
 
-            <Button
+
+                <EditText
+                    android:id="@+id/presentationName"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:hint="@string/enter_presentation_name"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:minHeight="40dp"
+                    android:textAlignment="center" />
+
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <FrameLayout
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textColor="@color/black_35_alpha"
+                    android:textSize="12dp"
+                    android:text="@string/time_limit"
+                    android:layout_gravity="center|top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:weightSum="1"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <NumberPicker
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:id="@+id/numberPicker1"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+            </FrameLayout>
+
+            <android.support.v7.widget.CardView
                 android:id="@+id/addPresentation"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="@string/add_presentation"
-                android:textAllCaps="false"
-                android:textColor="#194d19"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:foreground="@drawable/card_foreground"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/addPresentation_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="10dp"
+                    android:text="@string/save"
+                    android:textColor="@android:color/white"
+                    android:textSize="17dp"
+                    android:textStyle="bold" />
+
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>

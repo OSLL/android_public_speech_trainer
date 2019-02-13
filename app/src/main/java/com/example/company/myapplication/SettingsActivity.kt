@@ -35,6 +35,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
+
+
     }
 
     /**
@@ -42,6 +44,15 @@ class SettingsActivity : AppCompatPreferenceActivity() {
      */
     private fun setupActionBar() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     /**
@@ -87,6 +98,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("example_text"))
             bindPreferenceSummaryToValue(findPreference("example_list"))
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.speed_key)))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

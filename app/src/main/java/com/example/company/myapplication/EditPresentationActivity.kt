@@ -1,145 +1,121 @@
 package com.example.company.myapplication
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
-import com.example.company.myapplication.views.PresentationStartpageRow
-import com.example.company.myapplication.views.PresentationStartpageRow.Companion.activatedChangePresentationFlag
+import com.example.company.myapplication.views.PresentationStartpageItemRow
+import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-
-
-
-const val DEFAULT_TIME = "DefTime"
+import android.widget.NumberPicker
+import com.example.company.myapplication.appSupport.ProgressHelper
 
 class EditPresentationActivity : AppCompatActivity() {
 
-    private var renderer: PdfRenderer? = null
-    private var currentPage: PdfRenderer.Page? = null
-    private var parcelFileDescriptor: ParcelFileDescriptor? = null
-
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
+    private lateinit var progressHelper: ProgressHelper
+
+    private var formatter: NumberPicker.Formatter = NumberPicker.Formatter { value ->
+        val temp = value * 10
+        "" + temp
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
 
-        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
-        val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
-        if (presId > 0) {
-            presentationData = presentationDataDao?.getPresentationWithId(presId)
-        }
-        else {
-            Log.d(TEST_DB, "edit_pres_act: wrong ID")
-            return
-        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageRow.activatedChangePresentationFlag
-        if (changePresentationFlag)
-            addPresentation.text = getString(R.string.further)
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
 
+        numberPicker1.maxValue = 100
+        numberPicker1.minValue = 1
 
-        addPresentation.setOnClickListener{
-
-            val uri = Uri.parse(presentationData?.stringUri)
-
-            if (presentationName.text.toString() == ""){
-                Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if(presentationName.text.length < 48) {
-                val i = Intent(this, PresentationActivity::class.java)
-                presentationData?.pageCount = renderer?.pageCount
-                presentationData?.name = presentationName.text.toString()
-                presentationDataDao?.updatePresentation(presentationData!!)
-              
-                if (changePresentationFlag)
-                i.putExtra(getString(R.string.changePresentationFlag), activatedChangePresentationFlag)
-
-                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), presentationData?.id)
-                startActivity(i)
-            }
-            else
-                Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        initRenderer()
-        renderPage(0)
-    }
-
-    private fun renderPage(pageIndex: Int){
-
-        currentPage?.close()
-        currentPage = renderer?.openPage(pageIndex)
-        val width = currentPage?.width
-        val height = currentPage?.height
-        val index = currentPage?.index
-        val pageCount = renderer?.pageCount
-
-        if(width != null && height != null && index != null && pageCount != null) {
-            val NWidth: Int = width
-            val NHeight: Int = height
-            val bitmap: Bitmap = Bitmap.createBitmap(NWidth, NHeight, Bitmap.Config.ARGB_8888)
-            currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            pdf_view.setImageBitmap(bitmap)
-        }
-    }
-
-    private fun initRenderer(){
-
-        val uri = Uri.parse(presentationData?.stringUri)
-
-        try{
-            val temp = File(this.cacheDir, "tempImage.pdf")
-            val fos = FileOutputStream(temp)
-            val ins: InputStream
-            ins = if (presentationData?.debugFlag == 0) {
-                val cr = contentResolver
-                cr.openInputStream(uri)
+        try {
+            presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+            val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID), -1)
+            if (presId > 0) {
+                presentationData = presentationDataDao?.getPresentationWithId(presId)
             } else {
-                assets.open(presentationData?.stringUri)
+                Log.d(APST_TAG, "edit_pres_act: wrong ID")
+                return
+            }
+
+            val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
+
+            val pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
+            pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
+
+            Log.d("dfvgbh", presentationData?.timeLimit.toString())
+            if (changePresentationFlag) {
+                title = getString(R.string.presentationEditing)
+
+                numberPicker1.value = (presentationData?.timeLimit!! / 60).toInt()
+            } else {
+                val defTime = pdfReader.getPageCount()
+                if (defTime == null || defTime < 1) {
+                    Toast.makeText(this, "page count error", Toast.LENGTH_LONG).show()
+                    finish()
+                    return
+                }
+
+                if (defTime > 100) numberPicker1.value = 100
+                else numberPicker1.value = defTime
             }
 
             if (presentationData?.name!!.isNullOrEmpty())
-                presentationName.setText(getFileName(uri,contentResolver))
+                presentationName.setText(getFileName(Uri.parse(presentationData!!.stringUri), contentResolver))
             else
                 presentationName.setText(presentationData?.name)
 
 
-            val buffer = ByteArray(1024)
+            addPresentation.setOnClickListener {
 
-            var readBytes = ins.read(buffer)
-            while(readBytes != -1){
-                fos.write(buffer, 0, readBytes)
-                readBytes = ins.read(buffer)
+                if (presentationName.text.toString() == "") {
+                    Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (presentationName.text.length < 48) {
+                    presentationData?.pageCount = pdfReader.getPageCount()
+                    presentationData?.name = presentationName.text.toString()
+                    presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
+                    presentationDataDao?.updatePresentation(presentationData!!)
+
+                    finish()
+                } else
+                    Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
             }
-
-            fos.close()
-            ins.close()
-
-            parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
-            renderer = PdfRenderer(parcelFileDescriptor)
-        } catch(e: IOException){
-            Toast.makeText(this, "error in opening presentation file", Toast.LENGTH_LONG).show()
-            Log.d("error","error in opening presentation file")
+        } catch (e: Exception) {
+            finish()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            super.onBackPressed()
+            return true
+        }
+        return false
+    }
+
+    override fun onPause() {
+        progressHelper.show()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        progressHelper.hide()
+        super.onResume()
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 }
