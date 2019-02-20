@@ -394,6 +394,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         speed_bar_chart.axisLeft.setDrawGridLines(false)//откл вертикальных линий сетки
         speed_bar_chart.axisLeft.textSize = 15f
         speed_bar_chart.axisLeft.axisMinimum = 0f // минимальное значение оси y = 0
+        speed_bar_chart.setVisibleYRangeMinimum(optimalSpeed * 1.2f, speed_bar_chart.axisLeft.axisDependency)
+        speed_bar_chart.axisLeft.granularity = 20f
 
         val ll = LimitLine(optimalSpeed.toFloat(), getString(R.string.speech_speed))
         ll.lineWidth = 2f

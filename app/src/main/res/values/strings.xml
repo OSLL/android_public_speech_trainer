@@ -219,6 +219,7 @@
     <string name="repositoryLink">Ссылка на репозиторий</string>
     <string name="authors">Евгений Моторин\nМихаил Дементьев\nДмитрий Путьков\nДарья Шаркова\nКирилл Хохлов\nМарк Заславский</string>
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
+    <string name="average_time_chart">Среднее время</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
