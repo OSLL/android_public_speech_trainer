@@ -326,49 +326,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             tsC.drawText(getString(R.string.total_words_count) + " " + allWords.toString(), 30f, 209f, tsP)
             tsC.drawText(getString(R.string.average_earning), 30f, 232f, tsP)
 
-
-/*
-            val countBmp = Bitmap.createBitmap(nWidth, 30, Bitmap.Config.ARGB_8888)
-            val countC = Canvas(countBmp)
-            countC.drawPaint(whitePaint)
-            val countPaint = Paint()
-            countPaint.color = Color.BLACK
-            countPaint.style = Paint.Style.FILL
-            countPaint.isAntiAlias = true
-            countPaint.textSize = 20f
-            countC.drawText(getString(R.string.count_of_training) + getCase(trainingCount, "раз", "раза", "раз"), 20f, 20f, countPaint)
-
-            val statBmp = Bitmap.createBitmap(nWidth, 115, Bitmap.Config.ARGB_8888)
-            val statC = Canvas(statBmp)
-            statC.drawPaint(whitePaint)
-            val statPaint = Paint()
-            statPaint.color = Color.BLACK
-            statPaint.style = Paint.Style.FILL
-            statPaint.isAntiAlias = true
-            statPaint.textSize = 20f
-            statC.drawText(getString(R.string.result_of_training), 20f, 20f, statPaint)
-            statPaint.textSize = 17f
-            statPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-            statC.drawText(getString(R.string.time_of_training) + getStringPresentationTimeLimit(currentTrainingTime), 30f, 43f, statPaint)
-            statC.drawText(getString(R.string.record_of_training), 30f, 66f, statPaint)
-            statC.drawText(getString(R.string.earnings_of_training), 30f, 99f, statPaint)
-
-            val statTrainingTime = Bitmap.createBitmap(nWidth, 105, Bitmap.Config.ARGB_8888)
-            val statTime = Canvas(statTrainingTime)
-            statTime.drawPaint(whitePaint)
-            val timePaint = Paint()
-            timePaint.color = Color.BLACK
-            timePaint.style = Paint.Style.FILL
-            timePaint.isAntiAlias = true
-            timePaint.textSize = 20f
-            statTime.drawText(getString(R.string.stat_training_time), 20f, 20f, timePaint)
-            timePaint.textSize = 17f
-            timePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-            statTime.drawText(getString(R.string.max_training_time) + getStringPresentationTimeLimit(maxTime), 30f, 43f, timePaint)
-            statTime.drawText(getString(R.string.min_training_time) + getStringPresentationTimeLimit(minTime), 30f, 66f, timePaint)
-            statTime.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(averageTime.toLong()), 30f, 89f, timePaint)
-*/
-
             val canvas = Canvas(finishBmp)
             val paint = Paint()
             canvas.drawBitmap(bmpBase, 0f, 0f, paint)
@@ -376,13 +333,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             canvas.drawBitmap(lastTrainingBmp, 0f, nHeight.toFloat() + 40f, paint)
             canvas.drawBitmap(trainingStatisticsBmp, 0f, nHeight.toFloat() + 200f, paint)
 
-            /*
-            val paintCircle = Paint()
-            paintCircle.color = Color.YELLOW
-            canvas.drawCircle(185f, nHeight.toFloat() + 161f, 15f, paintCircle)
-            canvas.drawCircle(225f, nHeight.toFloat() + 161f, 15f, paintCircle)
-            canvas.drawCircle(265f, nHeight.toFloat() + 161f, 15f, paintCircle)
-            */
         }
     }
 
@@ -410,29 +360,13 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         millisUntilFinishedVar -= TimeUnit.MINUTES.toSeconds(minutes)
 
         val seconds = millisUntilFinishedVar
-/*
-        val min = getCase(minutes.toInt(), "минуту", "минуты", "минут")
-        val sec = getCase(seconds.toInt(), "секунду", "секунды", "секунд")
 
-        val res = String.format(
-                Locale.getDefault(),
-                "%01d $min %01d $sec",
-                minutes, seconds
-        )
-*/
         return String.format(
                 Locale.getDefault(),
                 " %02d:%02d",
                 minutes, seconds
         )
 
-/*
-        return if(minutes.toInt() == 0){
-            " ${res.substring(res.indexOf("с") - 3)}"
-        } else {
-            " ${res.substring(res.indexOf("м") - 3, res.indexOf("м") + 7) + res.substring(res.indexOf("с") - 3)}"
-        }
-*/
     }
 
     //Инициализация графика скорсти чтения
