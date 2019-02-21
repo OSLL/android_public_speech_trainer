@@ -1,6 +1,7 @@
 package com.example.company.myapplication.fragments
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -13,6 +14,7 @@ import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.R
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -110,6 +112,16 @@ class TimeOnEachSlideChartFragment: Fragment() {
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.valueFormatter = IndexAxisValueFormatter(labels)
         xAxis.granularity = 1f
+
+        val yAxis = time_on_each_slide_chart.axisLeft
+
+        val averageTimeLine = LimitLine(averageTimeOnEachSlide.toFloat(), getString(R.string.average_time_chart))
+        averageTimeLine.lineColor = Color.GREEN
+        averageTimeLine.lineWidth = 2f
+        averageTimeLine.textSize = 10f
+
+        yAxis.addLimitLine(averageTimeLine)
+        //yAxis.setDrawLimitLinesBehindData(true)
 
         time_on_each_slide_chart.invalidate()
     }
