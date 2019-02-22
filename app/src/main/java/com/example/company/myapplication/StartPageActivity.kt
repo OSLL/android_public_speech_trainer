@@ -11,11 +11,14 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import com.example.company.myapplication.DBTables.helpers.HELPER_LOG
+import com.example.company.myapplication.DBTables.helpers.PresentationDBHelper
 import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.company.myapplication.appSupport.ProgressHelper
@@ -50,6 +53,7 @@ class StartPageActivity : AppCompatActivity() {
     private lateinit var progressHelper: ProgressHelper
 
     private var pdfReader: PdfToBitmap? = null
+    private lateinit var presentationDBHelper: PresentationDBHelper
 
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +62,7 @@ class StartPageActivity : AppCompatActivity() {
 
         progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        presentationDBHelper = PresentationDBHelper(this)
 
         if (!checkPermissions())
             checkPermissions()
@@ -125,7 +130,7 @@ class StartPageActivity : AppCompatActivity() {
                         continue
                     }
                     pdfReader = PdfToBitmap(presentation.stringUri, presentation.debugFlag, this)
-                    adapter?.add(PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
+                    adapter?.add(PresentationStartpageItemRow(presentation, presentationDBHelper.getPresentationImage(presentation.id!!), this@StartPageActivity))
                 } catch (e: Exception) {
                     Toast.makeText(this, "file: ${presentation.stringUri} \nTYPE ERROR.\nDeleted from DB!", Toast.LENGTH_LONG).show()
                     presentationDataDao?.deletePresentationWithId(presentation.id!!)
@@ -143,7 +148,7 @@ class StartPageActivity : AppCompatActivity() {
                     continue
                 }
                 if (i > (adapter!!.itemCount - 1)) {
-                    adapter?.add(PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
+                    adapter?.add(PresentationStartpageItemRow(presentation, presentationDBHelper.getPresentationImage(presentation.id!!), this@StartPageActivity))
                     adapter?.notifyDataSetChanged()
                     recyclerview_startpage.adapter = adapter
                     continue
@@ -152,7 +157,7 @@ class StartPageActivity : AppCompatActivity() {
                 val row = adapter!!.getItem(i) as PresentationStartpageItemRow
                 if (row.presentationTimeLimit != presentation.timeLimit || row.presentationName != presentation.name) {
                     adapter?.removeGroup(i)
-                    adapter?.add(i, PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
+                    adapter?.add(i, PresentationStartpageItemRow(presentation, presentationDBHelper.getPresentationImage(presentation.id!!), this@StartPageActivity))
 
                     adapter?.notifyDataSetChanged()
                 }
@@ -262,6 +267,7 @@ class StartPageActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        Log.d(HELPER_LOG, "size:${presentationDataDao?.getAll()?.size}")
         refreshRecyclerView()
         runLayoutAnimation(recyclerview_startpage)
     }

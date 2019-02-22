@@ -22,7 +22,7 @@ abstract class SpeechDataBase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(SpeechDataBase::class) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            SpeechDataBase::class.java, "weather.0.1.db")
+                            SpeechDataBase::class.java, "weather.0.2")
                             .allowMainThreadQueries()
                             .build()
                 }

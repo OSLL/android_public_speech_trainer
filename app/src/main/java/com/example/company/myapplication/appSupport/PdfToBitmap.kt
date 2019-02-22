@@ -18,8 +18,8 @@ import java.io.InputStream
 
 class PdfToBitmap{
 
-    private val presentationStringUri: String
-    private val debugIntMode: Int
+    private var presentationStringUri: String?
+    private var debugIntMode: Int?
     private val ctx: Context
 
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
@@ -33,6 +33,19 @@ class PdfToBitmap{
         this.presentationStringUri = presentationUri
         this.debugIntMode = debugIntMode
         this.ctx = ctx
+
+        initRenderer(presentationUri,debugIntMode)
+    }
+
+    constructor(ctx: Context) {
+        this.ctx = ctx
+        this.presentationStringUri = null
+        this.debugIntMode = null
+    }
+
+    fun addPresentation(presentationUri: String, debugIntMode: Int) {
+        this.debugIntMode = debugIntMode
+        this.presentationStringUri = presentationUri
 
         initRenderer(presentationUri,debugIntMode)
     }

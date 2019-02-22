@@ -13,6 +13,8 @@ import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import android.widget.NumberPicker
+import com.example.company.myapplication.DBTables.helpers.HELPER_LOG
+import com.example.company.myapplication.DBTables.helpers.PresentationDBHelper
 import com.example.company.myapplication.appSupport.ProgressHelper
 
 class EditPresentationActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class EditPresentationActivity : AppCompatActivity() {
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
     private lateinit var progressHelper: ProgressHelper
+    private lateinit var presentationDBHelper: PresentationDBHelper
 
     private var formatter: NumberPicker.Formatter = NumberPicker.Formatter { value ->
         val temp = value * 10
@@ -32,6 +35,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        presentationDBHelper = PresentationDBHelper(this)
         progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
 
         numberPicker1.maxValue = 100
@@ -88,11 +92,13 @@ class EditPresentationActivity : AppCompatActivity() {
                     presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
                     presentationDataDao?.updatePresentation(presentationData!!)
 
+                    presentationDBHelper.saveDefaultPresentationImage(presentationData?.id!!)
                     finish()
                 } else
                     Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
+            Log.d(HELPER_LOG, e.toString())
             finish()
         }
     }
