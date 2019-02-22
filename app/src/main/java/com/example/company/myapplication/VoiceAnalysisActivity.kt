@@ -40,7 +40,6 @@ class VoiceAnalysisActivity : AppCompatActivity() {
     private val postCountdownReceiver = PostCountdownReceiver()
     private val postSpeechReceiver = PostSpeechReceiver()
     private val setNextSlideButtonReceiver = SetNextSlideButtonReceiver()
-    private val unusedmate = 34
     lateinit var audioAnalyzer: AudioAnalyzer
 
     private var finishedRecording = false
