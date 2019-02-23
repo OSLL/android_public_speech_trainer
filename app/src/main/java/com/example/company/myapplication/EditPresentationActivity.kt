@@ -32,7 +32,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName, datePicker))
 
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
@@ -53,10 +53,16 @@ class EditPresentationActivity : AppCompatActivity() {
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
             Log.d("dfvgbh", presentationData?.timeLimit.toString())
+
+            var date = presentationData?.presentationDate
+
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
 
                 numberPicker1.value = (presentationData?.timeLimit!! / 60).toInt()
+
+                val dateArr = date!!.split("-").map { it.toInt() }
+                datePicker.updateDate(dateArr[0], dateArr[1] - 1, dateArr[2])
             } else {
                 val defTime = pdfReader.getPageCount()
                 if (defTime == null || defTime < 1) {
@@ -74,7 +80,6 @@ class EditPresentationActivity : AppCompatActivity() {
             else
                 presentationName.setText(presentationData?.name)
 
-
             addPresentation.setOnClickListener {
 
                 if (presentationName.text.toString() == "") {
@@ -86,6 +91,7 @@ class EditPresentationActivity : AppCompatActivity() {
                     presentationData?.pageCount = pdfReader.getPageCount()
                     presentationData?.name = presentationName.text.toString()
                     presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
+                    presentationData?.presentationDate = datePicker.year.toString() + "-" + (datePicker.month + 1).toString() + "-" + datePicker.dayOfMonth.toString()
                     presentationDataDao?.updatePresentation(presentationData!!)
 
                     finish()

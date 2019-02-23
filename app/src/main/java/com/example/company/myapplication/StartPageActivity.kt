@@ -151,7 +151,7 @@ class StartPageActivity : AppCompatActivity() {
                 }
 
                 val row = adapter!!.getItem(i) as PresentationStartpageItemRow
-                if (row.presentationTimeLimit != presentation.timeLimit || row.presentationName != presentation.name) {
+                if (row.presentationTimeLimit != presentation.timeLimit || row.presentationName != presentation.name || row.presentationDate != presentation.presentationDate) {
                     adapter?.removeGroup(i)
                     adapter?.add(i, PresentationStartpageItemRow(presentation, pdfReader?.getBitmapForSlide(0), this@StartPageActivity))
 
