@@ -47,7 +47,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center">
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center|start">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -87,6 +89,28 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="12 слайдов" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/presentation_date_layout_start_page_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/ic_date_range_black_24dp" />
+
+                <TextView
+                    android:layout_marginStart="5dp"
+                    android:id="@+id/presentation_date_start_page_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="2019-12-31" />
 
             </LinearLayout>
 
