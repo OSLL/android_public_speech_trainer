@@ -86,6 +86,7 @@
                     </DatePicker>
 
                     <CheckBox
+                        android:id="@+id/enableNotifications"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -97,7 +98,7 @@
             </FrameLayout>
 
             <FrameLayout
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -111,7 +112,7 @@
                     android:layout_height="wrap_content" />
 
                 <LinearLayout
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:descendantFocusability="blocksDescendants"
                     android:clickable="false"
                     android:focusable="false"
