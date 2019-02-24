@@ -103,8 +103,6 @@ class PresentationStartpageItemRow(private val presentation: PresentationData, p
         val currentDate = dateParser.parse(dateParser.format(Date()))
         val presDate = dateParser.parse(date)
 
-        Log.d("datePicker", "$currentDate and $presDate")
-
         return if (currentDate.before(presDate) || currentDate == presDate) {
             date
         }

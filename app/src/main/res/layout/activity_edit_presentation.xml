@@ -64,8 +64,8 @@
 
                 <TextView
                     android:textColor="@color/black_35_alpha"
-                    android:textSize="12dp"
-                    android:text="Дата доклада"
+                    android:textSize="12sp"
+                    android:text="@string/presentation_date"
                     android:layout_gravity="center|top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -91,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="16dp"
-                        android:text="Уведомления" />
+                        android:text="@string/notifications" />
 
                 </LinearLayout>
 
