@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.company.myapplication">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"/>
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -22,6 +22,7 @@
         android:largeHeap="true">
         <activity android:name=".StartPageActivity"
             android:configChanges="orientation|screenSize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,9 +44,9 @@
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".EditPresentationActivity"
-            android:label="@string/activity_edit_presentation_name" />
+            android:label="@string/activity_edit_presentation_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TrainingStatisticsActivity"
             android:label="@string/activity_training_statistics_name" />
@@ -57,7 +58,7 @@
             android:name=".SpeechRecognitionService"
             android:enabled="true" />
 
-        <activity android:name=".VoiceAnalysisActivity"></activity>
+        <activity android:name=".VoiceAnalysisActivity" />
     </application>
 
 </manifest>
