@@ -105,6 +105,7 @@ class StartPageActivity : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
+            R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }

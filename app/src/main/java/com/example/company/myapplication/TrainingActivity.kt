@@ -452,7 +452,7 @@ class TrainingActivity : AppCompatActivity() {
             }
         }
 
-        @SuppressLint("LongLogTag")
+        @SuppressLint("LongLogTag", "WrongThread")
         override fun doInBackground(vararg voids: Void): Void? {
             while (executeFlag) {
                 try {

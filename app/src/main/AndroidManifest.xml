@@ -3,23 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.company.myapplication">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"/>
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/activity_start_page_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
+        android:theme="@style/AppTheme">
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:label="@string/about"
+            android:name=".AboutActivity"/>
         <activity android:name=".StartPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,18 +39,15 @@
             android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".PresentationActivity"
-            android:label="@string/activity_presentation_name" />
-        <activity
             android:name=".TrainingHistoryActivity"
             android:label="@string/activity_training_history_name" />
         <activity
             android:name=".CreatePresentationActivity"
             android:label="@string/activity_create_presentation_name" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".EditPresentationActivity"
-            android:label="@string/activity_edit_presentation_name" />
+            android:label="@string/activity_edit_presentation_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TrainingStatisticsActivity"
             android:label="@string/activity_training_statistics_name" />
@@ -56,7 +59,7 @@
             android:name=".SpeechRecognitionService"
             android:enabled="true" />
 
-        <activity android:name=".VoiceAnalysisActivity"></activity>
+        <activity android:name=".VoiceAnalysisActivity" />
     </application>
 
 </manifest>

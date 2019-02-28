@@ -1,4 +1,4 @@
-//noinspection GradleDependency
+//noinspection Gratruependency
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
@@ -24,6 +24,11 @@ android {
         }
     }
     buildToolsVersion '28.0.3'
+
+    lintOptions {
+       abortOnError true
+    }
+
 }
 
 dependencies {
@@ -56,4 +61,6 @@ allprojects {
     }
 }
 
-
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
+}
