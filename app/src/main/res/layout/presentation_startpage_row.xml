@@ -37,11 +37,12 @@
             android:layout_marginTop="8dp"
             android:paddingHorizontal="4dp"
             android:textAlignment="center"
-            android:text="Username Presentatcdscdscoe"
+            android:text="Presentation Name"
             android:maxLines="2"
             android:textColor="@android:color/black"
             android:layout_gravity="center_horizontal"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -67,7 +68,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="12 min 00 sec" />
+                    android:text="12 min 00 sec"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 
@@ -88,7 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="12 слайдов" />
+                    android:text="12 слайдов"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 
