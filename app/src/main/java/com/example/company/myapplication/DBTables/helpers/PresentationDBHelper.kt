@@ -3,13 +3,10 @@ package com.example.company.myapplication.DBTables.helpers
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import java.io.ByteArrayOutputStream
-
-const val HELPER_LOG = "helper_log"
 
 class PresentationDBHelper {
     private val presentationDataDao: PresentationDataDao
@@ -22,33 +19,46 @@ class PresentationDBHelper {
 
     fun changePresentationImage(presentationId: Int, image: Bitmap) {
         val presentation = presentationDataDao.getPresentationWithId(presentationId) ?: return
+        val stream = ByteArrayOutputStream()
+        getResizedBitmap(image, 300).compress(Bitmap.CompressFormat.PNG, 100, stream)
+        presentation.imageBLOB = stream.toByteArray()
+        presentationDataDao.updatePresentation(presentation)
+        stream.close()
     }
 
     fun saveDefaultPresentationImage(presentationId: Int) {
         val presentation = presentationDataDao.getPresentationWithId(presentationId) ?: return
         pdfToBitmap.addPresentation(presentation.stringUri, presentation.debugFlag)
         val bm = pdfToBitmap.getBitmapForSlide(0) ?: return
-
         val stream = ByteArrayOutputStream()
-        bm.compress(Bitmap.CompressFormat.PNG, 20, stream)
-
+        getResizedBitmap(bm, 300).compress(Bitmap.CompressFormat.PNG, 100, stream)
         presentation.imageBLOB = stream.toByteArray()
-        Log.d(HELPER_LOG, "before compress=${bm.byteCount}")
-        Log.d(HELPER_LOG, "after compress=${BitmapFactory.decodeByteArray(presentation.imageBLOB, 0, stream.size()).byteCount}")
         presentationDataDao.updatePresentation(presentation)
         stream.close()
     }
 
     fun getPresentationImage(presentationId: Int): Bitmap? {
-        try {
+        return try {
             val presentation = presentationDataDao.getPresentationWithId(presentationId)
             val blob = presentation?.imageBLOB
-
             val bm = BitmapFactory.decodeByteArray(blob, 0, blob!!.size)
-            Log.d(HELPER_LOG, "get bitmap size:${bm.byteCount}")
-            return bm
-        } catch (e: Exception) {
-            return null
+            bm
+        } catch (e: Exception) { null }
+    }
+
+    private fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap {
+        var width = image.width
+        var height = image.height
+
+        val bitmapRatio = width.toFloat() / height.toFloat()
+        if (bitmapRatio > 1) {
+            width = maxSize
+            height = (width / bitmapRatio).toInt()
+        } else {
+            height = maxSize
+            width = (height * bitmapRatio).toInt()
         }
+
+        return Bitmap.createScaledBitmap(image, width, height, true)
     }
 }

@@ -104,7 +104,7 @@ class TrainingActivity : AppCompatActivity() {
 
         time = presentationData?.timeLimit!!
 
-        pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
+        pdfReader = PdfToBitmap(presentationData!!, this)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)

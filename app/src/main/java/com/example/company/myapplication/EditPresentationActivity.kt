@@ -1,6 +1,10 @@
 package com.example.company.myapplication
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -12,22 +16,14 @@ import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDat
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
-import android.widget.NumberPicker
-import com.example.company.myapplication.DBTables.helpers.HELPER_LOG
-import com.example.company.myapplication.DBTables.helpers.PresentationDBHelper
 import com.example.company.myapplication.appSupport.ProgressHelper
+import java.io.ByteArrayOutputStream
 
 class EditPresentationActivity : AppCompatActivity() {
 
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
     private lateinit var progressHelper: ProgressHelper
-    private lateinit var presentationDBHelper: PresentationDBHelper
-
-    private var formatter: NumberPicker.Formatter = NumberPicker.Formatter { value ->
-        val temp = value * 10
-        "" + temp
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +31,6 @@ class EditPresentationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        presentationDBHelper = PresentationDBHelper(this)
         progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
 
         numberPicker1.maxValue = 100
@@ -53,10 +48,9 @@ class EditPresentationActivity : AppCompatActivity() {
 
             val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
-            val pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
+            val pdfReader = PdfToBitmap(presentationData!!, this)
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
-            Log.d("dfvgbh", presentationData?.timeLimit.toString())
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
 
@@ -80,27 +74,36 @@ class EditPresentationActivity : AppCompatActivity() {
 
 
             addPresentation.setOnClickListener {
-
                 if (presentationName.text.toString() == "") {
                     Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                if (presentationName.text.length < 48) {
-                    presentationData?.pageCount = pdfReader.getPageCount()
-                    presentationData?.name = presentationName.text.toString()
-                    presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
-                    presentationDataDao?.updatePresentation(presentationData!!)
-
-                    presentationDBHelper.saveDefaultPresentationImage(presentationData?.id!!)
-                    finish()
-                } else
+                if (presentationName.text.length > 48) {
                     Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val isChanged = presentationName.text.toString() != presentationData?.name ||
+                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit
+
+                presentationData?.pageCount = pdfReader.getPageCount()
+                presentationData?.name = presentationName.text.toString()
+                presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
+                presentationDataDao?.updatePresentation(presentationData!!)
+
+                if (changePresentationFlag) {
+                    val i = Intent()
+                    i.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
+                    i.putExtra(getString(R.string.presentationPosition),
+                            intent.getIntExtra(getString(R.string.presentationPosition), -1))
+                    setResult(Activity.RESULT_OK, i)
+                }
+
+                // finish in async
+                SaveDefaultPictureAsync(presentationData!!).execute()
             }
-        } catch (e: Exception) {
-            Log.d(HELPER_LOG, e.toString())
-            finish()
-        }
+        } catch (e: Exception) { finish() }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -112,7 +115,9 @@ class EditPresentationActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        progressHelper.show()
+        try {
+            progressHelper.show()
+        } catch (e: Exception) {}
         super.onPause()
     }
 
@@ -123,5 +128,53 @@ class EditPresentationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+    }
+
+    private inner class SaveDefaultPictureAsync(private val presentation: PresentationData)
+        : AsyncTask<Void, Void, Void>() {
+        private lateinit var stream: ByteArrayOutputStream
+        private var bm: Bitmap? = null
+        private lateinit var pdfToBitmap: PdfToBitmap
+
+        override fun onPreExecute() {
+            this@EditPresentationActivity.onPause()
+            super.onPreExecute()
+            stream = ByteArrayOutputStream()
+            pdfToBitmap = PdfToBitmap(presentation, this@EditPresentationActivity)
+        }
+
+        override fun doInBackground(vararg params: Void?): Void? {
+            try {
+                bm = pdfToBitmap.getBitmapForSlide(0) ?: return null
+                getResizedBitmap(bm!!, 300).compress(Bitmap.CompressFormat.PNG, 100, stream)
+                publishProgress()
+            } catch (e: Exception) { }
+            return null
+        }
+
+        override fun onProgressUpdate(vararg values: Void?) {
+            super.onProgressUpdate(*values)
+            if (bm == null) return
+            presentation.imageBLOB = stream.toByteArray()
+            presentationDataDao?.updatePresentation(presentation)
+            stream.close()
+            this@EditPresentationActivity.finish()
+        }
+
+        private fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap {
+            var width = image.width
+            var height = image.height
+
+            val bitmapRatio = width.toFloat() / height.toFloat()
+            if (bitmapRatio > 1) {
+                width = maxSize
+                height = (width / bitmapRatio).toInt()
+            } else {
+                height = maxSize
+                width = (height * bitmapRatio).toInt()
+            }
+
+            return Bitmap.createScaledBitmap(image, width, height, true)
+        }
     }
 }

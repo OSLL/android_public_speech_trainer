@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -29,12 +30,12 @@ class PdfToBitmap{
     private var pageCount: Int? = null
     private var pageIndexStatus: Int? = null
 
-    constructor(presentationUri: String, debugIntMode: Int, ctx: Context) {
-        this.presentationStringUri = presentationUri
-        this.debugIntMode = debugIntMode
+    constructor(presentation: PresentationData, ctx: Context) {
+        this.presentationStringUri = presentation.stringUri
+        this.debugIntMode = presentation.debugFlag
         this.ctx = ctx
 
-        initRenderer(presentationUri,debugIntMode)
+        initRenderer()
     }
 
     constructor(ctx: Context) {
@@ -47,7 +48,7 @@ class PdfToBitmap{
         this.debugIntMode = debugIntMode
         this.presentationStringUri = presentationUri
 
-        initRenderer(presentationUri,debugIntMode)
+        initRenderer()
     }
 
     private fun renderPage(pageIndex: Int): Bitmap? {
@@ -68,12 +69,12 @@ class PdfToBitmap{
         }
         return null
     }
-    private fun initRenderer(strUri: String, debugFlag: Int){
-        val uri = Uri.parse(strUri)
+    private fun initRenderer(){
+        val uri = Uri.parse(this.presentationStringUri)
         try{
             val temp = File(ctx.cacheDir, "tempImage.pdf")
             val fos = FileOutputStream(temp)
-            val isChecked = debugFlag == 1
+            val isChecked = this.debugIntMode == 1
             val ins: InputStream
             ins = if(!isChecked) {
                 try {
@@ -83,7 +84,7 @@ class PdfToBitmap{
                     Log.d("test_row", "editPres cr:" + e.toString())
                 } as InputStream
             } else {
-                ctx.assets.open(strUri)
+                ctx.assets.open(this.presentationStringUri)
             }
             val buffer = ByteArray(1024)
             var readBytes = ins.read(buffer)
@@ -115,7 +116,7 @@ class PdfToBitmap{
 
         val temp = File(ctx.cacheDir, fileName)
 
-        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_WRITE)
+        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
         renderer = PdfRenderer(parcelFileDescriptor)
 
         currentPage = renderer?.openPage(0)

@@ -210,6 +210,8 @@
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
     <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
     <string name="presentationEditing">Редактирование презентации</string>
+    <string name="isPresentationChangedFlag">isPresentationChanges</string>
+    <string name="presentationPosition">presentationPosition</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
