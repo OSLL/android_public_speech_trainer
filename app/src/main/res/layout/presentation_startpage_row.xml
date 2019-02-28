@@ -34,14 +34,15 @@
             android:id="@+id/name_presentation_start_page_row"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:maxLines="2"
             android:paddingHorizontal="4dp"
-            android:text="Username Presentatcdscdscdsfsdfdsfdsfdsfdsf sdfdfsdfdsfdsfdsfdsfdsfdssd fsdfds fdsfds f dsfsoe"
             android:textAlignment="center"
+            android:text="Presentation Name"
+            android:maxLines="2"
             android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -62,12 +63,13 @@
                     android:background="@android:drawable/ic_lock_idle_alarm" />
 
                 <TextView
+                    android:layout_marginLeft="5dp"
                     android:id="@+id/time_limit_presentation_start_page_row"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:text="12 min 00 sec" />
+                    android:text="12 min 00 sec"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 
@@ -83,12 +85,13 @@
                     android:background="@drawable/three_slides" />
 
                 <TextView
+                    android:layout_marginLeft="5dp"
                     android:id="@+id/page_count_presentation_start_page_row"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:text="12 слайдов" />
+                    android:text="12 слайдов"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 
@@ -106,6 +109,5 @@
 
 
     </FrameLayout>
-
-
+    
 </android.support.v7.widget.CardView>
