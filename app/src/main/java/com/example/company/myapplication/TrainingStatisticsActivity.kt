@@ -24,6 +24,7 @@ import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDat
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.example.putkovdimi.trainspeech.DBTables.TrainingData
+import com.example.putkovdimi.trainspeech.DBTables.TrainingSlideData
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
@@ -182,48 +183,44 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    private fun calcOfTheTrainingGrade(tr: TrainingData) : Int{
+    private fun calcOfTheTrainingGrade(slides: MutableList<TrainingSlideData>, x0: Double) : Int{
 
-        val x0 = presentationData?.timeLimit!!.toDouble()
         val dx: Double = if (currentTrainingTime > x0*3){
             x0
         } else abs(currentTrainingTime - x0)
 
-        var dy: Double = 0.toDouble()
+        var dy: Double = 0.0
 
-        val slides = trainingSlideDBHelper?.getAllSlidesForTraining(tr)?: return -1
         val speedList = ArrayList<Double>()
         val timeList = ArrayList<Long>()
-        var averSpeed: Double = 0.toDouble()
-        var curAverTime: Double = 0.toDouble()
+        var averSpeed: Double = 0.0
+        var curAverTime: Double = 0.0
         for (slide in slides){
-            if (slide.knownWords != "") speedList.add(slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * 60.toDouble())
+            if (slide.knownWords != "") speedList.add(slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * 60.0)
             timeList.add(slide.spentTimeInSec!!)
         }
-        for (i in speedList){
-            averSpeed += i
-        }
+        averSpeed = speedList.sum()
         for (i in timeList){
             curAverTime += i
         }
         averSpeed/=speedList.size
         curAverTime/=timeList.size
         for (i in speedList){
-            dy += pow((i-averSpeed),2.toDouble())
+            dy += pow((i-averSpeed),2.0)
         }
 
         dy /= speedList.size
 
-        var dz: Double = 0.toDouble()
+        var dz: Double = 0.0
 
         for (i in timeList){
-            dz += pow((i-curAverTime),2.toDouble())
+            dz += pow((i-curAverTime),2.0)
         }
 
         dz /= timeList.size
-        val X  = 1 - (dx/x0)
-        val Y = 1/(sqrt(dy)+1)
-        val Z = 1/(sqrt(dz)+1)
+        val X  = 1.0 - (dx/x0)
+        val Y = 1.0/(sqrt(dy)+1.0)
+        val Z = 1.0/(sqrt(dz)+1.0)
 
         return (100*(X+Y+Z)/3).toInt()
     }
@@ -342,7 +339,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             ltC.drawText(getString(R.string.worked_out_a_slide) + " " + curSlides?.count() + " / " + slides, 30f, 89f, ltP)
             ltC.drawText(getString(R.string.time_limit_training) + " " + getStringPresentationTimeLimit(presentationData?.timeLimit), 30f, 112f, ltP)
             ltC.drawText(getString(R.string.num_of_words_spoken) + " " + wordCount, 30f, 135f, ltP)
-            ltC.drawText(getString(R.string.earnings_of_training) + " " + calcOfTheTrainingGrade(trainingsList[trainingCount-1]), 30f, 158f, ltP)
+            ltC.drawText(getString(R.string.earnings_of_training) + " " + calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[trainingCount-1])?: return, presentationData?.timeLimit!!.toDouble()), 30f, 158f, ltP)
 
             val trainingStatisticsBmp = Bitmap.createBitmap(nWidth, 285, Bitmap.Config.ARGB_8888)
             val tsC = Canvas(trainingStatisticsBmp)
@@ -374,7 +371,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             tsC.drawText(getString(R.string.total_words_count) + " " + allWords, 30f, 209f, tsP)
             var averageEarn = 0
             for (i in trainingsList){
-                averageEarn += calcOfTheTrainingGrade(i)
+                averageEarn += calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(i)?: return, presentationData?.timeLimit!!.toDouble())
             }
             averageEarn /= trainingCount
             tsC.drawText(getString(R.string.average_earning) + " " + averageEarn, 30f, 232f, tsP)
