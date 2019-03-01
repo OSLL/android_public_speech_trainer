@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="15dp"
     android:orientation="vertical"
     android:background="@color/activityBackground"
@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:text="https://profile.flaticon.com/license/free"
         android:textColor="@android:color/holo_blue_dark"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_marginTop="20dp"
@@ -27,7 +28,8 @@
         android:layout_height="wrap_content"
         android:text="http://pngimg.com/license"
         android:textColor="@android:color/holo_blue_dark"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_marginTop="20dp"
@@ -37,7 +39,8 @@
         android:layout_height="wrap_content"
         android:text="https://pixabay.com/ru/service/terms/"
         android:textColor="@android:color/holo_blue_dark"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_marginTop="20dp"
@@ -47,6 +50,7 @@
         android:layout_height="wrap_content"
         android:text="http://pngimg.com/license"
         android:textColor="@android:color/holo_blue_dark"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>
