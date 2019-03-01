@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="2019-12-31" />
+                    tools:text="2019-01-31"/>
 
             </LinearLayout>
 
