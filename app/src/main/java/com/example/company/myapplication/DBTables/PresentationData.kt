@@ -10,9 +10,10 @@ data class PresentationData(@PrimaryKey(autoGenerate = true) var id: Int?,
                             @ColumnInfo(name = "timeLimit") var timeLimit : Long?,
                             @ColumnInfo(name = "pageCount") var pageCount: Int?,
                             @ColumnInfo(name = "presentationDate") var presentationDate: String,
+                            @ColumnInfo(name = "notifications") var notifications: Boolean,
                             @ColumnInfo(name = "debugPresentationFlag") var debugFlag: Int,
                             @ColumnInfo(name = "trainingDataId") var trainingDataId: Int?
 
 ){
-    constructor():this(null,"","",null,0, "2019-1-1",0, null)
+    constructor():this(null,"","",null,0, "2019-1-1",false, 0, null)
 }
