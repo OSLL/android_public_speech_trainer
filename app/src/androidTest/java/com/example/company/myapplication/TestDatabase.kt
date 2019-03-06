@@ -69,6 +69,7 @@ class TestDatabase {
         for (i in 0..1) {
             onView(withId(R.id.addBtn)).perform(click())
             onView(withId(R.id.addPresentation)).perform(click())
+            Thread.sleep(2000)
         }
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
@@ -102,7 +103,7 @@ class TestDatabase {
                 .check(matches(isDisplayed()))
                 .perform(click())
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
-        //assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
+        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
     }
 
     private fun setTrainingPresentationMod(mode: Boolean) {
