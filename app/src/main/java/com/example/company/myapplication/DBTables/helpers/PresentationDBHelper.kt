@@ -3,6 +3,7 @@ package com.example.company.myapplication.DBTables.helpers
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.example.company.myapplication.R
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -11,27 +12,31 @@ import java.io.ByteArrayOutputStream
 class PresentationDBHelper {
     private val presentationDataDao: PresentationDataDao
     private val pdfToBitmap: PdfToBitmap
+    private val defaultPictureSize: Int
+    private val defaultPictureQuality: Int
 
     constructor(ctx: Context) {
         presentationDataDao = SpeechDataBase.getInstance(ctx)!!.PresentationDataDao()
         pdfToBitmap = PdfToBitmap(ctx)
+        defaultPictureSize = ctx.resources.getInteger(R.integer.defaultPictureSize)
+        defaultPictureQuality = ctx.resources.getInteger(R.integer.defaultPictureQuality)
     }
 
     fun changePresentationImage(presentationId: Int, image: Bitmap) {
         val presentation = presentationDataDao.getPresentationWithId(presentationId) ?: return
         val stream = ByteArrayOutputStream()
-        getResizedBitmap(image, 300).compress(Bitmap.CompressFormat.PNG, 100, stream)
+        getResizedBitmap(image, defaultPictureSize).compress(Bitmap.CompressFormat.PNG, defaultPictureQuality, stream)
         presentation.imageBLOB = stream.toByteArray()
         presentationDataDao.updatePresentation(presentation)
         stream.close()
     }
 
-    fun saveDefaultPresentationImage(presentationId: Int) {
+    suspend fun saveDefaultPresentationImage(presentationId: Int) {
         val presentation = presentationDataDao.getPresentationWithId(presentationId) ?: return
         pdfToBitmap.addPresentation(presentation.stringUri, presentation.debugFlag)
         val bm = pdfToBitmap.getBitmapForSlide(0) ?: return
         val stream = ByteArrayOutputStream()
-        getResizedBitmap(bm, 300).compress(Bitmap.CompressFormat.PNG, 100, stream)
+        getResizedBitmap(bm, defaultPictureSize).compress(Bitmap.CompressFormat.PNG, defaultPictureQuality, stream)
         presentation.imageBLOB = stream.toByteArray()
         presentationDataDao.updatePresentation(presentation)
         stream.close()

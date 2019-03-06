@@ -2,14 +2,13 @@ package com.example.company.myapplication
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
+import com.example.company.myapplication.DBTables.helpers.PresentationDBHelper
 import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
@@ -17,7 +16,10 @@ import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import com.example.company.myapplication.appSupport.ProgressHelper
-import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class EditPresentationActivity : AppCompatActivity() {
 
@@ -28,8 +30,6 @@ class EditPresentationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
 
@@ -100,10 +100,21 @@ class EditPresentationActivity : AppCompatActivity() {
                     setResult(Activity.RESULT_OK, i)
                 }
 
-                // finish in async
-                SaveDefaultPictureAsync(presentationData!!).execute()
+                this@EditPresentationActivity.onPause()
+                GlobalScope.launch {
+                    try {
+                        val presentationDBHelper = async(IO) { PresentationDBHelper(this@EditPresentationActivity) }
+                        presentationDBHelper.await().saveDefaultPresentationImage(presentationData?.id!!)
+                        finish()
+                    } catch (e: Exception) {
+                        Log.d(APST_TAG, e.toString())
+                        finish()
+                    }
+                }
             }
-        } catch (e: Exception) { finish() }
+        } catch (e: Exception) {
+            finish()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -116,65 +127,20 @@ class EditPresentationActivity : AppCompatActivity() {
 
     override fun onPause() {
         try {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
             progressHelper.show()
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
         super.onPause()
     }
 
     override fun onResume() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         progressHelper.hide()
         super.onResume()
     }
 
     override fun onStart() {
         super.onStart()
-    }
-
-    private inner class SaveDefaultPictureAsync(private val presentation: PresentationData)
-        : AsyncTask<Void, Void, Void>() {
-        private lateinit var stream: ByteArrayOutputStream
-        private var bm: Bitmap? = null
-        private lateinit var pdfToBitmap: PdfToBitmap
-
-        override fun onPreExecute() {
-            this@EditPresentationActivity.onPause()
-            super.onPreExecute()
-            stream = ByteArrayOutputStream()
-            pdfToBitmap = PdfToBitmap(presentation, this@EditPresentationActivity)
-        }
-
-        override fun doInBackground(vararg params: Void?): Void? {
-            try {
-                bm = pdfToBitmap.getBitmapForSlide(0) ?: return null
-                getResizedBitmap(bm!!, 300).compress(Bitmap.CompressFormat.PNG, 100, stream)
-                publishProgress()
-            } catch (e: Exception) { }
-            return null
-        }
-
-        override fun onProgressUpdate(vararg values: Void?) {
-            super.onProgressUpdate(*values)
-            if (bm == null) return
-            presentation.imageBLOB = stream.toByteArray()
-            presentationDataDao?.updatePresentation(presentation)
-            stream.close()
-            this@EditPresentationActivity.finish()
-        }
-
-        private fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap {
-            var width = image.width
-            var height = image.height
-
-            val bitmapRatio = width.toFloat() / height.toFloat()
-            if (bitmapRatio > 1) {
-                width = maxSize
-                height = (width / bitmapRatio).toInt()
-            } else {
-                height = maxSize
-                width = (height * bitmapRatio).toInt()
-            }
-
-            return Bitmap.createScaledBitmap(image, width, height, true)
-        }
     }
 }

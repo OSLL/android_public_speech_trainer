@@ -4,6 +4,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
+import com.example.company.myapplication.R
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingDataDao
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingSlideDataDao
@@ -22,7 +23,7 @@ abstract class SpeechDataBase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(SpeechDataBase::class) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            SpeechDataBase::class.java, "weather.0.2")
+                            SpeechDataBase::class.java, context.getString(R.string.dbName))
                             .allowMainThreadQueries()
                             .build()
                 }

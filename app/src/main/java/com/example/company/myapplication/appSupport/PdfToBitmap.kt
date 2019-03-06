@@ -1,6 +1,5 @@
 package com.example.company.myapplication.appSupport
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -11,14 +10,15 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.APST_TAG
+import com.example.company.myapplication.R
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class PdfToBitmap{
-
+class PdfToBitmap {
     private var presentationStringUri: String?
     private var debugIntMode: Int?
     private val ctx: Context
@@ -72,7 +72,7 @@ class PdfToBitmap{
     private fun initRenderer(){
         val uri = Uri.parse(this.presentationStringUri)
         try{
-            val temp = File(ctx.cacheDir, "tempImage.pdf")
+            val temp = File(ctx.cacheDir, ctx.getString(R.string.tempImageName))
             val fos = FileOutputStream(temp)
             val isChecked = this.debugIntMode == 1
             val ins: InputStream
@@ -81,7 +81,7 @@ class PdfToBitmap{
                     val cr = ctx.contentResolver
                     cr.openInputStream(uri)
                 }catch (e: Exception) {
-                    Log.d("test_row", "editPres cr:" + e.toString())
+                    Log.d(APST_TAG + PdfToBitmap::class.toString(), e.toString())
                 } as InputStream
             } else {
                 ctx.assets.open(this.presentationStringUri)
@@ -100,7 +100,6 @@ class PdfToBitmap{
             this.pageCount = renderer?.pageCount
         } catch(e: IOException){
             Toast.makeText(ctx, "error in opening presentation file", Toast.LENGTH_LONG).show()
-            Log.d("error","error in opening presentation file")
         }
     }
 
