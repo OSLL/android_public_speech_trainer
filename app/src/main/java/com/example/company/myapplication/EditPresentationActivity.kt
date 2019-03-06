@@ -46,6 +46,13 @@ class EditPresentationActivity : AppCompatActivity() {
                 return
             }
 
+            val newPresUri = intent.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
+            if (newPresUri != null && newPresUri != presentationData?.stringUri){
+                presentationData?.stringUri = newPresUri
+            }
+
+            Log.d("lalalala", presentationData?.id.toString() + presentationData?.stringUri)
+
             val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
             val pdfReader = PdfToBitmap(presentationData!!, this)
@@ -66,7 +73,12 @@ class EditPresentationActivity : AppCompatActivity() {
                 if (defTime > 100) numberPicker1.value = 100
                 else numberPicker1.value = defTime
             }
-
+/*
+            val newPresUri = intent.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
+            if (newPresUri != null && newPresUri != presentationData?.stringUri){
+                presentationData?.stringUri = newPresUri
+            }
+*/
             if (presentationData?.name!!.isNullOrEmpty())
                 presentationName.setText(getFileName(Uri.parse(presentationData!!.stringUri), contentResolver))
             else
@@ -112,9 +124,26 @@ class EditPresentationActivity : AppCompatActivity() {
                     }
                 }
             }
+            change_pres.setOnClickListener {
+                val intent = Intent(this, CreatePresentationActivity::class.java)
+                intent.putExtra(getString(R.string.OLD_PRESENTATION_ID), presentationData?.id)
+                Log.d("lalalala", presentationData?.id.toString() + presentationData?.stringUri)
+                finish()
+                startActivity(intent)
+                /*
+                val newPresUri = intent.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
+                if (newPresUri != presentationData?.stringUri){
+                    presentationData?.stringUri = newPresUri
+                }
+                */
+            }
         } catch (e: Exception) {
             finish()
         }
+    }
+
+    fun updateUri(stringUri: String) {
+        presentationData?.stringUri = stringUri
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

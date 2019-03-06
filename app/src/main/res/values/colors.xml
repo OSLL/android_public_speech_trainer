@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black_35_alpha">#59000000</color>
+    <color name="black_15_alpha">#39000000</color>
     <color name="activityBackground">#e6e6e6</color>
 
     <!-- Time on each slide -->

@@ -171,6 +171,8 @@
     <string name="good_speech">Вы делаете достаточное количество пауз; отлично!</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
+    <string name="NEW_PRESENTATION_URI">new_presentation_uri</string>
+    <string name="OLD_PRESENTATION_ID">old_presentation_id</string>
     <string name="CURRENT_TRAINING_ID">current_training_id</string>
 
     <!-- For Change Presentation -->

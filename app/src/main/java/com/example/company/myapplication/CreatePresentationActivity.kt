@@ -9,6 +9,7 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import java.io.FileNotFoundException
@@ -48,8 +49,14 @@ class CreatePresentationActivity : AppCompatActivity() {
             try {
                 val i = Intent(this, EditPresentationActivity::class.java)
                 val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
-                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
+                i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
                 Log.d(FILE_SYSTEM, selectedFile.toString())
+                val oldPresId = intent.getIntExtra(getString(R.string.OLD_PRESENTATION_ID), -1)
+                if(oldPresId != -1){
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), oldPresId)
+                } else {
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
+                }
                 startActivity(i)
             } catch (e: FileNotFoundException) {
                 Log.d(FILE_SYSTEM, "file not found")
