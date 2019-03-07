@@ -29,7 +29,7 @@ class CreatePresentationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         changeFileFlag = intent.getBooleanExtra(getString(R.string.CHANGE_FILE_FLAG), false)
 
-        if (!isChecked) {
+        if (!isChecked || changeFileFlag) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
             val intent = Intent(ACTION_OPEN_DOCUMENT)
