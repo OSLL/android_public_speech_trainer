@@ -8,9 +8,9 @@ import android.view.MenuItem
 import android.widget.Toast
 import ru.spb.speech.views.PresentationStartpageItemRow
 import ru.spb.speech.appSupport.PdfToBitmap
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.ru.putkovdimi.trainspeech.DBTables.PresentationData
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
+import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import android.widget.NumberPicker
 import ru.spb.speech.appSupport.ProgressHelper

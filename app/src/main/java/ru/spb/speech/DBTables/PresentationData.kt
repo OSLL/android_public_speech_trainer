@@ -1,4 +1,4 @@
-package com.ru.putkovdimi.trainspeech.DBTables
+package ru.spb.speech.DBTables
 
 import android.arch.persistence.room.*
 

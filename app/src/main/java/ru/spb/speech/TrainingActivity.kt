@@ -21,11 +21,11 @@ import ru.spb.speech.DBTables.helpers.TrainingDBHelper
 import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.ru.putkovdimi.trainspeech.DBTables.PresentationData
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
-import com.ru.putkovdimi.trainspeech.DBTables.TrainingData
-import com.ru.putkovdimi.trainspeech.DBTables.TrainingSlideData
+import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
+import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.TrainingData
+import ru.spb.speech.DBTables.TrainingSlideData
 import kotlinx.android.synthetic.main.activity_training.*
 import java.util.*
 import java.util.concurrent.TimeUnit

@@ -1,7 +1,7 @@
-package com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces
+package ru.spb.speech.DBTables.DaoInterfaces
 
 import android.arch.persistence.room.*
-import com.ru.putkovdimi.trainspeech.DBTables.TrainingSlideData
+import ru.spb.speech.DBTables.TrainingSlideData
 
 @Dao
 interface TrainingSlideDataDao {

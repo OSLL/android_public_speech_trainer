@@ -20,10 +20,10 @@ import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.vocabulary.PrepositionsAndConjunctions
 import ru.spb.speech.fragments.TimeOnEachSlideChartFragment
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.ru.putkovdimi.trainspeech.DBTables.PresentationData
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
-import com.ru.putkovdimi.trainspeech.DBTables.TrainingData
+import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
+import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.TrainingData
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis

@@ -9,8 +9,8 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.ru.putkovdimi.trainspeech.DBTables.PresentationData
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.DBTables.SpeechDataBase
 import java.io.FileNotFoundException
 
 const val FILE_SYSTEM = "file_system"

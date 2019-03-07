@@ -1,9 +1,9 @@
 package ru.spb.speech.DBTables.helpers
 
 import android.content.Context
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
-import com.ru.putkovdimi.trainspeech.DBTables.TrainingData
-import com.ru.putkovdimi.trainspeech.DBTables.TrainingSlideData
+import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.TrainingData
+import ru.spb.speech.DBTables.TrainingSlideData
 
 class TrainingSlideDBHelper {
     private var context: Context

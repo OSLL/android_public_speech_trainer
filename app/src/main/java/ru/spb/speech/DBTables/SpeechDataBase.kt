@@ -1,12 +1,12 @@
-package com.ru.putkovdimi.trainspeech.DBTables
+package ru.spb.speech.DBTables
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingDataDao
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.TrainingSlideDataDao
+import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
+import ru.spb.speech.DBTables.DaoInterfaces.TrainingDataDao
+import ru.spb.speech.DBTables.DaoInterfaces.TrainingSlideDataDao
 
 @Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 1)
 abstract class SpeechDataBase : RoomDatabase() {

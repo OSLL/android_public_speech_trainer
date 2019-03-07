@@ -19,9 +19,9 @@ import android.widget.Toast
 import ru.spb.speech.views.PresentationStartpageItemRow
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
-import com.ru.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
-import com.ru.putkovdimi.trainspeech.DBTables.PresentationData
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
+import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder

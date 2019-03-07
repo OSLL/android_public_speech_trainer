@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import ru.spb.speech.APST_TAG
 import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.SpeechDataBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis

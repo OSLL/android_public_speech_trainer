@@ -12,8 +12,8 @@ import android.widget.Toast
 import ru.spb.speech.DBTables.helpers.TrainingDBHelper
 import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.views.TrainingHistoryItemRow
-import com.ru.putkovdimi.trainspeech.DBTables.PresentationData
-import com.ru.putkovdimi.trainspeech.DBTables.SpeechDataBase
+import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
