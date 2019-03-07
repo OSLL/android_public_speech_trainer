@@ -37,7 +37,7 @@
                 android:background="@color/black_15_alpha"
                 android:foreground="@drawable/card_foreground"
                 android:paddingHorizontal="4dp"
-                android:text="Изменить файл\nпрезентации"
+                android:text="@string/presentation_file_replacement"
                 android:textColor="@android:color/white"
                 android:textSize="12dp"
                 android:textStyle="bold" />
