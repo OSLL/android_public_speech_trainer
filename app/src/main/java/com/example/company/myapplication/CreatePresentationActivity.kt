@@ -20,7 +20,6 @@ const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
-    private val REQUSETCODE = 111
     private var changeFileFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +34,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             val intent = Intent(ACTION_OPEN_DOCUMENT)
                     .setDataAndType(myUri, "*/*")
                     .addCategory(CATEGORY_OPENABLE)
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), resources.getInteger(R.integer.choose_file_requestCode))
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
@@ -46,7 +45,7 @@ class CreatePresentationActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null) {
             val selectedFile = data.data //The uri with the location of the file
             if (changeFileFlag) {
                 val i = Intent()

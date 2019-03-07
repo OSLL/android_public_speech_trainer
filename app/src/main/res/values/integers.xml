@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="anim_duration_medium">500</integer>
+    <integer name="choose_file_requestCode">111</integer>
     <integer name="editPresentationResultCode">999</integer>
     <integer name="defaultPictureSize">300</integer>
     <integer name="defaultPictureQuality">100</integer>

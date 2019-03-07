@@ -21,10 +21,6 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
 
-
-const val debugSlides = "making_presentation.pdf"   //Название презентации из ресурсов для отладочного режима
-const val PageCount = 26       //Количество страниц в презентации, используемой для отладочного режима
-
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
 
