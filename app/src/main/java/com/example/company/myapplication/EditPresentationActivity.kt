@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import com.example.company.myapplication.DBTables.helpers.PresentationDBHelper
 import com.example.company.myapplication.views.PresentationStartpageItemRow
@@ -20,12 +21,14 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class EditPresentationActivity : AppCompatActivity() {
 
     private var presentationDataDao: PresentationDataDao? = null
     private var presentationData: PresentationData? = null
     private lateinit var progressHelper: ProgressHelper
+    private lateinit var pdfReader: PdfToBitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,17 +48,10 @@ class EditPresentationActivity : AppCompatActivity() {
                 Log.d(APST_TAG, "edit_pres_act: wrong ID")
                 return
             }
-
-            val newPresUri = intent.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
-            if (newPresUri != null && newPresUri != presentationData?.stringUri){
-                presentationData?.stringUri = newPresUri
-            }
-
-            Log.d("lalalala", presentationData?.id.toString() + presentationData?.stringUri)
-
+            val presentationUri = presentationData?.stringUri
             val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
-            val pdfReader = PdfToBitmap(presentationData!!, this)
+            pdfReader = PdfToBitmap(presentationData!!, this)
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
             if (changePresentationFlag) {
@@ -73,12 +69,7 @@ class EditPresentationActivity : AppCompatActivity() {
                 if (defTime > 100) numberPicker1.value = 100
                 else numberPicker1.value = defTime
             }
-/*
-            val newPresUri = intent.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
-            if (newPresUri != null && newPresUri != presentationData?.stringUri){
-                presentationData?.stringUri = newPresUri
-            }
-*/
+
             if (presentationData?.name!!.isNullOrEmpty())
                 presentationName.setText(getFileName(Uri.parse(presentationData!!.stringUri), contentResolver))
             else
@@ -97,7 +88,7 @@ class EditPresentationActivity : AppCompatActivity() {
                 }
 
                 val isChanged = presentationName.text.toString() != presentationData?.name ||
-                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit
+                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit || presentationUri != presentationData?.stringUri
 
                 presentationData?.pageCount = pdfReader.getPageCount()
                 presentationData?.name = presentationName.text.toString()
@@ -124,26 +115,18 @@ class EditPresentationActivity : AppCompatActivity() {
                     }
                 }
             }
-            change_pres.setOnClickListener {
-                val intent = Intent(this, CreatePresentationActivity::class.java)
-                intent.putExtra(getString(R.string.OLD_PRESENTATION_ID), presentationData?.id)
-                Log.d("lalalala", presentationData?.id.toString() + presentationData?.stringUri)
-                finish()
-                startActivity(intent)
-                /*
-                val newPresUri = intent.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
-                if (newPresUri != presentationData?.stringUri){
-                    presentationData?.stringUri = newPresUri
-                }
-                */
-            }
         } catch (e: Exception) {
             finish()
         }
-    }
 
-    fun updateUri(stringUri: String) {
-        presentationData?.stringUri = stringUri
+        // у тестовой презентации не предусмотрена замена файла
+        if (presentationData?.debugFlag == 1) change_pres.visibility = View.GONE
+        change_pres.setOnClickListener {
+            val i = Intent(this, CreatePresentationActivity::class.java)
+            i.putExtra(getString(R.string.CHANGE_FILE_FLAG), true)
+            startActivityForResult(i, resources.getInteger(R.integer.createPresentationActRequestCode))
+            overridePendingTransition(0, 0)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -152,6 +135,23 @@ class EditPresentationActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == resources.getInteger(R.integer.createPresentationActRequestCode) && resultCode == RESULT_OK && data != null) {
+            val uri = data.getStringExtra(getString(R.string.NEW_PRESENTATION_URI))
+
+            try {
+                pdfReader.addPresentation(uri, 0)
+            } catch (e: IOException) {
+                Toast.makeText(this, getString(R.string.pdfErrorMsg), Toast.LENGTH_LONG).show()
+                return
+            }
+
+            pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
+            presentationData?.stringUri = uri
+        }
     }
 
     override fun onPause() {

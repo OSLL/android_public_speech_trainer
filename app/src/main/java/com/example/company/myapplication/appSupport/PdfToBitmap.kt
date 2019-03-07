@@ -58,49 +58,48 @@ class PdfToBitmap {
         val height = currentPage?.height
         val index = currentPage?.index
         val pageCount = renderer?.pageCount
-        if(width != null && height != null && index != null && pageCount != null) {
+        if (width != null && height != null && index != null && pageCount != null) {
             val nWidth: Int = width
             val nHeight: Int = height
             val bitmap: Bitmap = Bitmap.createBitmap(nWidth, nHeight, Bitmap.Config.ARGB_8888)
             currentPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
             pageIndexStatus = currentPage?.index
-            return  bitmap
+            return bitmap
         }
         return null
     }
-    private fun initRenderer(){
-        val uri = Uri.parse(this.presentationStringUri)
-        try{
-            val temp = File(ctx.cacheDir, ctx.getString(R.string.tempImageName))
-            val fos = FileOutputStream(temp)
-            val isChecked = this.debugIntMode == 1
-            val ins: InputStream
-            ins = if(!isChecked) {
-                try {
-                    val cr = ctx.contentResolver
-                    cr.openInputStream(uri)
-                }catch (e: Exception) {
-                    Log.d(APST_TAG + PdfToBitmap::class.toString(), e.toString())
-                } as InputStream
-            } else {
-                ctx.assets.open(this.presentationStringUri)
-            }
-            val buffer = ByteArray(1024)
-            var readBytes = ins.read(buffer)
-            while(readBytes != -1){
-                fos.write(buffer, 0, readBytes)
-                readBytes = ins.read(buffer)
-            }
-            fos.close()
-            ins.close()
-            parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
-            renderer = PdfRenderer(parcelFileDescriptor)
 
-            this.pageCount = renderer?.pageCount
-        } catch(e: IOException){
-            Toast.makeText(ctx, "error in opening presentation file", Toast.LENGTH_LONG).show()
+    private fun initRenderer() {
+        val uri = Uri.parse(this.presentationStringUri)
+
+        val temp = File(ctx.cacheDir, ctx.getString(R.string.tempImageName))
+        val fos = FileOutputStream(temp)
+        val isChecked = this.debugIntMode == 1
+        val ins: InputStream
+        ins = if (!isChecked) {
+            try {
+                val cr = ctx.contentResolver
+                cr.openInputStream(uri)
+            } catch (e: Exception) {
+                Log.d(APST_TAG + PdfToBitmap::class.toString(), e.toString())
+            } as InputStream
+        } else {
+            ctx.assets.open(this.presentationStringUri)
         }
+        val buffer = ByteArray(1024)
+        var readBytes = ins.read(buffer)
+        while (readBytes != -1) {
+            fos.write(buffer, 0, readBytes)
+            readBytes = ins.read(buffer)
+        }
+        fos.close()
+        ins.close()
+        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
+        renderer = PdfRenderer(parcelFileDescriptor)
+
+        this.pageCount = renderer?.pageCount
+
     }
 
     fun getBitmapForSlide(slideNumber: Int): Bitmap? {
@@ -110,7 +109,7 @@ class PdfToBitmap {
     fun saveSlideImage(fileName: String): Bitmap? {
         if (renderer == null || parcelFileDescriptor == null) {
             Toast.makeText(ctx, "Saving picture error", Toast.LENGTH_LONG).show()
-            return  null
+            return null
         }
 
         val temp = File(ctx.cacheDir, fileName)
@@ -141,7 +140,7 @@ class PdfToBitmap {
 
             currentPage?.render(bmpBase, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
 
-            return  bmpBase
+            return bmpBase
         }
         return null
     }

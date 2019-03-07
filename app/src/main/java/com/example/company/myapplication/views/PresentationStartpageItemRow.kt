@@ -28,6 +28,7 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
     var presentationId: Int? = null
     var presentationName: String? = null
     var presentationTimeLimit: Long? = null
+    var presentationUri: String? = null
 
     override fun getLayout(): Int {
         return R.layout.presentation_startpage_row
@@ -42,6 +43,7 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
         presentationId = presentation.id
         presentationName = presentation.name
         presentationTimeLimit = presentation.timeLimit
+        presentationUri = presentation.stringUri
 
         viewHolder.itemView.training_history_btn_start_page_row.setOnClickListener {
             try {

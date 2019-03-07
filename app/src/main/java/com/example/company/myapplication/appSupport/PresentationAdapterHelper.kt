@@ -10,8 +10,10 @@ import android.os.AsyncTask
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import com.example.company.myapplication.APST_TAG
 import com.example.company.myapplication.EditPresentationActivity
 import com.example.company.myapplication.R
 import com.example.company.myapplication.TrainingActivity
@@ -109,8 +111,10 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         val row = adapter.getItem(position) as PresentationStartpageItemRow
         val presentation = presentationDataDao.getPresentationWithId(row.presentationId!!) ?: return
         row.setPresentationData(presentation)
-
         adapter.notifyItemChanged(position)
+
+        if (row.presentationUri != presentation.stringUri)
+            LoadItemAsync(adapter.getItem(position) as PresentationStartpageItemRow, presentation.imageBLOB).execute()
     }
 
     fun addLastItem() {

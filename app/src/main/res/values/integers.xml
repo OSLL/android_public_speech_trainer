@@ -4,4 +4,5 @@
     <integer name="editPresentationResultCode">999</integer>
     <integer name="defaultPictureSize">300</integer>
     <integer name="defaultPictureQuality">100</integer>
+    <integer name="createPresentationActRequestCode">2450</integer>
 </resources>

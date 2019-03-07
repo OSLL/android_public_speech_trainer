@@ -1,5 +1,6 @@
 package com.example.company.myapplication
 
+import android.app.Activity
 import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
@@ -9,7 +10,6 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import java.io.FileNotFoundException
@@ -20,13 +20,15 @@ const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
-
     private val REQUSETCODE = 111
+    private var changeFileFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
         super.onCreate(savedInstanceState)
+        changeFileFlag = intent.getBooleanExtra(getString(R.string.CHANGE_FILE_FLAG), false)
+
         if (!isChecked) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
@@ -46,17 +48,19 @@ class CreatePresentationActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
             val selectedFile = data.data //The uri with the location of the file
+            if (changeFileFlag) {
+                val i = Intent()
+                i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
+                setResult(Activity.RESULT_OK, i)
+                finish()
+                overridePendingTransition(0, 0)
+                return
+            }
             try {
                 val i = Intent(this, EditPresentationActivity::class.java)
                 val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
-                i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
+                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
                 Log.d(FILE_SYSTEM, selectedFile.toString())
-                val oldPresId = intent.getIntExtra(getString(R.string.OLD_PRESENTATION_ID), -1)
-                if(oldPresId != -1){
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), oldPresId)
-                } else {
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
-                }
                 startActivity(i)
             } catch (e: FileNotFoundException) {
                 Log.d(FILE_SYSTEM, "file not found")
@@ -94,5 +98,9 @@ class CreatePresentationActivity : AppCompatActivity() {
             return null
         }
     }
-}
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (changeFileFlag) overridePendingTransition(0, 0)
+    }
+}
