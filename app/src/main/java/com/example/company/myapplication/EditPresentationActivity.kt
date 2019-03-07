@@ -48,6 +48,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
             val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
+            val presentationUri = presentationData?.stringUri
             val pdfReader = PdfToBitmap(presentationData!!, this)
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
@@ -98,6 +99,11 @@ class EditPresentationActivity : AppCompatActivity() {
                     i.putExtra(getString(R.string.presentationPosition),
                             intent.getIntExtra(getString(R.string.presentationPosition), -1))
                     setResult(Activity.RESULT_OK, i)
+
+                    if (presentationUri == presentationData?.stringUri) {
+                        finish()
+                        return@setOnClickListener
+                    }
                 }
 
                 this@EditPresentationActivity.onPause()
@@ -105,11 +111,10 @@ class EditPresentationActivity : AppCompatActivity() {
                     try {
                         val presentationDBHelper = async(IO) { PresentationDBHelper(this@EditPresentationActivity) }
                         presentationDBHelper.await().saveDefaultPresentationImage(presentationData?.id!!)
-                        finish()
                     } catch (e: Exception) {
                         Log.d(APST_TAG, e.toString())
-                        finish()
                     }
+                    finish()
                 }
             }
         } catch (e: Exception) {
