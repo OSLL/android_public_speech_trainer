@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="anim_duration_medium">500</integer>
+    <integer name="transfer_to_interest">100</integer>
+    <integer name="number_of_factors">3</integer>
+    <integer name="zero">0</integer>
+    <integer name="block_height_with_last_workout">160</integer>
+    <integer name="block_height_with_training_statistics">285</integer>
+    <integer name="height_of_block_with_name">40</integer>
+    <integer name="length_of_the_presentation_title_32">32</integer>
+    <integer name="length_of_the_presentation_title_37">37</integer>
+    <integer name="length_of_the_presentation_title_30">30</integer>
+    <integer name="milliseconds_in_second">1000</integer>
+
 </resources>
