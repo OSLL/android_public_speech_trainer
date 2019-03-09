@@ -14,6 +14,7 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import android.widget.NumberPicker
 import com.example.company.myapplication.appSupport.ProgressHelper
+import java.util.*
 
 class EditPresentationActivity : AppCompatActivity() {
 
@@ -37,6 +38,8 @@ class EditPresentationActivity : AppCompatActivity() {
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
 
+        datePicker.minDate = Calendar.getInstance().timeInMillis
+
         try {
             presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
             val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID), -1)
@@ -54,7 +57,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
             Log.d("dfvgbh", presentationData?.timeLimit.toString())
 
-            var date = presentationData?.presentationDate
+            val date = presentationData?.presentationDate
 
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
