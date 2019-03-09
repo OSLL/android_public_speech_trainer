@@ -38,7 +38,9 @@ class EditPresentationActivity : AppCompatActivity() {
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
 
-        datePicker.minDate = Calendar.getInstance().timeInMillis
+        val calendar = Calendar.getInstance()
+        datePicker.minDate = calendar.timeInMillis
+        datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH) + 7)
 
         try {
             presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
