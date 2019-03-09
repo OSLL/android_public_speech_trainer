@@ -1,22 +1,27 @@
 package com.example.company.myapplication
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
-import android.preference.RingtonePreference
-import android.preference.SwitchPreference
+import android.os.SystemClock
+import android.preference.*
 import android.text.TextUtils
+import android.util.Log
 import android.view.MenuItem
+import com.example.company.myapplication.notifications.AlarmBootReceiver
+import com.example.company.myapplication.notifications.AlarmReceiver
 import java.lang.Boolean.parseBoolean
 
 /**
@@ -136,6 +141,46 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
+        }
+
+        override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
+            val key = preference?.key
+            val switchNotifications = findPreference("notifications_new_message") as SwitchPreference
+            if (key == "notifications_new_message") {
+                // TODO: Где-то тут включаем уведомления
+                val alarmIntent = Intent(activity, AlarmReceiver::class.java).let {intent ->
+                    PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                }
+                val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                val receiver = ComponentName(activity, AlarmBootReceiver::class.java)
+                val packageManager = activity.packageManager
+
+                if (switchNotifications.isChecked) {
+                    Log.d("MyNotifications", "enabled")
+                    packageManager.setComponentEnabledSetting(
+                            receiver,
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                            PackageManager.DONT_KILL_APP
+                    )
+                    alarmManager.setInexactRepeating(
+                            AlarmManager.RTC_WAKEUP,
+                            System.currentTimeMillis(),
+                            1000,
+                            alarmIntent
+                    )
+                }
+                else {
+                    Log.d("MyNotifications", "disabled")
+                    packageManager.setComponentEnabledSetting(
+                            receiver,
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP
+                    )
+                    alarmManager.cancel(alarmIntent)
+                }
+            }
+            return true
         }
     }
 
