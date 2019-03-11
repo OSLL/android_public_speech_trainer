@@ -9,7 +9,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
-import com.example.putkovdimi.trainspeech.DBTables.PresentationData
+import android.support.test.runner.permission.PermissionRequester
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import junit.framework.Assert.*
 import kotlinx.android.synthetic.main.activity_start_page.*
@@ -24,6 +24,12 @@ class TestDatabase {
     @Rule
     @JvmField
     var mControllerTestRule = ControlledActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    init {
+        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
+        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
 
     @Before
     fun enableDebugMode() {
@@ -115,13 +121,10 @@ class TestDatabase {
         spe.apply()
     }
 
-    private fun getSamplePresentationData(): PresentationData {
-        val presentation = PresentationData()
-        presentation.name =  getTargetContext().getString(R.string.deb_pres_name)
-        presentation.stringUri = getTargetContext().getString(R.string.deb_pres_name)
-        presentation.debugFlag = 1
-        presentation.pageCount = 2
-        presentation.timeLimit = 3000
-        return presentation
+    private fun grantPermissions(vararg permissions: String) {
+        PermissionRequester().apply {
+            addPermissions(*permissions)
+            requestPermissions()
+        }
     }
 }
