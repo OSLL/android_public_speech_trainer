@@ -95,7 +95,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         trainingSlideDBHelper = TrainingSlideDBHelper(this)
         trainingDBHelper = TrainingDBHelper(this)
 
-        pdfReader = PdfToBitmap(presentationData?.stringUri!!, presentationData?.debugFlag!!, this)
+        pdfReader = PdfToBitmap(presentationData!!, this)
 
         val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
 

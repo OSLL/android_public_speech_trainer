@@ -12,4 +12,7 @@
     <integer name="length_of_the_presentation_title_30">30</integer>
     <integer name="milliseconds_in_second">1000</integer>
 
+    <integer name="editPresentationResultCode">999</integer>
+    <integer name="defaultPictureSize">300</integer>
+    <integer name="defaultPictureQuality">100</integer>
 </resources>
