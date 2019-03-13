@@ -7,6 +7,8 @@ import android.content.Context
 import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.DaoInterfaces.TrainingDataDao
 import ru.spb.speech.DBTables.DaoInterfaces.TrainingSlideDataDao
+import ru.spb.speech.R
+
 
 @Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 1)
 abstract class SpeechDataBase : RoomDatabase() {
@@ -22,7 +24,7 @@ abstract class SpeechDataBase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(SpeechDataBase::class) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            SpeechDataBase::class.java, "weather.0.1.db")
+                            SpeechDataBase::class.java, context.getString(R.string.dbName))
                             .allowMainThreadQueries()
                             .build()
                 }

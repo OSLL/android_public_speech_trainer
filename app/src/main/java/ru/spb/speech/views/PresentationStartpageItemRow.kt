@@ -15,7 +15,7 @@ import ru.spb.speech.*
 import java.lang.Exception
 
 
-class PresentationStartpageItemRow(private val presentation: PresentationData, private val firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
+class PresentationStartpageItemRow(private var presentation: PresentationData, private var firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
     companion object {
         const val activatedChangePresentationFlag = 1
     }
@@ -47,6 +47,14 @@ class PresentationStartpageItemRow(private val presentation: PresentationData, p
                 Log.d("adapter_test", "row err: $e")
             }
         }
+    }
+
+    fun setPresentationData(pd: PresentationData) {
+        this.presentation = pd
+    }
+
+    fun setBitmap(bm: Bitmap) {
+        this.firstPageBitmap = bm
     }
 
     @SuppressLint("UseSparseArrays")

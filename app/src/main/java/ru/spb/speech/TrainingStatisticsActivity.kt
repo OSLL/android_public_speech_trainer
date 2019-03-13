@@ -90,7 +90,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         trainingSlideDBHelper = TrainingSlideDBHelper(this)
         trainingDBHelper = TrainingDBHelper(this)
 
-        pdfReader = PdfToBitmap(presentationData?.stringUri!!, presentationData?.debugFlag!!, this)
+        pdfReader = PdfToBitmap(presentationData!!, this)
 
         val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
 
@@ -369,7 +369,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     }
 
-    //Инициализация графика скорсти чтения
+    //Инициализация графика скорости чтения
     private fun printSpeedLineChart(lineEntries: List<BarEntry>){
         val labels = ArrayList<String>()
         val colors = ArrayList<Int>()

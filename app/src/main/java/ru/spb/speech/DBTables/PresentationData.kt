@@ -9,8 +9,9 @@ data class PresentationData(@PrimaryKey(autoGenerate = true) var id: Int?,
                             @ColumnInfo(name = "timeLimit") var timeLimit : Long?,
                             @ColumnInfo(name = "pageCount") var pageCount: Int?,
                             @ColumnInfo(name = "debugPresentationFlag") var debugFlag: Int,
-                            @ColumnInfo(name = "trainingDataId") var trainingDataId: Int?
+                            @ColumnInfo(name = "trainingDataId") var trainingDataId: Int?,
+                            @ColumnInfo(name = "imageBLOB", typeAffinity = ColumnInfo.BLOB) var imageBLOB: ByteArray?
 
 ){
-    constructor():this(null,"","",null,0,0, null)
+    constructor():this(null,"","",null,0,0, null, null)
 }

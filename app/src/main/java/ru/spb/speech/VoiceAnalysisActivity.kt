@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit
 const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"
 const val RECORD_AUDIO_PERMISSION = 200 // change constant?
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
-const val POST_COUNTDOWN_ACTION = "com.example.company.myapplication.ACTION_POST_COUNTDOWN" // TODO: change name later when we get a new package name
-const val POST_SPEECH_ACTION = "com.example.company.myapplication.ACTION_POST_RECORDING"
-const val NEXT_SLIDE_BUTTON_ACTION = "com.example.company.myapplication.ACTION_NEXT_SLIDE_BUTTON"
+const val POST_COUNTDOWN_ACTION = "ru.spb.speech.ACTION_POST_COUNTDOWN" // TODO: change name later when we get a new package name
+const val POST_SPEECH_ACTION = "ru.spb.speech.ACTION_POST_RECORDING"
+const val NEXT_SLIDE_BUTTON_ACTION = "ru.spb.speech.ACTION_NEXT_SLIDE_BUTTON"
 const val SAMPLING_RATE = 44100
 
 val obj = Object()

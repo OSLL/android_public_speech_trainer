@@ -18,15 +18,13 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/activity_start_page_name"
-        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity
-            android:configChanges="orientation|screenSize"
-            android:label="@string/about"
-            android:name=".AboutActivity"/>
-        <activity android:name=".StartPageActivity">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
+        <activity android:name=".StartPageActivity"
+            android:configChanges="orientation|screenSize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
