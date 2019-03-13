@@ -9,6 +9,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
+import android.support.test.runner.permission.PermissionRequester
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import junit.framework.Assert.*
 import kotlinx.android.synthetic.main.activity_start_page.*
@@ -23,6 +24,12 @@ class TestDatabase {
     @Rule
     @JvmField
     var mControllerTestRule = ControlledActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    init {
+        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
+        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
 
     @Before
     fun enableDebugMode() {
@@ -48,6 +55,8 @@ class TestDatabase {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.addPresentation)).perform(click())
 
+        Thread.sleep(2000) // ожидание асинхронного сохраенения первого слайда в БД
+
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
     }
@@ -66,6 +75,7 @@ class TestDatabase {
         for (i in 0..1) {
             onView(withId(R.id.addBtn)).perform(click())
             onView(withId(R.id.addPresentation)).perform(click())
+            Thread.sleep(2000)
         }
 
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
@@ -86,6 +96,8 @@ class TestDatabase {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.addPresentation)).perform(click())
 
+        Thread.sleep(2000) // ожидание асинхронного сохраенения первого слайда в БД
+
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
 
@@ -97,7 +109,7 @@ class TestDatabase {
                 .check(matches(isDisplayed()))
                 .perform(click())
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
-        //assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
+        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
     }
 
     private fun setTrainingPresentationMod(mode: Boolean) {
@@ -107,5 +119,12 @@ class TestDatabase {
 
         spe.putBoolean(testPresentationMode, mode)
         spe.apply()
+    }
+
+    private fun grantPermissions(vararg permissions: String) {
+        PermissionRequester().apply {
+            addPermissions(*permissions)
+            requestPermissions()
+        }
     }
 }

@@ -19,10 +19,10 @@ interface PresentationDataDao {
     fun deletePresentationWithId(ID: Int)
 
     @Query("SELECT * from presentationdata WHERE id = :ID LIMIT 1")
-    fun getPresentationWithId(ID: Int): PresentationData
+    fun getPresentationWithId(ID: Int): PresentationData?
 
     @Query("SELECT * from presentationdata WHERE name = :NAME LIMIT 1")
-    fun getPresentationWithName(NAME: String): PresentationData
+    fun getPresentationWithName(NAME: String): PresentationData?
 
     @Update
     fun updatePresentation(presentationData: PresentationData)
