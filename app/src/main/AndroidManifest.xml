@@ -52,6 +52,10 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:label="@string/about"
+            android:name=".AboutActivity"/>
 
         <service
             android:name=".SpeechRecognitionService"
