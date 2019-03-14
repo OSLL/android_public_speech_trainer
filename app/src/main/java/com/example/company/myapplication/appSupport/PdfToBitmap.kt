@@ -74,10 +74,10 @@ class PdfToBitmap {
         val uri = Uri.parse(this.presentationStringUri)
 
         val temp = File(ctx.cacheDir, ctx.getString(R.string.tempImageName))
-        val fos = FileOutputStream(temp)
+        val outPutStream = FileOutputStream(temp)
         val isChecked = this.debugIntMode == 1
-        val ins: InputStream
-        ins = if (!isChecked) {
+        val inputStream: InputStream
+        inputStream = if (!isChecked) {
             try {
                 val cr = ctx.contentResolver
                 cr.openInputStream(uri)
@@ -88,13 +88,13 @@ class PdfToBitmap {
             ctx.assets.open(this.presentationStringUri)
         }
         val buffer = ByteArray(1024)
-        var readBytes = ins.read(buffer)
+        var readBytes = inputStream.read(buffer)
         while (readBytes != -1) {
-            fos.write(buffer, 0, readBytes)
-            readBytes = ins.read(buffer)
+            outPutStream.write(buffer, 0, readBytes)
+            readBytes = inputStream.read(buffer)
         }
-        fos.close()
-        ins.close()
+        outPutStream.close()
+        inputStream.close()
         parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
         renderer = PdfRenderer(parcelFileDescriptor)
 

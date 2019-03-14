@@ -18,6 +18,8 @@ const val FILE_SYSTEM = "file_system"
 const val APST_TAG = "APST"
 const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 
+
+
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
     private var changeFileFlag = false
@@ -45,7 +47,7 @@ class CreatePresentationActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null) {
+        if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null && data.data != null) {
             val selectedFile = data.data //The uri with the location of the file
             if (changeFileFlag) {
                 val i = Intent()

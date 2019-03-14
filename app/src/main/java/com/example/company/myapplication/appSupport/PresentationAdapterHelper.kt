@@ -31,6 +31,10 @@ import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
 
+const val testHost = "8.8.8.8"
+const val testPost = 53
+const val timeLimit = 2500
+
 class PresentationAdapterHelper(private val rw: RecyclerView, private val adapter: GroupAdapter<ViewHolder>, private val context: Context) {
     private val presentationDataDao: PresentationDataDao = SpeechDataBase.getInstance(context)!!.PresentationDataDao()
     private var updateListener: UpdateAdapterListener? = null
@@ -154,7 +158,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         val thread = Thread(Runnable {
             connection = try {
                 val socket = Socket()
-                socket.connect(InetSocketAddress("8.8.8.8", 53), 2500)
+                socket.connect(InetSocketAddress(testHost, testPost), timeLimit)
                 socket.close()
                 true
             } catch (e: IOException) {

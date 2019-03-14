@@ -23,6 +23,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+const val maximumPresentationLength = 48
+const val secondsInAMinute = 60
+const val valueWhenMissedIntent = -1
+
 class EditPresentationActivity : AppCompatActivity() {
 
     private var presentationDataDao: PresentationDataDao? = null
@@ -41,7 +45,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
         try {
             presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
-            val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID), -1)
+            val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID), valueWhenMissedIntent)
             if (presId > 0) {
                 presentationData = presentationDataDao?.getPresentationWithId(presId)
             } else {
@@ -49,7 +53,7 @@ class EditPresentationActivity : AppCompatActivity() {
                 return
             }
             val presentationUri = presentationData?.stringUri
-            val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
+            val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), valueWhenMissedIntent) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
             pdfReader = PdfToBitmap(presentationData!!, this)
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
@@ -57,7 +61,7 @@ class EditPresentationActivity : AppCompatActivity() {
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
 
-                numberPicker1.value = (presentationData?.timeLimit!! / 60).toInt()
+                numberPicker1.value = (presentationData?.timeLimit!! / secondsInAMinute).toInt()
             } else {
                 val defTime = pdfReader.getPageCount()
                 if (defTime == null || defTime < 1) {
@@ -82,24 +86,24 @@ class EditPresentationActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                if (presentationName.text.length > 48) {
+                if (presentationName.text.length > maximumPresentationLength) {
                     Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
                 val isChanged = presentationName.text.toString() != presentationData?.name ||
-                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit || presentationUri != presentationData?.stringUri
+                        numberPicker1.value.toLong() * secondsInAMinute.toLong() != presentationData?.timeLimit || presentationUri != presentationData?.stringUri
 
                 presentationData?.pageCount = pdfReader.getPageCount()
                 presentationData?.name = presentationName.text.toString()
-                presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
+                presentationData?.timeLimit = numberPicker1.value.toLong() * secondsInAMinute.toLong()
                 presentationDataDao?.updatePresentation(presentationData!!)
 
                 if (changePresentationFlag) {
                     val i = Intent()
                     i.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
                     i.putExtra(getString(R.string.presentationPosition),
-                            intent.getIntExtra(getString(R.string.presentationPosition), -1))
+                            intent.getIntExtra(getString(R.string.presentationPosition), valueWhenMissedIntent))
                     setResult(Activity.RESULT_OK, i)
                 }
 
