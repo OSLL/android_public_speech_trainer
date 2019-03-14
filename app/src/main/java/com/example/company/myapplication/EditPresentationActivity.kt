@@ -67,7 +67,8 @@ class EditPresentationActivity : AppCompatActivity() {
                 numberPicker1.value = (presentationData?.timeLimit!! / 60).toInt()
 
                 val dateArr = date!!.split("-").map { it.toInt() }
-                datePicker.updateDate(dateArr[0], dateArr[1] - 1, dateArr[2])
+                //[0] - day, [1] - month, [2] - year
+                datePicker.updateDate(dateArr[0],dateArr[1] - 1, dateArr[2])
             } else {
                 val defTime = pdfReader.getPageCount()
                 if (defTime == null || defTime < 1) {
@@ -96,7 +97,8 @@ class EditPresentationActivity : AppCompatActivity() {
                     presentationData?.pageCount = pdfReader.getPageCount()
                     presentationData?.name = presentationName.text.toString()
                     presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
-                    presentationData?.presentationDate = datePicker.year.toString() + "-" + (datePicker.month + 1).toString() + "-" + datePicker.dayOfMonth.toString()
+                    //presentationData?.presentationDate = datePicker.year.toString() + "-" + (datePicker.month + 1).toString() + "-" + datePicker.dayOfMonth.toString()
+                    presentationData?.presentationDate = "${datePicker.year}-${datePicker.month + 1}-${datePicker.dayOfMonth}"
                     presentationDataDao?.updatePresentation(presentationData!!)
 
                     finish()
