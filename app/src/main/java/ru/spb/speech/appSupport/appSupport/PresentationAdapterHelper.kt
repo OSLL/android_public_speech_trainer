@@ -128,7 +128,8 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         }
 
         override fun doInBackground(vararg params: Void?): Void? {
-            bitmap = BitmapFactory.decodeByteArray(imageBLOB, 0, imageBLOB!!.size)
+            imageBLOB ?: return null
+            bitmap = BitmapFactory.decodeByteArray(imageBLOB, 0, imageBLOB.size)
             publishProgress()
             return null
         }

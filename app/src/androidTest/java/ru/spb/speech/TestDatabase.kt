@@ -9,7 +9,6 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
-import android.support.test.runner.permission.PermissionRequester
 import ru.spb.speech.DBTables.SpeechDataBase
 import junit.framework.Assert.*
 import kotlinx.android.synthetic.main.activity_start_page.*
@@ -121,10 +120,5 @@ class TestDatabase {
         spe.apply()
     }
 
-    private fun grantPermissions(vararg permissions: String) {
-        PermissionRequester().apply {
-            addPermissions(*permissions)
-            requestPermissions()
-        }
-    }
+
 }
