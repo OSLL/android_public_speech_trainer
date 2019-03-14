@@ -15,6 +15,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.spb.speech.R
+import ru.spb.speech.StartPageActivity
+import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class EditPresentationActivityTest {
@@ -45,6 +48,7 @@ class EditPresentationActivityTest {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2035, 5, 12))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(3000)
         onView(withText("2035-5-12")).check(matches(isDisplayed()))
 
         // Изменение даты при редактировании
@@ -52,6 +56,7 @@ class EditPresentationActivityTest {
         onView(withText("Редактировать")).perform(click())
         onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2036, 5, 12))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(3000)
         onView(withText("2036-5-12")).check(matches(isDisplayed()))
     }
 
