@@ -1,6 +1,5 @@
 package com.example.company.myapplication.appSupport
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -11,15 +10,17 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import android.widget.Toast
+import com.example.company.myapplication.APST_TAG
+import com.example.company.myapplication.R
+import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class PdfToBitmap{
-
-    private val presentationStringUri: String
-    private val debugIntMode: Int
+class PdfToBitmap {
+    private var presentationStringUri: String?
+    private var debugIntMode: Int?
     private val ctx: Context
 
     private var parcelFileDescriptor: ParcelFileDescriptor? = null
@@ -29,12 +30,25 @@ class PdfToBitmap{
     private var pageCount: Int? = null
     private var pageIndexStatus: Int? = null
 
-    constructor(presentationUri: String, debugIntMode: Int, ctx: Context) {
-        this.presentationStringUri = presentationUri
-        this.debugIntMode = debugIntMode
+    constructor(presentation: PresentationData, ctx: Context) {
+        this.presentationStringUri = presentation.stringUri
+        this.debugIntMode = presentation.debugFlag
         this.ctx = ctx
 
-        initRenderer(presentationUri,debugIntMode)
+        initRenderer()
+    }
+
+    constructor(ctx: Context) {
+        this.ctx = ctx
+        this.presentationStringUri = null
+        this.debugIntMode = null
+    }
+
+    fun addPresentation(presentationUri: String, debugIntMode: Int) {
+        this.debugIntMode = debugIntMode
+        this.presentationStringUri = presentationUri
+
+        initRenderer()
     }
 
     private fun renderPage(pageIndex: Int): Bitmap? {
@@ -55,22 +69,22 @@ class PdfToBitmap{
         }
         return null
     }
-    private fun initRenderer(strUri: String, debugFlag: Int){
-        val uri = Uri.parse(strUri)
+    private fun initRenderer(){
+        val uri = Uri.parse(this.presentationStringUri)
         try{
-            val temp = File(ctx.cacheDir, "tempImage.pdf")
+            val temp = File(ctx.cacheDir, ctx.getString(R.string.tempImageName))
             val fos = FileOutputStream(temp)
-            val isChecked = debugFlag == 1
+            val isChecked = this.debugIntMode == 1
             val ins: InputStream
             ins = if(!isChecked) {
                 try {
                     val cr = ctx.contentResolver
                     cr.openInputStream(uri)
                 }catch (e: Exception) {
-                    Log.d("test_row", "editPres cr:" + e.toString())
+                    Log.d(APST_TAG + PdfToBitmap::class.toString(), e.toString())
                 } as InputStream
             } else {
-                ctx.assets.open(strUri)
+                ctx.assets.open(this.presentationStringUri)
             }
             val buffer = ByteArray(1024)
             var readBytes = ins.read(buffer)
@@ -86,7 +100,6 @@ class PdfToBitmap{
             this.pageCount = renderer?.pageCount
         } catch(e: IOException){
             Toast.makeText(ctx, "error in opening presentation file", Toast.LENGTH_LONG).show()
-            Log.d("error","error in opening presentation file")
         }
     }
 
@@ -102,7 +115,7 @@ class PdfToBitmap{
 
         val temp = File(ctx.cacheDir, fileName)
 
-        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_WRITE)
+        parcelFileDescriptor = ParcelFileDescriptor.open(temp, ParcelFileDescriptor.MODE_READ_ONLY)
         renderer = PdfRenderer(parcelFileDescriptor)
 
         currentPage = renderer?.openPage(0)

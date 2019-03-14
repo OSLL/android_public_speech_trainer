@@ -1,19 +1,25 @@
 package com.example.company.myapplication
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
+import com.example.company.myapplication.DBTables.helpers.PresentationDBHelper
 import com.example.company.myapplication.views.PresentationStartpageItemRow
 import com.example.company.myapplication.appSupport.PdfToBitmap
 import com.example.putkovdimi.trainspeech.DBTables.DaoInterfaces.PresentationDataDao
 import com.example.putkovdimi.trainspeech.DBTables.PresentationData
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
-import android.widget.NumberPicker
 import com.example.company.myapplication.appSupport.ProgressHelper
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class EditPresentationActivity : AppCompatActivity() {
 
@@ -21,16 +27,9 @@ class EditPresentationActivity : AppCompatActivity() {
     private var presentationData: PresentationData? = null
     private lateinit var progressHelper: ProgressHelper
 
-    private var formatter: NumberPicker.Formatter = NumberPicker.Formatter { value ->
-        val temp = value * 10
-        "" + temp
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
 
@@ -49,10 +48,10 @@ class EditPresentationActivity : AppCompatActivity() {
 
             val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), -1) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
-            val pdfReader = PdfToBitmap(presentationData!!.stringUri, presentationData!!.debugFlag, this)
+            val presentationUri = presentationData?.stringUri
+            val pdfReader = PdfToBitmap(presentationData!!, this)
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
-            Log.d("dfvgbh", presentationData?.timeLimit.toString())
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
 
@@ -76,21 +75,47 @@ class EditPresentationActivity : AppCompatActivity() {
 
 
             addPresentation.setOnClickListener {
-
                 if (presentationName.text.toString() == "") {
                     Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                if (presentationName.text.length < 48) {
-                    presentationData?.pageCount = pdfReader.getPageCount()
-                    presentationData?.name = presentationName.text.toString()
-                    presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
-                    presentationDataDao?.updatePresentation(presentationData!!)
-
-                    finish()
-                } else
+                if (presentationName.text.length > 48) {
                     Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val isChanged = presentationName.text.toString() != presentationData?.name ||
+                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit
+
+                presentationData?.pageCount = pdfReader.getPageCount()
+                presentationData?.name = presentationName.text.toString()
+                presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
+                presentationDataDao?.updatePresentation(presentationData!!)
+
+                if (changePresentationFlag) {
+                    val i = Intent()
+                    i.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
+                    i.putExtra(getString(R.string.presentationPosition),
+                            intent.getIntExtra(getString(R.string.presentationPosition), -1))
+                    setResult(Activity.RESULT_OK, i)
+
+                    if (presentationUri == presentationData?.stringUri) {
+                        finish()
+                        return@setOnClickListener
+                    }
+                }
+
+                this@EditPresentationActivity.onPause()
+                GlobalScope.launch {
+                    try {
+                        val presentationDBHelper = async(IO) { PresentationDBHelper(this@EditPresentationActivity) }
+                        presentationDBHelper.await().saveDefaultPresentationImage(presentationData?.id!!)
+                    } catch (e: Exception) {
+                        Log.d(APST_TAG, e.toString())
+                    }
+                    finish()
+                }
             }
         } catch (e: Exception) {
             finish()
@@ -106,11 +131,16 @@ class EditPresentationActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        progressHelper.show()
+        try {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            progressHelper.show()
+        } catch (e: Exception) {
+        }
         super.onPause()
     }
 
     override fun onResume() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         progressHelper.hide()
         super.onResume()
     }
