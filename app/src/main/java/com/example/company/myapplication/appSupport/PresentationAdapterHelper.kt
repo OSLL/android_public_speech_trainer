@@ -65,7 +65,9 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
 
                 try {
                     rw.scrollToPosition(position)
-                } catch (e: NullPointerException) { }
+                } catch (e: NullPointerException) {
+                    Log.d(APST_TAG, "no clicked position")
+                }
 
                 presentationDataDao.deletePresentationWithId(row.presentationId!!)
                 updateListener?.onAdapterUpdate()
