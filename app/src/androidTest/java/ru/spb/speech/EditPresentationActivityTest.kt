@@ -1,15 +1,18 @@
 package ru.spb.speech
 
 import android.preference.PreferenceManager
+import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.longClick
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.PickerActions
+import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import android.support.test.uiautomator.UiDevice
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -32,12 +35,15 @@ class EditPresentationActivityTest {
     @After
     fun disableDebugMode() {
         setTrainingPresentationMod(false) // выключение тестовой презентации
+        removeDebugSlides(activityTestRule.activity)
     }
 
     @Test
     fun datePickerExist() {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.datePicker)).check(matches(isDisplayed()))
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
+
     }
 
     @Test
@@ -46,7 +52,7 @@ class EditPresentationActivityTest {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2035, 5, 12))
         onView(withId(R.id.addPresentation)).perform(click())
-        sleep(3000)
+        sleep(2000)
         onView(withText("2035-5-12")).check(matches(isDisplayed()))
 
         // Изменение даты при редактировании
@@ -54,7 +60,7 @@ class EditPresentationActivityTest {
         onView(withText("Редактировать")).perform(click())
         onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2036, 5, 12))
         onView(withId(R.id.addPresentation)).perform(click())
-        sleep(3000)
+        sleep(2000)
         onView(withText("2036-5-12")).check(matches(isDisplayed()))
     }
 
