@@ -23,6 +23,10 @@ import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -97,7 +101,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
 
     fun addItemInAdapter(item: PresentationStartpageItemRow, imageBLOB: ByteArray?) {
         adapter.add(item)
-        LoadItemAsync(item, imageBLOB).execute()
+        loadItemAsync(item, imageBLOB)
     }
 
 
@@ -114,7 +118,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         adapter.notifyItemChanged(position)
 
         if (row.presentationUri != presentation.stringUri)
-            LoadItemAsync(adapter.getItem(position) as PresentationStartpageItemRow, presentation.imageBLOB).execute()
+            loadItemAsync(adapter.getItem(position) as PresentationStartpageItemRow, presentation.imageBLOB)
     }
 
     fun addLastItem() {
@@ -123,24 +127,14 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         addItemInAdapter(row, presentation.imageBLOB)
     }
 
-    private inner class LoadItemAsync(private val row: PresentationStartpageItemRow, private val imageBLOB: ByteArray?) : AsyncTask<Void, Void, Void>() {
-        private var bitmap: Bitmap? = null
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            if (imageBLOB == null) this.onPostExecute(null)
-        }
-
-        override fun doInBackground(vararg params: Void?): Void? {
-            bitmap = BitmapFactory.decodeByteArray(imageBLOB, 0, imageBLOB!!.size)
-            publishProgress()
-            return null
-        }
-
-        override fun onProgressUpdate(vararg values: Void?) {
-            super.onProgressUpdate(*values)
-            if (bitmap == null) return
-            updateRowBitmap(row, bitmap!!)
+    private fun loadItemAsync(item: PresentationStartpageItemRow, imageBLOB: ByteArray?) {
+        GlobalScope.launch {
+            try {
+                val bm = async(IO) { BitmapFactory.decodeByteArray(imageBLOB, 0, imageBLOB!!.size) }
+                updateRowBitmap(item, bm.await())
+            } catch (e: Exception) {
+                Log.d(APST_TAG, "error while getting bitmap: $e")
+            }
         }
     }
 
