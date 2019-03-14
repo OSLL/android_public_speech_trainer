@@ -1,4 +1,4 @@
-package com.example.company.myapplication
+package ru.spb.speech
 
 import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry.getTargetContext
@@ -15,8 +15,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import ru.spb.speech.R
-import ru.spb.speech.StartPageActivity
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
