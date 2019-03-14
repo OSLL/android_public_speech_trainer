@@ -56,6 +56,8 @@ class StartPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
 
+        supportActionBar?.title = getString(R.string.activity_start_page_name)
+
         progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
 
