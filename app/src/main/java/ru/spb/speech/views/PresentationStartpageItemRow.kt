@@ -11,8 +11,10 @@ import kotlinx.android.synthetic.main.presentation_startpage_row.view.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import android.util.Log
+import android.view.View
 import ru.spb.speech.*
 import java.lang.Exception
+import java.text.SimpleDateFormat
 
 
 class PresentationStartpageItemRow(private var presentation: PresentationData, private var firstPageBitmap: Bitmap?, private val ctx: Context): Item<ViewHolder>() {
@@ -23,6 +25,7 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
     var presentationId: Int? = null
     var presentationName: String? = null
     var presentationTimeLimit: Long? = null
+    var presentationDate: String? = null
 
     override fun getLayout(): Int {
         return R.layout.presentation_startpage_row
@@ -34,9 +37,19 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
         viewHolder.itemView.page_count_presentation_start_page_row.text = getStringPresentationPageCount(presentation.pageCount)
         viewHolder.itemView.image_view_presentation_start_page_row.setImageBitmap(firstPageBitmap)
 
+        val date = getStringPresentationDate(presentation.presentationDate)
+        if (date != "") {
+            viewHolder.itemView.presentation_date_layout_start_page_row.visibility = View.VISIBLE
+            viewHolder.itemView.presentation_date_start_page_row.text = date
+        }
+        else {
+            viewHolder.itemView.presentation_date_layout_start_page_row.visibility = View.INVISIBLE
+        }
+
         presentationId = presentation.id
         presentationName = presentation.name
         presentationTimeLimit = presentation.timeLimit
+        presentationDate = presentation.presentationDate
 
         viewHolder.itemView.training_history_btn_start_page_row.setOnClickListener {
             try {
@@ -86,5 +99,18 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
         val cases = arrayOf(2, 0, 1, 1, 1, 2)
 
         return titles[if (n % 100 in 5..19) 2 else cases[if (n % 10 < 5) n % 10 else 5]]
+    }
+
+    private fun getStringPresentationDate(date: String): String {
+        val dateParser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = dateParser.parse(dateParser.format(Date()))
+        val presDate = dateParser.parse(date)
+
+        return if (currentDate.before(presDate) || currentDate == presDate) {
+            date
+        }
+        else {
+            ""
+        }
     }
 }

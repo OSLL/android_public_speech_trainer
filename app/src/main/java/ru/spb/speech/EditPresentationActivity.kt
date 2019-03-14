@@ -14,6 +14,7 @@ import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
+import java.util.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -31,10 +32,14 @@ class EditPresentationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
 
-        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName))
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName, datePicker))
 
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
+
+        val calendar = Calendar.getInstance()
+        datePicker.minDate = calendar.timeInMillis
+        datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH) + 7)
 
         try {
             presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
@@ -52,10 +57,16 @@ class EditPresentationActivity : AppCompatActivity() {
             val pdfReader = PdfToBitmap(presentationData!!, this)
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
+            val date = presentationData?.presentationDate
+
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
 
                 numberPicker1.value = (presentationData?.timeLimit!! / 60).toInt()
+
+                val dateArr = date!!.split("-").map { it.toInt() }
+                //[0] - day, [1] - month, [2] - year
+                datePicker.updateDate(dateArr[0],dateArr[1] - 1, dateArr[2])
             } else {
                 val defTime = pdfReader.getPageCount()
                 if (defTime == null || defTime < 1) {
@@ -73,7 +84,6 @@ class EditPresentationActivity : AppCompatActivity() {
             else
                 presentationName.setText(presentationData?.name)
 
-
             addPresentation.setOnClickListener {
                 if (presentationName.text.toString() == "") {
                     Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
@@ -86,11 +96,13 @@ class EditPresentationActivity : AppCompatActivity() {
                 }
 
                 val isChanged = presentationName.text.toString() != presentationData?.name ||
-                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit
+                        numberPicker1.value.toLong() * 60L != presentationData?.timeLimit ||
+                        presentationData?.presentationDate != "${datePicker.year}-${datePicker.month + 1}-${datePicker.dayOfMonth}"
 
                 presentationData?.pageCount = pdfReader.getPageCount()
                 presentationData?.name = presentationName.text.toString()
                 presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
+                presentationData?.presentationDate = "${datePicker.year}-${datePicker.month + 1}-${datePicker.dayOfMonth}"
                 presentationDataDao?.updatePresentation(presentationData!!)
 
                 if (changePresentationFlag) {

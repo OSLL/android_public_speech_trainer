@@ -10,6 +10,7 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import ru.spb.speech.DBTables.SpeechDataBase
 import junit.framework.Assert.assertEquals
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

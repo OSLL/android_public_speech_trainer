@@ -11,6 +11,8 @@
     <string name="activity_create_presentation_name">Добавление презентации</string>
     <string name="activity_edit_presentation_name">Добавление новой презентации</string>
     <string name="time_limit">Ограничение времени на доклад (минут)</string>
+    <string name="notifications">Уведомления</string>
+    <string name="presentation_date">Дата доклада</string>
     <string name="share">Поделиться</string>
     <string name="activity_train_name">Тренироваться</string>
     <string name="check_text">Check Presentation Text</string>
