@@ -135,6 +135,7 @@ class EditPresentationActivity : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
             progressHelper.show()
         } catch (e: Exception) {
+            Log.d(APST_TAG, e.toString())
         }
         super.onPause()
     }
