@@ -2,6 +2,7 @@ package com.example.company.myapplication
 
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
@@ -32,7 +33,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName, datePicker))
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName, datePicker, notifications))
 
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
@@ -54,7 +55,8 @@ class EditPresentationActivity : AppCompatActivity() {
 
             Log.d("dfvgbh", presentationData?.timeLimit.toString())
 
-            var date = presentationData?.presentationDate
+            val date = presentationData?.presentationDate
+            notifications.isChecked = presentationData!!.notifications
 
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
@@ -92,7 +94,11 @@ class EditPresentationActivity : AppCompatActivity() {
                     presentationData?.name = presentationName.text.toString()
                     presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
                     presentationData?.presentationDate = datePicker.year.toString() + "-" + (datePicker.month + 1).toString() + "-" + datePicker.dayOfMonth.toString()
+                    presentationData?.notifications = notifications.isChecked
                     presentationDataDao?.updatePresentation(presentationData!!)
+
+                    if (notifications.isChecked && !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("notifications_new_message", false))
+                        Toast.makeText(this, R.string.message_enable_notifications, Toast.LENGTH_SHORT).show()
 
                     finish()
                 } else

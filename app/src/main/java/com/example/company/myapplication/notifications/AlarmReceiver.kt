@@ -11,8 +11,8 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.util.Log
 import com.example.company.myapplication.DBTables.helpers.TrainingDBHelper
+import com.example.company.myapplication.DBTables.helpers.TrainingSlideDBHelper
 import com.example.company.myapplication.R
 import com.example.company.myapplication.StartPageActivity
 import com.example.putkovdimi.trainspeech.DBTables.SpeechDataBase
@@ -22,10 +22,11 @@ import java.util.*
 
 class AlarmReceiver: BroadcastReceiver() {
     val CHANNEL_ID = "1011"
+    val NOTIFICATION_ID = 15
+    val TRAININGS_FOR_NOTIFICATIONS = 3
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("MyNotifications", "AlarmReceiver")
 
         if (validateNotification(context!!)) {
             createNotificationChannel(context)
@@ -39,13 +40,13 @@ class AlarmReceiver: BroadcastReceiver() {
 
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle(context.getString(R.string.app_name))
+                .setContentTitle(context.getString(R.string.notifications_title))
                 .setContentText(context.getString(R.string.notifications_text))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
 
         with(NotificationManagerCompat.from(context)) {
-            notify(15, notificationBuilder.build())
+            notify(NOTIFICATION_ID, notificationBuilder.build())
         }
     }
 
@@ -64,7 +65,13 @@ class AlarmReceiver: BroadcastReceiver() {
             if (list != null) {
                 val trainingDate = Date(list[list.size - 1].timeStampInSec!! * 1000)
 
-                if (list.size < 5 && trainingDate.before(dayBefore) && Date().before(presentationDate))
+                var endedTrainings = 0
+                for (training in list) {
+                    if (isTrainingEnd(context, training, presentation.pageCount!!))
+                        endedTrainings += 1
+                }
+
+                if (endedTrainings < TRAININGS_FOR_NOTIFICATIONS && trainingDate.before(dayBefore) && Date().before(presentationDate))
                     return true
             }
             else {
@@ -74,6 +81,15 @@ class AlarmReceiver: BroadcastReceiver() {
         }
 
         return false
+    }
+
+    private fun isTrainingEnd(context: Context, training: TrainingData, slidesCount: Int): Boolean {
+        val helper = TrainingSlideDBHelper(context)
+        val slides = helper.getAllSlidesForTraining(training)
+
+        if (slides != null && slides.count() < slidesCount)
+            return false
+        return true
     }
 
     @SuppressLint("ObsoleteSdkInt")

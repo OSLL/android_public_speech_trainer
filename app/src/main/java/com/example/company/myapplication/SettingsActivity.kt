@@ -3,8 +3,6 @@ package com.example.company.myapplication
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
@@ -23,6 +21,7 @@ import android.view.MenuItem
 import com.example.company.myapplication.notifications.AlarmBootReceiver
 import com.example.company.myapplication.notifications.AlarmReceiver
 import java.lang.Boolean.parseBoolean
+import java.util.*
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -147,7 +146,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             val key = preference?.key
             val switchNotifications = findPreference("notifications_new_message") as SwitchPreference
             if (key == "notifications_new_message") {
-                // TODO: Где-то тут включаем уведомления
                 val alarmIntent = Intent(activity, AlarmReceiver::class.java).let {intent ->
                     PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
@@ -156,22 +154,26 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 val receiver = ComponentName(activity, AlarmBootReceiver::class.java)
                 val packageManager = activity.packageManager
 
+                val notificationTime = Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(Calendar.HOUR_OF_DAY, 20)
+                    set(Calendar.MINUTE, 30)
+                }
                 if (switchNotifications.isChecked) {
-                    Log.d("MyNotifications", "enabled")
                     packageManager.setComponentEnabledSetting(
                             receiver,
                             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                             PackageManager.DONT_KILL_APP
                     )
+
                     alarmManager.setInexactRepeating(
                             AlarmManager.RTC_WAKEUP,
-                            System.currentTimeMillis(),
-                            1000,
+                            notificationTime.timeInMillis,
+                            AlarmManager.INTERVAL_DAY,
                             alarmIntent
                     )
                 }
                 else {
-                    Log.d("MyNotifications", "disabled")
                     packageManager.setComponentEnabledSetting(
                             receiver,
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,

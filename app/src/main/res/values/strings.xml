@@ -114,8 +114,10 @@
     <string name="pref_ringtone_silent">Silent</string>
     <string name="pref_title_vibrate">Вибрация</string>
     <string name="notification_channel_name">Напоминания о тренировках</string>
+    <string name="message_enable_notifications">Необходимо включить уведомления в настройках</string>
 
-    <string name="notifications_text">Вы давно не тренировались</string>
+    <string name="notifications_title">Вы давно не тренировались</string>
+    <string name="notifications_text">Нажмите, чтобы перейти к тренировкам</string>
 
     <string name="words_count">Количество слов в минуту</string>
     <string name="slide_number">Номер слайда</string>
