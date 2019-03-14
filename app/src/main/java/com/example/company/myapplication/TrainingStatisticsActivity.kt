@@ -373,11 +373,21 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             tsC.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(averageTime.toLong()), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_186), tsP)
             tsC.drawText(getString(R.string.total_words_count) + " " + allWords, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_209), tsP)
             var averageEarn = 0
+            var minScore = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[0])?: return, presentationData?.timeLimit!!.toFloat())
+            var maxScore = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[0])?: return, presentationData?.timeLimit!!.toFloat())
             for (i in trainingsList){
-                averageEarn += calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(i)?: return, presentationData?.timeLimit!!.toFloat())
+                val score = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(i)?: return, presentationData?.timeLimit!!.toFloat())
+                averageEarn += score
+                if (minScore < score){
+                    minScore = score
+                }
+                if (maxScore > score){
+                    maxScore = score
+                }
             }
             averageEarn /= trainingCount
-            tsC.drawText(getString(R.string.average_earning) + " " + averageEarn, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
+            tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
+            tsC.drawText(getString(R.string.average_earning_2) + " " + averageEarn + " / " + minScore + " / " + maxScore, resources.getDimension(R.dimen.x_indent_multiplier_90), resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
 
             val canvas = Canvas(finishBmp)
             val paint = Paint()

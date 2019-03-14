@@ -5,7 +5,7 @@
     <integer name="number_of_factors">3</integer>
     <integer name="zero">0</integer>
     <integer name="block_height_with_last_workout">160</integer>
-    <integer name="block_height_with_training_statistics">285</integer>
+    <integer name="block_height_with_training_statistics">308</integer>
     <integer name="height_of_block_with_name">40</integer>
     <integer name="length_of_the_presentation_title_32">32</integer>
     <integer name="length_of_the_presentation_title_37">37</integer>
