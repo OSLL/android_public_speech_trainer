@@ -237,7 +237,7 @@
     <string name="repositoryUrl">https://github.com/OSLL/android_public_speech_trainer</string>
     <string name="licenses">Лицензии</string>
     <string name="repositoryLink">Ссылка на репозиторий</string>
-    <string name="authors">Евгений Моторин\nМихаил Дементьев\nДмитрий Путьков\nДарья Шаркова\nКирилл Хохлов\nМарк Заславский</string>
+    <string name="authors">Евгений Моторин\nМихаил Дементьев\nДмитрий Путьков\nДарья Шаркова\nКирилл Хохлов\nВладимир Андросов\nМарк Заславский</string>
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
