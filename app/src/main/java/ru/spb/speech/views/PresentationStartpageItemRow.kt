@@ -32,10 +32,7 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        if (presentation.name.length > 35)
-            viewHolder.itemView.name_presentation_start_page_row.text = "${presentation.name.substring(0, 35)}..."
-        else
-            viewHolder.itemView.name_presentation_start_page_row.text = presentation.name
+        viewHolder.itemView.name_presentation_start_page_row.text = presentation.name
         viewHolder.itemView.time_limit_presentation_start_page_row.text = getStringPresentationTimeLimit(presentation.timeLimit!!)
         viewHolder.itemView.page_count_presentation_start_page_row.text = getStringPresentationPageCount(presentation.pageCount)
         viewHolder.itemView.image_view_presentation_start_page_row.setImageBitmap(firstPageBitmap)
