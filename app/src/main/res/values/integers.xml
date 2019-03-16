@@ -2,7 +2,6 @@
 <resources>
     <integer name="anim_duration_medium">500</integer>
     <integer name="transfer_to_interest">100</integer>
-    <integer name="number_of_factors">3</integer>
     <integer name="zero">0</integer>
     <integer name="block_height_with_last_workout">160</integer>
     <integer name="block_height_with_training_statistics">308</integer>

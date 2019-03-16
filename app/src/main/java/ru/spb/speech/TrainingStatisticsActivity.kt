@@ -60,10 +60,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var bmpBase: Bitmap? = null
 
     private var currentTrainingTime: Long = 0
-    private var wordCount: Int = 0
+
     private val activityRequestCode = 101
 
     private lateinit var progressHelper: ProgressHelper
+
+    private var trainingStatisticsData: TrainingStatisticsData? = null
 
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,11 +159,13 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
+        trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
+
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
-                getString(R.string.training_time) + " ${getStringPresentationTimeLimit(currentTrainingTime)}\n" +
+                getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
                 getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
 
 
@@ -186,107 +190,17 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    private fun calcOfTheTrainingGrade(slideInTraining: MutableList<TrainingSlideData>, x0ReportTimeLimit: Float) : Int{
-
-        val dxDiffBtwTrainTimeAndLim: Float = if (currentTrainingTime > x0ReportTimeLimit*3){
-            x0ReportTimeLimit
-        } else abs(currentTrainingTime - x0ReportTimeLimit)
-
-        var dySpeechVelDispersion = resources.getDimension(R.dimen.zero_float)
-
-        val speedList = ArrayList<Float>()
-        val timeList = ArrayList<Long>()
-        var averSpeed = resources.getDimension(R.dimen.zero_float)
-        var curAverTime = resources.getDimension(R.dimen.zero_float)
-        for (slide in slideInTraining){
-            if (slide.knownWords != "") speedList.add(slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * 60.0f)
-            timeList.add(slide.spentTimeInSec!!)
-        }
-        averSpeed = speedList.sum()
-        for (i in timeList){
-            curAverTime += i
-        }
-        averSpeed/=speedList.size
-        curAverTime/=timeList.size
-        for (i in speedList){
-            dySpeechVelDispersion += pow((i-averSpeed).toDouble(),resources.getDimension(R.dimen.quadrant_degree_float).toDouble()).toFloat()
-        }
-
-        dySpeechVelDispersion /= speedList.size
-
-        var dzTimeDispersionOnSlides = resources.getDimension(R.dimen.zero_float)
-
-        for (i in timeList){
-            dzTimeDispersionOnSlides += pow((i-curAverTime).toDouble(),resources.getDimension(R.dimen.quadrant_degree_float).toDouble()).toFloat()
-        }
-
-        dzTimeDispersionOnSlides /= timeList.size
-        val xExerciseTimeFactor  = resources.getDimension(R.dimen.unit_float) - (dxDiffBtwTrainTimeAndLim/x0ReportTimeLimit)
-        val ySpeechSpeedFactor = resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion)+resources.getDimension(R.dimen.unit_float))
-        val zTimeOnSlidesFactor = resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides)+resources.getDimension(R.dimen.unit_float))
-
-        return (resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor)/resources.getInteger(R.integer.number_of_factors)).toInt()
-    }
-
     private fun drawPict() {
+
         pdfReader?.getBitmapForSlide(resources.getInteger(R.integer.zero))
         bmpBase = pdfReader?.saveSlideImage("tempImage.pdf")
 
-        val trainingsList = trainingDBHelper?.getAllTrainingsForPresentation(presentationData!!) ?: return
-
-        val trainingCount = trainingsList.size
-        var countOfComplTraining = resources.getInteger(R.integer.zero)
-        var fallIntoReg = resources.getInteger(R.integer.zero)
-
-        Log.d(ACTIVITY_TRAINING_STATISTIC_NAME, "training count: $trainingCount")
-
-        var maxTime = 0L
-        var minTime = 0L
-        var curTime = 0L
-        var totalTime = resources.getDimension(R.dimen.zero_float)
-        var countFlag = true
-        val averageTime: Float
-        var allAverageTime = 0L
-        var allWords: Int = resources.getInteger(R.integer.zero)
-
-
-        for (training in trainingsList) {
-
-            val tempWords = training.allRecognizedText.split(" ").size
-            allWords += tempWords
-            allWords--
-
-            val slide = trainingSlideDBHelper?.getAllSlidesForTraining(training)?: return
-
-            if(slide.count() == presentationData?.pageCount!!) {
-                countOfComplTraining++
-            }
-
-            val list = trainingSlideDBHelper?.getAllSlidesForTraining(training) ?: continue
-            for (page in list) {
-                curTime += page.spentTimeInSec!!
-                totalTime += page.spentTimeInSec!!
-            }
-            if (curTime > maxTime) maxTime = curTime
-            if (curTime < minTime) minTime = curTime
-            if (countFlag) {
-                minTime = curTime
-                countFlag = false
-            }
-
-            if (curTime < presentationData?.timeLimit!!){
-                fallIntoReg++
-            } else {
-                allAverageTime += curTime - presentationData?.timeLimit!!
-            }
-
-            curTime = 0
-        }
-        averageTime = totalTime / trainingCount
+        Log.d(ACTIVITY_TRAINING_STATISTIC_NAME, "training count: ${trainingStatisticsData?.trainingCount}")
 
         val width = bmpBase?.width
         val height = bmpBase?.height
-        val presName = presentationData?.name
+
+        val presName = trainingStatisticsData?.presName
 
         if(width != null && height != null) {
             val nWidth: Int = width
@@ -331,18 +245,14 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             ltC.drawText(getString(R.string.last_training_title), resources.getDimension(R.dimen.x_indent_multiplier_20), resources.getDimension(R.dimen.y_indent_multiplier_20), ltP)
             ltP.textSize = resources.getDimension(R.dimen.font_size_17)
             ltP.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-            val dateOfLastTraining = (DateUtils.formatDateTime(
-                    this, trainingsList[trainingCount-1].timeStampInSec!! * resources.getInteger(R.integer.milliseconds_in_second), DateUtils.FORMAT_SHOW_DATE) + " | " +
-                    DateUtils.formatDateTime(
-                            this, trainingsList[trainingCount-1].timeStampInSec!! * resources.getInteger(R.integer.milliseconds_in_second), DateUtils.FORMAT_SHOW_TIME))
-            ltC.drawText(getString(R.string.date_and_time_to_start_training) + " " + dateOfLastTraining, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_43), ltP)
-            ltC.drawText(getString(R.string.time_of_training) + getStringPresentationTimeLimit(currentTrainingTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_66), ltP)
-            val curSlides = trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[trainingCount-1])
-            val slides = presentationData?.pageCount!!
-            ltC.drawText(getString(R.string.worked_out_a_slide) + " " + curSlides?.count() + " / " + slides, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_89), ltP)
-            ltC.drawText(getString(R.string.time_limit_training) + " " + getStringPresentationTimeLimit(presentationData?.timeLimit), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_112), ltP)
-            ltC.drawText(getString(R.string.num_of_words_spoken) + " " + wordCount, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_135), ltP)
-            ltC.drawText(getString(R.string.earnings_of_training) + " " + calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[trainingCount-1])?: return, presentationData?.timeLimit!!.toFloat()), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_158), ltP)
+
+            ltC.drawText(getString(R.string.date_and_time_to_start_training) + " " + trainingStatisticsData?.dateOfLastTraining, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_43), ltP)
+            ltC.drawText(getString(R.string.time_of_training) + getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime!!), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_66), ltP)
+
+            ltC.drawText(getString(R.string.worked_out_a_slide) + " " + trainingStatisticsData?.curSlides + " / " + trainingStatisticsData?.slides, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_89), ltP)
+            ltC.drawText(getString(R.string.time_limit_training) + " " + getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_112), ltP)
+            ltC.drawText(getString(R.string.num_of_words_spoken) + " " + trainingStatisticsData?.curWordCount, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_135), ltP)
+            ltC.drawText(getString(R.string.earnings_of_training) + " " + trainingStatisticsData?.trainingGrade, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_158), ltP)
 
             val trainingStatisticsBmp = Bitmap.createBitmap(nWidth, resources.getInteger(R.integer.block_height_with_training_statistics), Bitmap.Config.ARGB_8888)
             val tsC = Canvas(trainingStatisticsBmp)
@@ -356,38 +266,23 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             tsC.drawText(getString(R.string.training_statistic_title), resources.getDimension(R.dimen.x_indent_multiplier_20), resources.getDimension(R.dimen.y_indent_multiplier_25), tsP)
             tsP.textSize = resources.getDimension(R.dimen.font_size_17)
             tsP.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-            val dateOfFirstTraining = (DateUtils.formatDateTime(
-                    this, trainingsList[0].timeStampInSec!! * resources.getInteger(R.integer.milliseconds_in_second), DateUtils.FORMAT_SHOW_DATE) + " | " +
-                    DateUtils.formatDateTime(
-                            this, trainingsList[0].timeStampInSec!! * resources.getInteger(R.integer.milliseconds_in_second), DateUtils.FORMAT_SHOW_TIME))
-            tsC.drawText(getString(R.string.date_of_first_training) + " " + dateOfFirstTraining, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_48), tsP)
-            tsC.drawText(getString(R.string.training_completeness) + " " + countOfComplTraining + " / " + trainingCount, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_71), tsP)
-            tsC.drawText(getString(R.string.getting_into_the_regulations) + " " + fallIntoReg + " / " + trainingCount , resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_94), tsP)
-            var averageExtraTime: Long = 0
-            if(trainingCount - fallIntoReg > 0) {
-                averageExtraTime = allAverageTime / (trainingCount - fallIntoReg)
-            }
-            tsC.drawText(getString(R.string.mean_deviation_from_the_limit) + " " + getStringPresentationTimeLimit(averageExtraTime) , resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_117), tsP)
-            tsC.drawText(getString(R.string.max_training_time) + getStringPresentationTimeLimit(maxTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_140), tsP)
-            tsC.drawText(getString(R.string.min_training_time) + getStringPresentationTimeLimit(minTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_163), tsP)
-            tsC.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(averageTime.toLong()), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_186), tsP)
-            tsC.drawText(getString(R.string.total_words_count) + " " + allWords, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_209), tsP)
-            var averageEarn = 0
-            var minScore = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[0])?: return, presentationData?.timeLimit!!.toFloat())
-            var maxScore = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(trainingsList[0])?: return, presentationData?.timeLimit!!.toFloat())
-            for (i in trainingsList){
-                val score = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(i)?: return, presentationData?.timeLimit!!.toFloat())
-                averageEarn += score
-                if (minScore < score){
-                    minScore = score
-                }
-                if (maxScore > score){
-                    maxScore = score
-                }
-            }
-            averageEarn /= trainingCount
+
+            tsC.drawText(getString(R.string.date_of_first_training) + " " + trainingStatisticsData?.dateOfFirstTraining, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_48), tsP)
+            tsC.drawText(getString(R.string.training_completeness) + " " + trainingStatisticsData?.countOfCompleteTraining + " / " + trainingStatisticsData?.trainingCount, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_71), tsP)
+            tsC.drawText(getString(R.string.getting_into_the_regulations) + " " + trainingStatisticsData?.fallIntoReg + " / " + trainingStatisticsData?.trainingCount , resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_94), tsP)
+
+            tsC.drawText(getString(R.string.mean_deviation_from_the_limit) + " " + getStringPresentationTimeLimit(trainingStatisticsData?.averageExtraTime) , resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_117), tsP)
+            tsC.drawText(getString(R.string.max_training_time) + getStringPresentationTimeLimit(trainingStatisticsData?.maxTrainTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_140), tsP)
+            tsC.drawText(getString(R.string.min_training_time) + getStringPresentationTimeLimit(trainingStatisticsData?.minTrainTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_163), tsP)
+            tsC.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(trainingStatisticsData?.averageTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_186), tsP)
+            tsC.drawText(getString(R.string.total_words_count) + " " + trainingStatisticsData?.allWords, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_209), tsP)
+
             tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
-            tsC.drawText(getString(R.string.average_earning_2) + " " + averageEarn + " / " + minScore + " / " + maxScore, resources.getDimension(R.dimen.x_indent_multiplier_90), resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
+            tsC.drawText(getString(R.string.average_earning_2) + " " +
+                    trainingStatisticsData?.averageEarn?.toInt() + " / " +
+                    trainingStatisticsData?.minEarn?.toInt() + " / " +
+                    trainingStatisticsData?.maxEarn?.toInt(), resources.getDimension(R.dimen.x_indent_multiplier_90),
+                    resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
 
             val canvas = Canvas(finishBmp)
             val paint = Paint()
@@ -532,7 +427,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 val word = text.substring(startIndex, endIndex)
                 val count = dictionary[word] ?: 0
                 dictionary[word] = count + 1
-                wordCount++
             }
         }
 

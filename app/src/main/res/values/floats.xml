@@ -5,6 +5,8 @@
     <dimen name="unit_float">1px</dimen>
     <dimen name="number_of_seconds_in_a_minute_float">60px</dimen>
 
+    <dimen name="number_of_factors">3px</dimen>
+
     <dimen name="font_size_24">24px</dimen>
     <dimen name="font_size_20">20px</dimen>
     <dimen name="font_size_16">16px</dimen>
