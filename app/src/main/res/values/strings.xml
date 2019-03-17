@@ -213,6 +213,10 @@
     <string name="stat_training_time">Статистика времени тренировок:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
 
+    <string name="error_accessing_the_training_list">Ошибка в получении доступа к списку тренировок</string>
+    <string name="error_accessing_training_slides">Ошибка в получении доступа слайдам тренировки</string>
+    <string name="error_accessing_the_training_list_or_presentation_data">Ошибка в получении доступа к списку тренировок или presentationData</string>
+
     <!-- Example settings for Tests -->
     <string name="test_time">00:30</string>
     <string name="pause">Пауза</string>

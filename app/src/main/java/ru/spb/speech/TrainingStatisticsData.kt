@@ -37,8 +37,8 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                         DateUtils.formatDateTime(
                                 context, trainingList[trainingCount-1].timeStampInSec!! * context.resources!!.getInteger(R.integer.milliseconds_in_second), DateUtils.FORMAT_SHOW_TIME))
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
-            "error in getting a list of trainings"
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
+                context.getString(R.string.error_accessing_the_training_list)
             }
         }
     //Длительность тренировки:
@@ -49,7 +49,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 for (slide in trainingSlidesList)
                     curTrTime += slide.spentTimeInSec!!
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 return -1
             }
             return curTrTime
@@ -60,7 +60,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             return if (trainingList != null && trainingCount != null){
                 trainingSlideDBHelper?.getAllSlidesForTraining(trainingList[trainingCount-1])?.count()
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 -1
             }
         }
@@ -80,7 +80,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 }
                 curWordCount
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 -1
             }
         }
@@ -90,7 +90,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             return if(trainingList != null && trainingCount != null){
                 calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainingList[trainingCount-1]), presData?.timeLimit!!.toFloat()).toInt()
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 -1
             }
         }
@@ -106,8 +106,8 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                         DateUtils.formatDateTime(
                                 context, trainingList[0].timeStampInSec!! * context.resources.getInteger(R.integer.milliseconds_in_second), DateUtils.FORMAT_SHOW_TIME))
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
-                "error in getting a list of trainings"
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
+                context.getString(R.string.error_accessing_the_training_list)
             }
         }
     //Тренировок полных / всего:
@@ -123,7 +123,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 }
                 countTr
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 -1
             }
         }
@@ -143,23 +143,23 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                             fallIntoRegTemp += 1
                         }
                     } else {
-                        Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a slide of training")
+                        Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_training_slides))
                         return -1
                     }
                 }
                 fallIntoRegTemp
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 -1
             }
         }
     //Среднее отклонение от ограничения:
-    val averageExtraTime = getMaxAndMinAndAverageAndExtraTime("extra")
+    val averageExtraTime = getMaxAndMinAndAverageAndExtraTime(context.resources.getString(R.string.mean_deviation_from_the_limit))
     //Максимальное и минимальное время тренировки:
-    val maxTrainTime = getMaxAndMinAndAverageAndExtraTime("max")
-    val minTrainTime = getMaxAndMinAndAverageAndExtraTime("min")
+    val maxTrainTime = getMaxAndMinAndAverageAndExtraTime(context.resources.getString(R.string.max_training_time))
+    val minTrainTime = getMaxAndMinAndAverageAndExtraTime(context.resources.getString(R.string.min_training_time))
     //Среднее время тренировки:
-    val averageTime = getMaxAndMinAndAverageAndExtraTime("average")
+    val averageTime = getMaxAndMinAndAverageAndExtraTime(context.resources.getString(R.string.average_time))
 
     //Сказано слов всего:
     val allWords: Int
@@ -178,7 +178,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 }
                 return allWordsTemp
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 return -1
             }
         }
@@ -194,7 +194,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 }
                 averageEarnTemp/trainingCount
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
                 -1f
             }
         }
@@ -228,7 +228,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 }
                 maxEarnTemp
             } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings or presentation Data")
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.resources.getString(R.string.error_accessing_the_training_list_or_presentation_data))
                 -1f
             }
         }
@@ -237,10 +237,10 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     private fun getMaxAndMinAndAverageAndExtraTime(minOrMax: String): Long {
         val (maxTrainTime, minTrainTime, averageExtraTime, averageTime) = calcMinAndMaxTime()
         return when (minOrMax) {
-            "max" -> maxTrainTime
-            "min" -> minTrainTime
-            "extra" -> averageExtraTime
-            "average" -> averageTime
+            context.resources.getString(R.string.max_training_time) -> maxTrainTime
+            context.resources.getString(R.string.min_training_time) -> minTrainTime
+            context.resources.getString(R.string.mean_deviation_from_the_limit) -> averageExtraTime
+            context.resources.getString(R.string.average_time) -> averageTime
             else -> -1L
         }
     }
@@ -280,7 +280,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             averageTime = totalTime / trainingCount
             return TimeOfTraining(maxTime, minTime, averageExtraTime, averageTime)
         } else {
-            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a list of trainings or presentation Data")
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.resources.getString(R.string.error_accessing_the_training_list_or_presentation_data))
             return TimeOfTraining(0L, 0L, 0L, 0L)
         }
     }
@@ -303,7 +303,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 timeList.add(slide.spentTimeInSec!!)
             }
         } else {
-            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, "error in getting a slides in training")
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_training_slides))
             return -1f
         }
         averSpeed = speedList.sum()
