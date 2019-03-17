@@ -27,7 +27,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //Название презентации:
     val presName = presentationData?.name
 
-    //--------------------Последняя тренировка:---------------------//
+    //--------------------Текущая тренировка:---------------------//
 
     //Дата и время начала:
     val dateOfLastTraining: String
