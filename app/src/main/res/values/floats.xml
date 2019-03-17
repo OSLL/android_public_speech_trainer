@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="zero_float">0px</dimen>
+    <dimen name="quadrant_degree_float">2px</dimen>
+    <dimen name="unit_float">1px</dimen>
+    <dimen name="number_of_seconds_in_a_minute_float">60px</dimen>
+
+    <dimen name="number_of_factors">3px</dimen>
+
+    <dimen name="font_size_24">24px</dimen>
+    <dimen name="font_size_20">20px</dimen>
+    <dimen name="font_size_16">16px</dimen>
+    <dimen name="font_size_17">17px</dimen>
+    <dimen name="font_size_14">14px</dimen>
+
+    <dimen name="x_indent_multiplier_6_5">6.5px</dimen>
+    <dimen name="x_indent_multiplier_20">20px</dimen>
+    <dimen name="x_indent_multiplier_30">30px</dimen>
+    <dimen name="x_indent_multiplier_90">90px</dimen>
+
+    <dimen name="y_indent_multiplier_30">30px</dimen>
+    <dimen name="y_indent_multiplier_25">25px</dimen>
+    <dimen name="y_indent_multiplier_20">20px</dimen>
+    <dimen name="y_indent_multiplier_40">40px</dimen>
+    <dimen name="y_indent_multiplier_43">43px</dimen>
+    <dimen name="y_indent_multiplier_48">48px</dimen>
+    <dimen name="y_indent_multiplier_66">66px</dimen>
+    <dimen name="y_indent_multiplier_71">71px</dimen>
+    <dimen name="y_indent_multiplier_89">89px</dimen>
+    <dimen name="y_indent_multiplier_94">94px</dimen>
+    <dimen name="y_indent_multiplier_112">112px</dimen>
+    <dimen name="y_indent_multiplier_117">117px</dimen>
+    <dimen name="y_indent_multiplier_135">135px</dimen>
+    <dimen name="y_indent_multiplier_140">140px</dimen>
+    <dimen name="y_indent_multiplier_158">158px</dimen>
+    <dimen name="y_indent_multiplier_163">163px</dimen>
+    <dimen name="y_indent_multiplier_186">186px</dimen>
+    <dimen name="y_indent_multiplier_200">200px</dimen>
+    <dimen name="y_indent_multiplier_209">209px</dimen>
+    <dimen name="y_indent_multiplier_232">232px</dimen>
+    <dimen name="y_indent_multiplier_255">255px</dimen>
+
+    <dimen name="left_indent_multiplier_0">0px</dimen>
+    <dimen name="top_indent_multiplier_0">0px</dimen>
+    <dimen name="top_indent_multiplier_40">40px</dimen>
+    <dimen name="top_indent_multiplier_200">200px</dimen>
+
+</resources>
