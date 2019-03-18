@@ -28,6 +28,7 @@
     <string name="back_to_main">На главную</string>
     <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
     <string name="no_internet_connection">Отсутствует соединение с интеренетом</string>
+    <string name="export_statistics">Экспорт статистики</string>
 
     <string name="the_next">Следующий</string>
 
@@ -188,7 +189,8 @@
 
 
     <!-- Example settings for Shared Picture -->
-    <string name="last_training_title">Последняя тренировка: </string>
+    <string name="name_of_pres">Название презентации: </string>
+    <string name="cur_training_title">Текущая тренировка: </string>
     <string name="date_and_time_to_start_training">Дата и время начала: </string>
     <string name="time_of_training">Длительность тренировки: </string>
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
@@ -208,6 +210,10 @@
     <string name="average_earning_1">Средняя / минимальная</string>
     <string name="average_earning_2">/ максимальная оценка: </string>
 
+    <string name="training_statistics_directory">training_statistics</string>
+    <string name="error_creating_text_file">Ошибка в создании текстового файла</string>
+    <string name="successful_export_statistics">Статистика успешно сохранена в дирректорию</string>
+    <string name="error_export_statistics">Ошибка при экспорте статистики</string>
 
     <string name="count_of_training">Вы тренировались</string>
     <string name="result_of_training">Результат тренировки:</string>
