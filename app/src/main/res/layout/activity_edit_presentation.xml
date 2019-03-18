@@ -20,7 +20,7 @@
             android:id="@+id/pdf_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.95"
+            android:layout_weight="1.05"
             android:background="@android:color/white"
             android:scaleType="fitCenter" />
 
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
-            android:layout_weight="1.05"
+            android:layout_weight="0.95"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:orientation="vertical">
@@ -44,7 +44,7 @@
                 <EditText
                     android:id="@+id/presentationName"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:gravity="center"
@@ -58,48 +58,9 @@
             </android.support.design.widget.TextInputLayout>
 
             <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
 
-                <TextView
-                    android:textColor="@color/black_35_alpha"
-                    android:textSize="12sp"
-                    android:text="@string/presentation_date"
-                    android:layout_gravity="center|top"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <DatePicker
-                        android:id="@+id/datePicker"
-                        android:layout_width="match_parent"
-                        android:layout_height="90dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:calendarViewShown="false"
-                        android:datePickerMode="spinner">
-                    </DatePicker>
-
-                    <CheckBox
-                        android:id="@+id/notifications"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/notifications" />
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-            <FrameLayout
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
+                android:layout_weight="1.05"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -131,6 +92,38 @@
 
                 </LinearLayout>
             </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.95">
+
+                <TextView
+                    android:textColor="@color/black_35_alpha"
+                    android:textSize="12sp"
+                    android:text="@string/presentation_date"
+                    android:layout_gravity="center|top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <DatePicker
+                    android:id="@+id/datePicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner">
+                </DatePicker>
+            </FrameLayout>
+
+            <CheckBox
+                android:id="@+id/notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/notifications"
+                android:layout_marginTop="-16dp"
+                android:layout_marginBottom="3dp"/>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/addPresentation"

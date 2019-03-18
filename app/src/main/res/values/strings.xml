@@ -190,15 +190,30 @@
 
 
     <!-- Example settings for Shared Picture -->
+    <string name="last_training_title">Последняя тренировка: </string>
+    <string name="date_and_time_to_start_training">Дата и время начала: </string>
+    <string name="time_of_training">Длительность тренировки: </string>
+    <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
+    <string name="time_limit_training">Ограничение времени на доклад: </string>
+    <string name="num_of_words_spoken">Слов сказано: </string>
+    <string name="earnings_of_training">Оценка за тренировку: </string>
+
+    <string name="training_statistic_title">Статистика тренировок: </string>
+    <string name="date_of_first_training">Дата первой тренировки: </string>
+    <string name="training_completeness">Тренировок полных / всего: </string>
+    <string name="getting_into_the_regulations">Попали в регламент / всего: </string>
+    <string name="mean_deviation_from_the_limit">Среднее отклонение от ограничения: </string>
+    <string name="max_training_time">Максимальное время тренировки: </string>
+    <string name="min_training_time">Минимальное время тренировки: </string>
+    <string name="average_time">Среднее время тренировки: </string>
+    <string name="total_words_count">Сказано слов всего: </string>
+    <string name="average_earning">Средняя оценка: </string>
+
+
     <string name="count_of_training">Вы тренировались</string>
     <string name="result_of_training">Результат тренировки:</string>
-    <string name="time_of_training">--- Вы говорили -></string>
     <string name="record_of_training">--- Ваш результат на 100% далек от рекордного</string>
-    <string name="earnings_of_training">--- Вы заработали:</string>
     <string name="stat_training_time">Статистика времени тренировок:</string>
-    <string name="max_training_time">--- Максимальное время:</string>
-    <string name="min_training_time">--- Минимальное время:</string>
-    <string name="average_time">--- Среднее время:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
 
     <!-- Example settings for Tests -->
@@ -214,6 +229,8 @@
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
     <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
     <string name="presentationEditing">Редактирование презентации</string>
+    <string name="isPresentationChangedFlag">isPresentationChanges</string>
+    <string name="presentationPosition">presentationPosition</string>
     <string name="about">О программе</string>
     <string name="app_name">Тренажер Публичных Выступлений</string>
     <string name="version">Версия</string>
@@ -221,9 +238,11 @@
     <string name="repositoryUrl">https://github.com/OSLL/android_public_speech_trainer</string>
     <string name="licenses">Лицензии</string>
     <string name="repositoryLink">Ссылка на репозиторий</string>
-    <string name="authors">Евгений Моторин\nМихаил Дементьев\nДмитрий Путьков\nДарья Шаркова\nКирилл Хохлов\nМарк Заславский</string>
+    <string name="authors">Евгений Моторин\nМихаил Дементьев\nДмитрий Путьков\nДарья Шаркова\nКирилл Хохлов\nВладимир Андросов\nМарк Заславский</string>
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
     <string name="average_time_chart">Среднее время</string>
+    <string name="tempImageName">tempImage.pdf</string>
+    <string name="dbName">apst.0.2</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
