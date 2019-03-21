@@ -13,10 +13,7 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
@@ -27,15 +24,18 @@ class EditPresentationActivityTest {
     @JvmField
     var activityTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
+    lateinit var helper: TestHelper
+
     @Before
     fun enableDebugMode() {
-        setTrainingPresentationMod(true) // включение тестовой презентации
+        helper = TestHelper(activityTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
     }
 
     @After
     fun disableDebugMode() {
-        setTrainingPresentationMod(false) // выключение тестовой презентации
-        removeDebugSlides(activityTestRule.activity)
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+        helper.removeDebugSlides()
     }
 
     @Test
@@ -64,12 +64,4 @@ class EditPresentationActivityTest {
         onView(withText("2036-5-12")).check(matches(isDisplayed()))
     }
 
-    private fun setTrainingPresentationMod(mode: Boolean) {
-        val sp = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-        val spe = sp.edit()
-        val testPresentationMode = activityTestRule.activity.getString(R.string.deb_pres)
-
-        spe.putBoolean(testPresentationMode, mode)
-        spe.apply()
-    }
 }
