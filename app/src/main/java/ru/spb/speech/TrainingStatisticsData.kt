@@ -30,7 +30,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //--------------------Текущая тренировка:---------------------//
 
     //Дата и время начала:
-    val dateOfLastTraining: String
+    val dateOfCurTraining: String
         get() {
             return if(trainData != null){
                 (DateUtils.formatDateTime(
