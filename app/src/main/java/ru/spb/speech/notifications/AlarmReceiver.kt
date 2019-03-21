@@ -22,19 +22,25 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AlarmReceiver: BroadcastReceiver() {
+    val NOTIFICATIONS_TAG = "NOTIFICATIONS"
+
     val CHANNEL_ID = "1011"
     val NOTIFICATION_ID = 15
     val TRAININGS_FOR_NOTIFICATIONS = 5
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
-        createNotificationChannel(context!!)
-        sendNotification(context!!)
 
-//        if (validateNotification(context!!)) {
-//            createNotificationChannel(context)
-//            sendNotification(context)
-//        }
+        try {
+            if (validateNotification(context!!)) {
+                createNotificationChannel(context)
+                sendNotification(context)
+            }
+        } catch (e: Exception) {
+            Log.d(NOTIFICATIONS_TAG, e.message)
+        }
+
+
     }
 
     private fun sendNotification(context: Context) {
