@@ -100,13 +100,8 @@ class TestDatabase {
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
 
-        onView(withId(R.id.image_view_presentation_start_page_row)).perform(longClick()) // Вызов диалогового окна удаления презентации
+        removeDebugSlides(mControllerTestRule.activity)
 
-        // Нажатие на кнопку "удалить"
-        onView(withText(mControllerTestRule.activity.getString(R.string.remove)))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()))
-                .perform(click())
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
         assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
     }
