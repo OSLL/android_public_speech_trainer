@@ -131,7 +131,7 @@
     <string name="presentationEntries">presentationEntries</string>
     <string name="speech_speed">Комфортная скорость речи, слов в минуту</string>
     <string name="pref_default_speed">120</string>
-    <string name="max_grade_of_the_train">(100)</string>
+    <string name="maximum_mark_for_training">(100)</string>
 
     <!-- Strings related to speech recording and analysis -->
     <string name="start_recording">Начать тренировку</string>
