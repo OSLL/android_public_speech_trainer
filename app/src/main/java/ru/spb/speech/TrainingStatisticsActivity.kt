@@ -197,7 +197,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
-        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} (100)"
+        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.max_grade_of_the_train)}"
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
@@ -290,7 +290,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             ltC.drawText(getString(R.string.worked_out_a_slide) + " " + trainingStatisticsData?.curSlides + " / " + trainingStatisticsData?.slides, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_89), ltP)
             ltC.drawText(getString(R.string.time_limit_training) + " " + getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_112), ltP)
             ltC.drawText(getString(R.string.num_of_words_spoken) + " " + trainingStatisticsData?.curWordCount, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_135), ltP)
-            ltC.drawText("${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} (100)", resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_158), ltP)
+            ltC.drawText("${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.max_grade_of_the_train)}", resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_158), ltP)
 
             val trainingStatisticsBmp = Bitmap.createBitmap(nWidth, resources.getInteger(R.integer.block_height_with_training_statistics), Bitmap.Config.ARGB_8888)
             val tsC = Canvas(trainingStatisticsBmp)
@@ -339,7 +339,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "${getString(R.string.worked_out_a_slide)} ${trainingStatisticsData?.curSlides} / ${trainingStatisticsData?.slides}\n" +
                 "${getString(R.string.time_limit_training)} ${getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit)}\n" +
                 "${getString(R.string.num_of_words_spoken)} ${trainingStatisticsData?.curWordCount}\n" +
-                "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} (100)\n\n" +
+                "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.max_grade_of_the_train)}\n\n" +
                 "\t${getString(R.string.training_statistic_title)}\n" +
                 "${getString(R.string.date_of_first_training)} ${trainingStatisticsData?.dateOfFirstTraining}\n" +
                 "${getString(R.string.training_completeness)} ${trainingStatisticsData?.countOfCompleteTraining} / ${trainingStatisticsData?.trainingCount}\n" +
