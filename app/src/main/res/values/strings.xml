@@ -18,6 +18,7 @@
     <string name="check_text">Check Presentation Text</string>
     <string name="add_presentation">Добавить презентацию</string>
     <string name="enter_presentation_name">Название презентации</string>
+    <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
     <string name="add_presentation_symbol">+</string>
@@ -174,6 +175,8 @@
     <string name="good_speech">Вы делаете достаточное количество пауз; отлично!</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
+    <string name="NEW_PRESENTATION_URI">new_presentation_uri</string>
+    <string name="CHANGE_FILE_FLAG">change_file_flag</string>
     <string name="CURRENT_TRAINING_ID">current_training_id</string>
 
     <!-- For Change Presentation -->
@@ -253,6 +256,7 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="pdfErrorMsg">File not in PDF format!</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
