@@ -2,8 +2,9 @@ language: android
 jdk: oraclejdk8
 env:
   global:
-    - ANDROID_TARGET=android-27
-    - ANDROID_ABI=x86
+    - ANDROID_TARGET=android-24
+    - ANDROID_ABI=armeabi-v7a
+    - ANDROID_HOME=$HOME/.android/android-sdk
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
