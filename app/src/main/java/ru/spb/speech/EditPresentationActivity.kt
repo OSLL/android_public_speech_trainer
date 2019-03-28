@@ -86,8 +86,10 @@ class EditPresentationActivity : AppCompatActivity() {
                 else numberPicker1.value = defTime
             }
 
-            if (presentationData?.name!!.isNullOrEmpty())
-                presentationName.setText(getFileName(Uri.parse(presentationData!!.stringUri), contentResolver))
+            if (presentationData?.name!!.isNullOrEmpty()) {
+                val tempPresName = getFileName(Uri.parse(presentationData!!.stringUri), contentResolver)
+                presentationName.setText(tempPresName.substring (0, tempPresName.indexOf(".pdf")))
+            }
             else
                 presentationName.setText(presentationData?.name)
 

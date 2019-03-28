@@ -23,6 +23,7 @@ const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
     private var changeFileFlag = false
+    private var isPDF = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -49,6 +50,7 @@ class CreatePresentationActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null && data.data != null) {
             val selectedFile = data.data //The uri with the location of the file
+            isPDF = isFilePDF(selectedFile)
             if (changeFileFlag) {
                 val i = Intent()
                 i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
@@ -57,14 +59,20 @@ class CreatePresentationActivity : AppCompatActivity() {
                 overridePendingTransition(0, 0)
                 return
             }
-            try {
-                val i = Intent(this, EditPresentationActivity::class.java)
-                val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
-                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
-                Log.d(FILE_SYSTEM, selectedFile.toString())
-                startActivity(i)
-            } catch (e: FileNotFoundException) {
-                Log.d(FILE_SYSTEM, "file not found")
+            if(isPDF) {
+                try {
+                    val i = Intent(this, EditPresentationActivity::class.java)
+                    val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
+                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
+                    Log.d(FILE_SYSTEM, selectedFile.toString())
+                    startActivity(i)
+                } catch (e: FileNotFoundException) {
+                    Log.d(FILE_SYSTEM, "file not found")
+                }
+            }
+            else {
+                Toast.makeText(this, getString(R.string.pdfErrorMsg), Toast.LENGTH_LONG).show()
+                finish()
             }
         }
 
@@ -98,6 +106,12 @@ class CreatePresentationActivity : AppCompatActivity() {
         } catch (e: Exception) {
             return null
         }
+    }
+
+    private fun isFilePDF(myUri: Uri): Boolean {
+        var tempPresName = getFileName(myUri, contentResolver)
+        var ind = tempPresName.lastIndexOf(".")
+        return tempPresName.substring(ind) == ".pdf"
     }
 
     override fun onBackPressed() {
