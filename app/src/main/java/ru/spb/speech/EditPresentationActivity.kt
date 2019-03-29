@@ -89,8 +89,8 @@ class EditPresentationActivity : AppCompatActivity() {
             }
 
             if (presentationData?.name!!.isNullOrEmpty()) {
-                val tempPresName = getFileName(Uri.parse(presentationData!!.stringUri), contentResolver)
-                presentationName.setText(tempPresName.substring (0, tempPresName.indexOf(PDF.type)))
+                val temporaryPresentationName = getFileName(Uri.parse(presentationData!!.stringUri), contentResolver)
+                presentationName.setText(temporaryPresentationName.substring (0, temporaryPresentationName.indexOf(PDF.type)))
             }
             else
                 presentationName.setText(presentationData?.name)
@@ -119,11 +119,11 @@ class EditPresentationActivity : AppCompatActivity() {
                 presentationDataDao?.updatePresentation(presentationData!!)
 
                 if (changePresentationFlag) {
-                    val i = Intent()
-                    i.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
-                    i.putExtra(getString(R.string.presentationPosition),
+                    val intent = Intent()
+                    intent.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
+                    intent.putExtra(getString(R.string.presentationPosition),
                             intent.getIntExtra(getString(R.string.presentationPosition), valueWhenMissedIntent))
-                    setResult(Activity.RESULT_OK, i)
+                    setResult(Activity.RESULT_OK, intent)
 
                     if (presentationUri == presentationData?.stringUri) {
                         finish()
@@ -149,9 +149,9 @@ class EditPresentationActivity : AppCompatActivity() {
         // у тестовой презентации не предусмотрена замена файла
         if (presentationData?.debugFlag == 1) change_pres.visibility = View.GONE
         change_pres.setOnClickListener {
-            val i = Intent(this, CreatePresentationActivity::class.java)
-            i.putExtra(getString(R.string.CHANGE_FILE_FLAG), true)
-            startActivityForResult(i, resources.getInteger(R.integer.createPresentationActRequestCode))
+            val intent = Intent(this, CreatePresentationActivity::class.java)
+            intent.putExtra(getString(R.string.CHANGE_FILE_FLAG), true)
+            startActivityForResult(intent, resources.getInteger(R.integer.createPresentationActRequestCode))
             overridePendingTransition(0, 0)
         }
     }

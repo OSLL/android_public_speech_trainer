@@ -40,9 +40,9 @@ class CreatePresentationActivity : AppCompatActivity() {
                     .addCategory(CATEGORY_OPENABLE)
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), resources.getInteger(R.integer.choose_file_requestCode))
         } else {
-            val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
-            startActivity(i)
+            val intent = Intent(this, EditPresentationActivity::class.java)
+            intent.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
+            startActivity(intent)
             finish()
         }
     }
@@ -53,22 +53,22 @@ class CreatePresentationActivity : AppCompatActivity() {
             val selectedFile = data.data //The uri with the location of the file
             isPDF = isFilePDF(selectedFile)
             if (changeFileFlag) {
-                val i = Intent()
-                i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
-                setResult(Activity.RESULT_OK, i)
+                val intent = Intent()
+                intent.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
+                setResult(Activity.RESULT_OK, intent)
                 finish()
                 overridePendingTransition(0, 0)
                 return
             }
             if(isPDF) {
                 try {
-                    val i = Intent(this, EditPresentationActivity::class.java)
+                    val intent = Intent(this, EditPresentationActivity::class.java)
                     val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
-                    i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
+                    intent.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
                     Log.d(FILE_SYSTEM, selectedFile.toString())
-                    startActivity(i)
+                    startActivity(intent)
                 } catch (e: FileNotFoundException) {
-                    Log.d(FILE_SYSTEM, "file not found")
+                    Log.d(FILE_SYSTEM, "file not found $selectedFile")
                 }
             }
             else {
@@ -110,9 +110,9 @@ class CreatePresentationActivity : AppCompatActivity() {
     }
 
     private fun isFilePDF(myUri: Uri): Boolean {
-        var tempPresName = getFileName(myUri, contentResolver)
-        var ind = tempPresName.lastIndexOf(".")
-        return tempPresName.substring(ind) == PDF.type
+        val temporaryPresentationName = getFileName(myUri, contentResolver)
+        val index = temporaryPresentationName.lastIndexOf(".")
+        return temporaryPresentationName.substring(index) == PDF.type
     }
 
     override fun onBackPressed() {
