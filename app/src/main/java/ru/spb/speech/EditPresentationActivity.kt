@@ -22,7 +22,9 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import ru.spb.speech.constants.AllowableExtension
 import java.io.IOException
+import ru.spb.speech.constants.AllowableExtension.PDF
 
 const val maximumPresentationLength = 48
 const val secondsInAMinute = 60
@@ -88,7 +90,7 @@ class EditPresentationActivity : AppCompatActivity() {
 
             if (presentationData?.name!!.isNullOrEmpty()) {
                 val tempPresName = getFileName(Uri.parse(presentationData!!.stringUri), contentResolver)
-                presentationName.setText(tempPresName.substring (0, tempPresName.indexOf(".pdf")))
+                presentationName.setText(tempPresName.substring (0, tempPresName.indexOf(PDF.type)))
             }
             else
                 presentationName.setText(presentationData?.name)

@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.constants.AllowableExtension.PDF
 import java.io.FileNotFoundException
 
 const val FILE_SYSTEM = "file_system"
@@ -111,7 +112,7 @@ class CreatePresentationActivity : AppCompatActivity() {
     private fun isFilePDF(myUri: Uri): Boolean {
         var tempPresName = getFileName(myUri, contentResolver)
         var ind = tempPresName.lastIndexOf(".")
-        return tempPresName.substring(ind) == ".pdf"
+        return tempPresName.substring(ind) == PDF.type
     }
 
     override fun onBackPressed() {
