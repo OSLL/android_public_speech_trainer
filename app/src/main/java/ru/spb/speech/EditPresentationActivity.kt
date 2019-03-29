@@ -24,7 +24,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-const val maximumPresentationLength = 48
 const val secondsInAMinute = 60
 const val valueWhenMissedIntent = -1
 
@@ -94,11 +93,6 @@ class EditPresentationActivity : AppCompatActivity() {
             addPresentation.setOnClickListener {
                 if (presentationName.text.toString() == "") {
                     Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                if (presentationName.text.length > maximumPresentationLength) {
-                    Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
