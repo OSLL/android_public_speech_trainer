@@ -26,7 +26,6 @@ import ru.spb.speech.constants.AllowableExtension
 import java.io.IOException
 import ru.spb.speech.constants.AllowableExtension.PDF
 
-const val maximumPresentationLength = 48
 const val secondsInAMinute = 60
 const val valueWhenMissedIntent = -1
 
@@ -98,11 +97,6 @@ class EditPresentationActivity : AppCompatActivity() {
             addPresentation.setOnClickListener {
                 if (presentationName.text.toString() == "") {
                     Toast.makeText(this, R.string.message_no_presentation_name, Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                if (presentationName.text.length > maximumPresentationLength) {
-                    Toast.makeText(this, R.string.pres_name_is_too_long, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
