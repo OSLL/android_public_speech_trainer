@@ -16,4 +16,5 @@ android:
 script:
   - ./gradlew assembleDebug
   - ./gradlew assembleAndroidTest
+  - ./gradlew testDebugUnitTest
   - ./gradlew lintDebug
