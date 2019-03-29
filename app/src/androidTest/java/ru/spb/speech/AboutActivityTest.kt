@@ -25,6 +25,12 @@ class AboutActivityTest {
     @JvmField
     var mControllerTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
+    init {
+        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
+        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
     @Test
     fun checkButtons() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
