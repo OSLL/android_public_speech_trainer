@@ -18,6 +18,7 @@
     <string name="check_text">Check Presentation Text</string>
     <string name="add_presentation">Добавить презентацию</string>
     <string name="enter_presentation_name">Название презентации</string>
+    <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
     <string name="add_presentation_symbol">+</string>
@@ -28,6 +29,7 @@
     <string name="back_to_main">На главную</string>
     <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
     <string name="no_internet_connection">Отсутствует соединение с интеренетом</string>
+    <string name="export_statistics">Экспорт статистики</string>
 
     <string name="the_next">Следующий</string>
 
@@ -49,6 +51,7 @@
     </string>
     <string name="pref_title_enable_deb_pres">Включить тестовые презентации</string>
     <string name="deb_speech_audio_key">deb_speech_audio</string>
+    <string name="notifications_key">notifications_new_message</string>
     <string name="speed_key">speed_key</string>
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочня презентация</string>
@@ -132,6 +135,7 @@
     <string name="presentationEntries">presentationEntries</string>
     <string name="speech_speed">Комфортная скорость речи, слов в минуту</string>
     <string name="pref_default_speed">120</string>
+    <string name="maximum_mark_for_training">(100)</string>
 
     <!-- Strings related to speech recording and analysis -->
     <string name="start_recording">Начать тренировку</string>
@@ -175,6 +179,8 @@
     <string name="good_speech">Вы делаете достаточное количество пауз; отлично!</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
+    <string name="NEW_PRESENTATION_URI">new_presentation_uri</string>
+    <string name="CHANGE_FILE_FLAG">change_file_flag</string>
     <string name="CURRENT_TRAINING_ID">current_training_id</string>
 
     <!-- For Change Presentation -->
@@ -190,7 +196,8 @@
 
 
     <!-- Example settings for Shared Picture -->
-    <string name="last_training_title">Последняя тренировка: </string>
+    <string name="name_of_pres">Название презентации: </string>
+    <string name="cur_training_title">Текущая тренировка: </string>
     <string name="date_and_time_to_start_training">Дата и время начала: </string>
     <string name="time_of_training">Длительность тренировки: </string>
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
@@ -207,14 +214,24 @@
     <string name="min_training_time">Минимальное время тренировки: </string>
     <string name="average_time">Среднее время тренировки: </string>
     <string name="total_words_count">Сказано слов всего: </string>
-    <string name="average_earning">Средняя оценка: </string>
+    <string name="average_earning_1">Средняя / минимальная</string>
+    <string name="average_earning_2">/ максимальная оценка: </string>
 
+    <string name="training_statistics_directory">training_statistics</string>
+    <string name="error_creating_text_file">Ошибка в создании текстового файла</string>
+    <string name="successful_export_statistics">Статистика успешно сохранена в дирректорию</string>
+    <string name="error_export_statistics">Ошибка при экспорте статистики</string>
 
     <string name="count_of_training">Вы тренировались</string>
     <string name="result_of_training">Результат тренировки:</string>
     <string name="record_of_training">--- Ваш результат на 100% далек от рекордного</string>
     <string name="stat_training_time">Статистика времени тренировок:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
+
+    <string name="error_accessing_the_cur_training_data">Ошибка в получении доступа к данным текущей тренировки</string>
+    <string name="error_accessing_the_training_list">Ошибка в получении доступа к списку тренировок</string>
+    <string name="error_accessing_training_slides">Ошибка в получении доступа слайдам тренировки</string>
+    <string name="error_accessing_the_training_list_or_presentation_data">Ошибка в получении доступа к списку тренировок или presentationData</string>
 
     <!-- Example settings for Tests -->
     <string name="test_time">00:30</string>
@@ -243,6 +260,7 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="pdfErrorMsg">File not in PDF format!</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

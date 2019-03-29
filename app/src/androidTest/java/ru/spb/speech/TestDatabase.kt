@@ -29,15 +29,17 @@ class TestDatabase {
         grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
         grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     }
+    lateinit var helper: TestHelper
 
     @Before
     fun enableDebugMode() {
-        setTrainingPresentationMod(true) // включение тестовой презентации
+        helper = TestHelper(mControllerTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
     }
 
     @After
     fun disableDebugMode() {
-        setTrainingPresentationMod(false) // выключение тестовой презентации
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
     }
 
     @Test
@@ -100,20 +102,9 @@ class TestDatabase {
         assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
 
-        removeDebugSlides(mControllerTestRule.activity)
+        helper.removeDebugSlides()
 
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
         assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
     }
-
-    private fun setTrainingPresentationMod(mode: Boolean) {
-        val sp = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-        val spe = sp.edit()
-        val testPresentationMode = mControllerTestRule.activity.getString(R.string.deb_pres)
-
-        spe.putBoolean(testPresentationMode, mode)
-        spe.apply()
-    }
-
-
 }

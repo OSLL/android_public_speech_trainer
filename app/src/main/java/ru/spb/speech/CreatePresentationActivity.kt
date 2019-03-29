@@ -1,5 +1,6 @@
 package ru.spb.speech
 
+import android.app.Activity
 import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
@@ -17,22 +18,25 @@ const val FILE_SYSTEM = "file_system"
 const val APST_TAG = "APST"
 const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 
+
+
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
-
-    private val REQUSETCODE = 111
+    private var changeFileFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
         super.onCreate(savedInstanceState)
-        if (!isChecked) {
+        changeFileFlag = intent.getBooleanExtra(getString(R.string.CHANGE_FILE_FLAG), false)
+
+        if (!isChecked || changeFileFlag) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
             val intent = Intent(ACTION_OPEN_DOCUMENT)
                     .setDataAndType(myUri, "*/*")
                     .addCategory(CATEGORY_OPENABLE)
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), REQUSETCODE)
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), resources.getInteger(R.integer.choose_file_requestCode))
         } else {
             val i = Intent(this, EditPresentationActivity::class.java)
             i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
@@ -43,8 +47,16 @@ class CreatePresentationActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUSETCODE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null && data.data != null) {
             val selectedFile = data.data //The uri with the location of the file
+            if (changeFileFlag) {
+                val i = Intent()
+                i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
+                setResult(Activity.RESULT_OK, i)
+                finish()
+                overridePendingTransition(0, 0)
+                return
+            }
             try {
                 val i = Intent(this, EditPresentationActivity::class.java)
                 val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
@@ -87,5 +99,9 @@ class CreatePresentationActivity : AppCompatActivity() {
             return null
         }
     }
-}
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (changeFileFlag) overridePendingTransition(0, 0)
+    }
+}

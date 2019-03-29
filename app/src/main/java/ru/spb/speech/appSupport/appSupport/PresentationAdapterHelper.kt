@@ -10,6 +10,7 @@ import android.os.AsyncTask
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import ru.spb.speech.EditPresentationActivity
@@ -18,12 +19,21 @@ import ru.spb.speech.TrainingActivity
 import ru.spb.speech.views.PresentationStartpageItemRow
 import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.APST_TAG
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
+
+const val testHost = "8.8.8.8"
+const val testPost = 53
+const val timeLimit = 2500
 
 class PresentationAdapterHelper(private val rw: RecyclerView, private val adapter: GroupAdapter<ViewHolder>, private val context: Context) {
     private val presentationDataDao: PresentationDataDao = SpeechDataBase.getInstance(context)!!.PresentationDataDao()
@@ -55,7 +65,9 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
 
                 try {
                     rw.scrollToPosition(position)
-                } catch (e: NullPointerException) { }
+                } catch (e: NullPointerException) {
+                    Log.d(APST_TAG, "no clicked position")
+                }
 
                 presentationDataDao.deletePresentationWithId(row.presentationId!!)
                 updateListener?.onAdapterUpdate()
@@ -95,7 +107,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
 
     fun addItemInAdapter(item: PresentationStartpageItemRow, imageBLOB: ByteArray?) {
         adapter.add(item)
-        LoadItemAsync(item, imageBLOB).execute()
+        loadItemAsync(item, imageBLOB)
     }
 
 
@@ -109,8 +121,10 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         val row = adapter.getItem(position) as PresentationStartpageItemRow
         val presentation = presentationDataDao.getPresentationWithId(row.presentationId!!) ?: return
         row.setPresentationData(presentation)
-
         adapter.notifyItemChanged(position)
+
+        if (row.presentationUri != presentation.stringUri)
+            loadItemAsync(adapter.getItem(position) as PresentationStartpageItemRow, presentation.imageBLOB)
     }
 
     fun addLastItem() {
@@ -119,25 +133,14 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         addItemInAdapter(row, presentation.imageBLOB)
     }
 
-    private inner class LoadItemAsync(private val row: PresentationStartpageItemRow, private val imageBLOB: ByteArray?) : AsyncTask<Void, Void, Void>() {
-        private var bitmap: Bitmap? = null
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            if (imageBLOB == null) this.onPostExecute(null)
-        }
-
-        override fun doInBackground(vararg params: Void?): Void? {
-            imageBLOB ?: return null
-            bitmap = BitmapFactory.decodeByteArray(imageBLOB, 0, imageBLOB.size)
-            publishProgress()
-            return null
-        }
-
-        override fun onProgressUpdate(vararg values: Void?) {
-            super.onProgressUpdate(*values)
-            if (bitmap == null) return
-            updateRowBitmap(row, bitmap!!)
+    private fun loadItemAsync(item: PresentationStartpageItemRow, imageBLOB: ByteArray?) {
+        GlobalScope.launch {
+            try {
+                val bm = async(IO) { BitmapFactory.decodeByteArray(imageBLOB, 0, imageBLOB!!.size) }
+                updateRowBitmap(item, bm.await())
+            } catch (e: Exception) {
+                Log.d(APST_TAG, "error while getting bitmap: $e")
+            }
         }
     }
 
@@ -157,7 +160,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         val thread = Thread(Runnable {
             connection = try {
                 val socket = Socket()
-                socket.connect(InetSocketAddress("8.8.8.8", 53), 2500)
+                socket.connect(InetSocketAddress(testHost, testPost), timeLimit)
                 socket.close()
                 true
             } catch (e: IOException) {

@@ -15,5 +15,5 @@ data class PresentationData(@PrimaryKey(autoGenerate = true) var id: Int?,
                             @ColumnInfo(name = "imageBLOB", typeAffinity = ColumnInfo.BLOB) var imageBLOB: ByteArray?
 
 ){
-    constructor():this(null,"","",null,0, "2019-1-1",false, 0, null, null)
+    constructor():this(null,"","",null,0, "2019-1-1", false, 0, null, null)
 }

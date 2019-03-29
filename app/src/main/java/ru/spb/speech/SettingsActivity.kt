@@ -144,7 +144,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             val key = preference?.key
             val switchNotifications = findPreference("notifications_new_message") as SwitchPreference
             if (key == "notifications_new_message") {
-                val alarmIntent = Intent(activity, AlarmReceiver::class.java).let { intent ->
+                val alarmIntent = Intent(activity.application.applicationContext, AlarmReceiver::class.java).let { intent ->
                     PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
                 val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
