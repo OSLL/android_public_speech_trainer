@@ -18,6 +18,7 @@
     <string name="check_text">Check Presentation Text</string>
     <string name="add_presentation">Добавить презентацию</string>
     <string name="enter_presentation_name">Название презентации</string>
+    <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
     <string name="add_presentation_symbol">+</string>
@@ -26,8 +27,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
-    <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
-    <string name="no_internet_connection">Отсутствует соединение с интеренетом</string>
+    <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
     <string name="export_statistics">Экспорт статистики</string>
 
     <string name="the_next">Следующий</string>
@@ -131,6 +131,7 @@
     <string name="presentationEntries">presentationEntries</string>
     <string name="speech_speed">Комфортная скорость речи, слов в минуту</string>
     <string name="pref_default_speed">120</string>
+    <string name="maximum_mark_for_training">(100)</string>
 
     <!-- Strings related to speech recording and analysis -->
     <string name="start_recording">Начать тренировку</string>
@@ -174,6 +175,8 @@
     <string name="good_speech">Вы делаете достаточное количество пауз; отлично!</string>
 
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
+    <string name="NEW_PRESENTATION_URI">new_presentation_uri</string>
+    <string name="CHANGE_FILE_FLAG">change_file_flag</string>
     <string name="CURRENT_TRAINING_ID">current_training_id</string>
 
     <!-- For Change Presentation -->
@@ -253,6 +256,7 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="pdfErrorMsg">File not in PDF format!</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

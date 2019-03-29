@@ -15,14 +15,34 @@
         android:orientation="vertical"
         android:weightSum="2">
 
-        <ImageView
-            android:layout_marginTop="10dp"
-            android:id="@+id/pdf_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <FrameLayout
             android:layout_weight="1.05"
-            android:background="@android:color/white"
-            android:scaleType="fitCenter" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/pdf_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:scaleType="fitCenter" />
+
+            <Button
+                android:id="@+id/change_pres"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="right|top"
+                android:layout_margin="10dp"
+                android:background="@color/black_15_alpha"
+                android:foreground="@drawable/card_foreground"
+                android:paddingHorizontal="4dp"
+                android:text="@string/presentation_file_replacement"
+                android:textColor="@android:color/white"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,6 +72,7 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:minHeight="40dp"
+                    android:maxLength="@integer/max_possible_pres_name_length"
                     android:textAlignment="center" />
 
 
@@ -64,6 +85,8 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
                     android:textColor="@color/black_35_alpha"
                     android:textSize="12dp"
                     android:text="@string/time_limit"
