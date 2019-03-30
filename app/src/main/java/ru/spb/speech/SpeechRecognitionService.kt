@@ -4,13 +4,19 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.media.AudioManager
 import android.os.*
+import android.preference.PreferenceManager
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.support.test.InstrumentationRegistry
 import android.util.Log
 import java.lang.ref.WeakReference
+import android.content.SharedPreferences
+
+
 
 public class SpeechRecognitionService: Service() {
     protected lateinit var mAudioManager: AudioManager
@@ -22,6 +28,8 @@ public class SpeechRecognitionService: Service() {
     @Volatile protected var mIsCountDownOn: Boolean = false
     private var mIsStreamSolo: Boolean = false
 
+    private var isAudioMode = false
+
     internal val MSG_RECOGNIZER_START_LISTENING = 1
     internal val MSG_RECOGNIZER_CANCEL = 2
 
@@ -32,6 +40,10 @@ public class SpeechRecognitionService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        isAudioMode = prefs.getBoolean(getString(R.string.deb_speech_audio_key), false)
+
         Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "SERVICE: onCreate called")
         mAudioManager = (getSystemService(Context.AUDIO_SERVICE) as AudioManager?)!!
 
@@ -42,7 +54,6 @@ public class SpeechRecognitionService: Service() {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         mSpeechRecognizerIntent!!.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 this.packageName)
-
 
         mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
     }
@@ -91,7 +102,7 @@ public class SpeechRecognitionService: Service() {
     protected var mNoSpeechCountDown: CountDownTimer = object : CountDownTimer(5000, 500) {
 
         override fun onTick(millisUntilFinished: Long) {
-            if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0)
+            if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0 && !isAudioMode)
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
         }
 

@@ -1,21 +1,34 @@
 package ru.spb.speech
 
 import android.preference.PreferenceManager
+import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
+import android.support.test.espresso.matcher.ViewMatchers.assertThat
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import android.support.test.uiautomator.UiDevice
+import android.support.test.uiautomator.UiSelector
+import android.util.Log
 import junit.framework.Assert.assertEquals
-import org.junit.Ignore
+import org.hamcrest.CoreMatchers
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
-@Ignore
 @RunWith(AndroidJUnit4::class)
 class SoundTrackValidationTest {
+    private var mDevice: UiDevice? = null
+
+    @Before
+    fun before() {
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        assertThat(mDevice, CoreMatchers.notNullValue())
+    }
     @Rule
     @JvmField
     var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
@@ -31,16 +44,23 @@ class SoundTrackValidationTest {
         debSl.putBoolean(OnAudio, true)
 
         debSl.apply()
+
         onView(withId(R.id.addBtn)).perform(click())
+        val presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring (0, mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(".pdf"))
+        onView(withId(R.id.presentationName)).perform(clearText(), typeText(presName), closeSoftKeyboard())
         onView(withId(R.id.addPresentation)).perform(click())
 
-        //onView(withId(R.id.trainingTime)).perform(clearText(), typeText(mIntentsTestRule.activity.getString(R.string.test_time)), closeSoftKeyboard())
+        mDevice!!.findObject(UiSelector().text(presName)).click()
 
-        //onView(withId(R.id.training)).perform(click())
+        sleep(23000)
 
-        onView(withId(android.R.id.button1)).perform(click())
+        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
 
-        assertEquals(speed_statistics!!.toFloat(),48f,10f)
+        sleep(5000)
+
+        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.training_statistics))).click()
+
+        assertEquals(speed_statistics!!.toFloat(),32f,5f)
 
         debSl.putBoolean(OnMode, false)
         debSl.putBoolean(OnAudio, false)

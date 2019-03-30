@@ -207,7 +207,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
 
 
-        speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+        speed_statistics = trainingStatisticsData?.curWordCount
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
