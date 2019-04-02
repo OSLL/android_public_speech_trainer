@@ -1,4 +1,4 @@
-package ru.spb.speech
+package ru.spb.speech.appSupport
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver

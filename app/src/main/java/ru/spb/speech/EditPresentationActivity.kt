@@ -14,7 +14,7 @@ import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.DBTables.helpers.PresentationDBHelper
+import ru.spb.speech.DBTables.helpers.PresentationDBHelper
 import ru.spb.speech.appSupport.ProgressHelper
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.util.*
@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import ru.spb.speech.appSupport.getFileName
 import java.io.IOException
 
 const val secondsInAMinute = 60

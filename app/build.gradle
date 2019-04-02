@@ -55,6 +55,9 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.xwray:groupie:2.1.0'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
+
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-database:16.1.0'
 }
 
 allprojects {
@@ -66,3 +69,5 @@ allprojects {
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:+'
 }
+
+apply plugin: 'com.google.gms.google-services'
