@@ -1,4 +1,4 @@
-package ru.spb.speech.appSupport.appSupport
+package ru.spb.speech.appSupport
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
@@ -98,7 +97,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
 
     fun fillAdapter() {
         for (p in presentationDataDao.getAll()) {
-            if (p.timeLimit == null || p.pageCount == 0 || p.name.isNullOrEmpty()) {
+            if (p.isUnfinished()) {
                 presentationDataDao.deletePresentationWithId(p.id!!)
                 continue
             }
@@ -131,6 +130,12 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
 
     fun addLastItem() {
         val presentation = presentationDataDao.getLastPresentation()
+
+        if (presentation.isUnfinished()) {
+            presentationDataDao.deletePresentationWithId(presentation.id!!)
+            return
+        }
+
         val row = PresentationStartpageItemRow(presentation, null, context)
         addItemInAdapter(row, presentation.imageBLOB)
     }
