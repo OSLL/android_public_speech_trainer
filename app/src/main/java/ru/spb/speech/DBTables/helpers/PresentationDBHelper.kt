@@ -9,7 +9,7 @@ import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.SpeechDataBase
 import java.io.ByteArrayOutputStream
 
-open class PresentationDBHelper {
+class PresentationDBHelper {
     private val presentationDataDao: PresentationDataDao
     private val pdfToBitmap: PdfToBitmap
     private val defaultPictureSize: Int
