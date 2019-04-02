@@ -30,4 +30,10 @@ class TestHelper(private val activity: Activity) {
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
                 .perform(ViewActions.click())
     }
+
+    fun addDebPresentation(presentationName: String) {
+        Espresso.onView(ViewMatchers.withId(R.id.addBtn)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.presentationName)).perform(ViewActions.clearText(), ViewActions.typeText(presentationName), ViewActions.closeSoftKeyboard())
+        Espresso.onView(ViewMatchers.withId(R.id.addPresentation)).perform(ViewActions.click())
+    }
 }
