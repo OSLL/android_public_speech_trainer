@@ -20,11 +20,13 @@ import java.util.concurrent.TimeUnit
 @RunWith(AndroidJUnit4::class)
 class TrainingActivityTest {
 
-    val TRAINING_TIME_FULL = 104000L // amount of slides * 4 (time per slide ~4 sec)
-    val TRAINING_TIME_EATLY_STOP = 15000L
-    val DELTA = 5000L
+    val SLIDES_COUNT_IN_DEB_PRES = 26L
+    val TIME_PER_SLIDE = 4L
 
-    val SLIDES_COUNT_IN_DEB_PRES = 26
+    val TRAINING_TIME_FULL = SLIDES_COUNT_IN_DEB_PRES * TIME_PER_SLIDE
+    val TRAINING_TIME_EATLY_STOP = 15000L
+
+    val DELTA = 5000L
 
     @Rule
     @JvmField
