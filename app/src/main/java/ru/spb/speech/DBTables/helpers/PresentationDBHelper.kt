@@ -1,4 +1,4 @@
-package ru.spb.speech.DBTables.DBTables.helpers
+package ru.spb.speech.DBTables.helpers
 
 import android.content.Context
 import android.graphics.Bitmap
