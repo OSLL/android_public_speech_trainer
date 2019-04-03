@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class TrainingActivityTest {
 
     val SLIDES_COUNT_IN_DEB_PRES = 26L
-    val TIME_PER_SLIDE = 4L
+    val TIME_PER_SLIDE = 4000L
 
     val TRAINING_TIME_FULL = SLIDES_COUNT_IN_DEB_PRES * TIME_PER_SLIDE
     val TRAINING_TIME_EATLY_STOP = 15000L
