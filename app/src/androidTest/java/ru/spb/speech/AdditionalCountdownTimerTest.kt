@@ -5,14 +5,11 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
-import android.support.test.espresso.contrib.PickerActions
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
-import android.util.Log
 import android.widget.NumberPicker
-import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers
 import org.junit.Before
 import org.junit.Rule
@@ -45,9 +42,9 @@ class AdditionalCountdownTimerTest {
     fun additionalCountdownTimerTest(){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
-        val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
+        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
 
-        debSl.putBoolean(OnMode, true)
+        debSl.putBoolean(onMode, true)
         debSl.apply()
 
         onView(withId(R.id.addBtn)).perform(click())
@@ -58,17 +55,17 @@ class AdditionalCountdownTimerTest {
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
 
-        sleep(65000)
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.training_time_in_milliseconds_to_trigger_an_additional_timer).toLong())
 
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
 
-        sleep(5000)
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
 
         mDevice!!.pressBack()
 
         onView(withId(R.id.time_left)).check(matches(hasTextColor(android.R.color.holo_red_light)))
 
-        debSl.putBoolean(OnMode, false)
+        debSl.putBoolean(onMode, false)
         debSl.apply()
     }
 
@@ -81,7 +78,7 @@ class AdditionalCountdownTimerTest {
             }
 
             override fun getDescription(): String {
-                return "Set the passed number into the NumberPicker"
+                return mIntentsTestRule.activity.getString(R.string.setNumber_function_information)
             }
 
             override fun getConstraints(): Matcher<View> {
