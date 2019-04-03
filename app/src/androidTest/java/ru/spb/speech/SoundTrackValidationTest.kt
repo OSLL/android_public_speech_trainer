@@ -5,8 +5,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
-import android.support.test.espresso.matcher.ViewMatchers.assertThat
-import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
@@ -60,6 +59,11 @@ class SoundTrackValidationTest {
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.training_statistics))).click()
 
         assertEquals(speed_statistics!!.toFloat(),mIntentsTestRule.activity.resources.getDimension(R.dimen.expected_number_of_recognized_words),mIntentsTestRule.activity.resources.getDimension(R.dimen.error_in_the_number_of_recognized_words))
+
+        mDevice!!.pressBack()
+
+        onView(withText(presName)).perform(longClick())
+        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
 
         debSl.putBoolean(onMode, false)
         debSl.putBoolean(onAudio, false)
