@@ -28,6 +28,12 @@ class TrainingActivityTest {
 
     val DELTA = 5000L
 
+    init {
+        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
+        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
     @Rule
     @JvmField
     var activityTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
