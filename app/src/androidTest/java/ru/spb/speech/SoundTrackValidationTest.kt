@@ -11,7 +11,6 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
-import android.util.Log
 import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers
 import org.junit.Before
@@ -34,14 +33,14 @@ class SoundTrackValidationTest {
     var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     @Test
-    fun Test(){
+    fun soundTrackValidationTest(){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
-        val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val OnAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
+        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
+        val onAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
 
-        debSl.putBoolean(OnMode, true)
-        debSl.putBoolean(OnAudio, true)
+        debSl.putBoolean(onMode, true)
+        debSl.putBoolean(onAudio, true)
 
         debSl.apply()
 
@@ -52,18 +51,18 @@ class SoundTrackValidationTest {
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
 
-        sleep(23000)
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.required_time_in_milliseconds_allotted_for_training).toLong())
 
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
 
-        sleep(5000)
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
 
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.training_statistics))).click()
 
-        assertEquals(speed_statistics!!.toFloat(),32f,5f)
+        assertEquals(speed_statistics!!.toFloat(),mIntentsTestRule.activity.resources.getDimension(R.dimen.expected_number_of_recognized_words),mIntentsTestRule.activity.resources.getDimension(R.dimen.error_in_the_number_of_recognized_words))
 
-        debSl.putBoolean(OnMode, false)
-        debSl.putBoolean(OnAudio, false)
+        debSl.putBoolean(onMode, false)
+        debSl.putBoolean(onAudio, false)
         debSl.apply()
     }
 
