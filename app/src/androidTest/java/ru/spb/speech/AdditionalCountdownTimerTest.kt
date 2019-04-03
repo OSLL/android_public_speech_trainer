@@ -65,6 +65,11 @@ class AdditionalCountdownTimerTest {
 
         onView(withId(R.id.time_left)).check(matches(hasTextColor(android.R.color.holo_red_light)))
 
+        mDevice!!.pressBack()
+
+        onView(withText(presName)).perform(longClick())
+        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
+
         debSl.putBoolean(onMode, false)
         debSl.apply()
     }
