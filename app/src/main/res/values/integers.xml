@@ -23,5 +23,8 @@
     <integer name="defaultPictureQuality">100</integer>
 
     <integer name="max_possible_pres_name_length">48</integer>
+
+    <integer name="one_minute">1</integer>
+    <integer name="two_minutes">2</integer>
 </resources>
 
