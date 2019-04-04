@@ -23,34 +23,52 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.view.View
 import org.hamcrest.Matcher
+import org.junit.After
 
 
 @RunWith(AndroidJUnit4::class)
 class AdditionalCountdownTimerTest {
     private var mDevice: UiDevice? = null
+    private var presName = ""
 
     @Before
     fun before() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         assertThat(mDevice, CoreMatchers.notNullValue())
-    }
-    @Rule
-    @JvmField
-    var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
-    @Test
-    fun additionalCountdownTimerTest(){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
         val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
 
         debSl.putBoolean(onMode, true)
         debSl.apply()
+    }
+
+    @After
+    fun after() {
+        mDevice!!.pressBack()
+
+        onView(withText(presName)).perform(longClick())
+        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
+        val debSl = sharedPreferences.edit()
+        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
+        debSl.putBoolean(onMode, false)
+        debSl.apply()
+    }
+
+    @Rule
+    @JvmField
+    var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    @Test
+    fun additionalCountdownTimerTest(){
 
         onView(withId(R.id.addBtn)).perform(click())
-        val presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring (0, mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(".pdf"))
+        presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring (mIntentsTestRule.activity.resources.getInteger(R.integer.zero), mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(mIntentsTestRule.activity.getString(R.string.pdf_format)))
         onView(withId(R.id.presentationName)).perform(clearText(), typeText(presName), closeSoftKeyboard())
-        onView(withId(R.id.numberPicker1)).perform(setNumber(1))
+        onView(withId(R.id.numberPicker1)).perform(setNumber(mIntentsTestRule.activity.resources.getInteger(R.integer.one_minute_report_setting)))
         onView(withId(R.id.addPresentation)).perform(click())
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
@@ -64,14 +82,6 @@ class AdditionalCountdownTimerTest {
         mDevice!!.pressBack()
 
         onView(withId(R.id.time_left)).check(matches(hasTextColor(android.R.color.holo_red_light)))
-
-        mDevice!!.pressBack()
-
-        onView(withText(presName)).perform(longClick())
-        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
-
-        debSl.putBoolean(onMode, false)
-        debSl.apply()
     }
 
     private fun setNumber(num: Int): ViewAction {
