@@ -68,7 +68,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private lateinit var progressHelper: ProgressHelper
 
-    private var trainingStatisticsData: TrainingStatisticsData? = null
+    var trainingStatisticsData: TrainingStatisticsData? = null
 
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -208,6 +208,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+        sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
