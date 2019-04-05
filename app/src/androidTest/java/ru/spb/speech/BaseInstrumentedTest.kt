@@ -1,7 +1,5 @@
 package ru.spb.speech
 
-import android.util.Log
-
 open class BaseInstrumentedTest {
     init {
         grantPermissions(android.Manifest.permission.RECORD_AUDIO)
