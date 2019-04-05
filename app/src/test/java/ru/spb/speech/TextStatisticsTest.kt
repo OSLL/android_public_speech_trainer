@@ -8,11 +8,13 @@ import org.junit.Assert.*
 
 class TextStatisticsTest {
 
+
     lateinit var presentationEntries: HashMap<Int, Float>
+    private val optimalSpeed = 120
 
     @Before
     fun setUp() {
-        presentationEntries = HashMap<Int, Float>()
+        presentationEntries = HashMap()
     }
 
     @After
@@ -39,37 +41,38 @@ class TextStatisticsTest {
 
     @Test
     fun getBestSlideEmpty() {
-        assertEquals(-1, getBestSlide(presentationEntries))
+        assertEquals(-1, getBestSlide(presentationEntries, optimalSpeed))
     }
 
     @Test
     fun getBestSlideOne() {
         presentationEntries[0] = 1f
-        assertEquals(0, getBestSlide(presentationEntries))
+        assertEquals(1, getBestSlide(presentationEntries, optimalSpeed))
     }
 
     @Test
     fun getBestSlideTwo() {
         presentationEntries[0] = 1f
         presentationEntries[1] = 2f
-        assertEquals(1, getBestSlide(presentationEntries))
+        assertEquals(2, getBestSlide(presentationEntries, optimalSpeed))
     }
 
     @Test
     fun getWorstSlideEmpty() {
-        assertEquals(-1, getWorstSlide(presentationEntries))
+        assertEquals(-1, getWorstSlide(presentationEntries, optimalSpeed))
     }
 
     @Test
     fun getWorstSlideOne() {
         presentationEntries[0] = 1f
-        assertEquals(0, getWorstSlide(presentationEntries))
+        assertEquals(1, getWorstSlide(presentationEntries, optimalSpeed))
     }
 
     @Test
     fun getWorstSlideTwo() {
         presentationEntries[0] = 1f
         presentationEntries[1] = 2f
-        assertEquals(0, getWorstSlide(presentationEntries))
+        assertEquals(1, getWorstSlide(presentationEntries, optimalSpeed))
     }
+
 }
