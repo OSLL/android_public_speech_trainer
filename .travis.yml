@@ -14,7 +14,7 @@ android:
   - $ANDROID_TARGET
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
 script:
-  - sh rename_google_services.sh
+  - ./rename_google_services.sh
   - ./gradlew assembleDebug
   - ./gradlew assembleAndroidTest
   - ./gradlew lintDebug
