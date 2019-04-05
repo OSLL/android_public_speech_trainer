@@ -70,8 +70,4 @@ allprojects {
     }
 }
 
-dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:+'
-}
-
 apply plugin: 'com.google.gms.google-services'
