@@ -48,7 +48,7 @@ class AboutActivity : AppCompatActivity() {
     private fun removeLicensesFragment() {
         title = getString(R.string.about)
         supportFragmentManager.beginTransaction()
-                .remove(supportFragmentManager.findFragmentByTag(LicensesFragment::class.toString()))
+                .remove(supportFragmentManager.findFragmentByTag(LicensesFragment::class.toString())!!)
                 .commit()
     }
 }

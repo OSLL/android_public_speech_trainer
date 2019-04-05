@@ -157,7 +157,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
                 AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
         recyclerView.layoutAnimation = controller
         try {
-            recyclerView.adapter.notifyDataSetChanged()
+            recyclerView.adapter!!.notifyDataSetChanged()
         } catch (e: NullPointerException) { }
         recyclerView.scheduleLayoutAnimation()
     }
