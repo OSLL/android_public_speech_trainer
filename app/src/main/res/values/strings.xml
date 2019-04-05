@@ -54,6 +54,7 @@
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочня презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
+    <string name="pdf_format">.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
     <string name="pref_default_display_name">John Smith</string>
@@ -233,6 +234,7 @@
     <string name="test_time">00:30</string>
     <string name="pause">Пауза</string>
     <string name="continue_">Продолжить</string>
+    <string name="setNumber_function_information">Set the passed number into the NumberPicker</string>
 
     <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
     <string name="continue_training">Продолжить тренировку</string>
