@@ -262,7 +262,7 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
-    <string name="pdfErrorMsg">File not in PDF format!</string>
+    <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
