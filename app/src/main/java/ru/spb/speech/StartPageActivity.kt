@@ -18,8 +18,8 @@ import ru.spb.speech.DBTables.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
-import ru.spb.speech.appSupport.appSupport.PresentationAdapterHelper
-import ru.spb.speech.appSupport.appSupport.UpdateAdapterListener
+import ru.spb.speech.appSupport.PresentationAdapterHelper
+import ru.spb.speech.appSupport.UpdateAdapterListener
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
