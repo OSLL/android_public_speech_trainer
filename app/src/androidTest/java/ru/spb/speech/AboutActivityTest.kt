@@ -20,7 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 import ru.spb.speech.R.string.*
 
-class AboutActivityTest {
+class AboutActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mControllerTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
