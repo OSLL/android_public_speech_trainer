@@ -22,7 +22,9 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import ru.spb.speech.constants.AllowableExtension
 import java.io.IOException
+import ru.spb.speech.constants.AllowableExtension.PDF
 
 const val secondsInAMinute = 60
 const val valueWhenMissedIntent = -1
@@ -85,8 +87,10 @@ class EditPresentationActivity : AppCompatActivity() {
                 else numberPicker1.value = defTime
             }
 
-            if (presentationData?.name!!.isNullOrEmpty())
-                presentationName.setText(getFileName(Uri.parse(presentationData!!.stringUri), contentResolver))
+            if (presentationData?.name!!.isNullOrEmpty()) {
+                val temporaryPresentationName = getFileName(Uri.parse(presentationData!!.stringUri), contentResolver)
+                presentationName.setText(temporaryPresentationName.substring (0, temporaryPresentationName.indexOf(PDF.type)))
+            }
             else
                 presentationName.setText(presentationData?.name)
 
@@ -109,11 +113,11 @@ class EditPresentationActivity : AppCompatActivity() {
                 presentationDataDao?.updatePresentation(presentationData!!)
 
                 if (changePresentationFlag) {
-                    val i = Intent()
-                    i.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
-                    i.putExtra(getString(R.string.presentationPosition),
+                    val intent = Intent()
+                    intent.putExtra(getString(R.string.isPresentationChangedFlag), isChanged)
+                    intent.putExtra(getString(R.string.presentationPosition),
                             intent.getIntExtra(getString(R.string.presentationPosition), valueWhenMissedIntent))
-                    setResult(Activity.RESULT_OK, i)
+                    setResult(Activity.RESULT_OK, intent)
 
                     if (presentationUri == presentationData?.stringUri) {
                         finish()
@@ -139,9 +143,9 @@ class EditPresentationActivity : AppCompatActivity() {
         // у тестовой презентации не предусмотрена замена файла
         if (presentationData?.debugFlag == 1) change_pres.visibility = View.GONE
         change_pres.setOnClickListener {
-            val i = Intent(this, CreatePresentationActivity::class.java)
-            i.putExtra(getString(R.string.CHANGE_FILE_FLAG), true)
-            startActivityForResult(i, resources.getInteger(R.integer.createPresentationActRequestCode))
+            val intent = Intent(this, CreatePresentationActivity::class.java)
+            intent.putExtra(getString(R.string.CHANGE_FILE_FLAG), true)
+            startActivityForResult(intent, resources.getInteger(R.integer.createPresentationActRequestCode))
             overridePendingTransition(0, 0)
         }
     }

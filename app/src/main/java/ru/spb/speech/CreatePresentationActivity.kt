@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.constants.AllowableExtension.PDF
 import java.io.FileNotFoundException
 
 const val FILE_SYSTEM = "file_system"
@@ -23,6 +24,7 @@ const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
     private var changeFileFlag = false
+    private var isPDF = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -38,9 +40,9 @@ class CreatePresentationActivity : AppCompatActivity() {
                     .addCategory(CATEGORY_OPENABLE)
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), resources.getInteger(R.integer.choose_file_requestCode))
         } else {
-            val i = Intent(this, EditPresentationActivity::class.java)
-            i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
-            startActivity(i)
+            val intent = Intent(this, EditPresentationActivity::class.java)
+            intent.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB(getString(R.string.deb_pres_name)))
+            startActivity(intent)
             finish()
         }
     }
@@ -49,22 +51,29 @@ class CreatePresentationActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null && data.data != null) {
             val selectedFile = data.data //The uri with the location of the file
+            isPDF = isFilePDF(selectedFile)
             if (changeFileFlag) {
-                val i = Intent()
-                i.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
-                setResult(Activity.RESULT_OK, i)
+                val intent = Intent()
+                intent.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
+                setResult(Activity.RESULT_OK, intent)
                 finish()
                 overridePendingTransition(0, 0)
                 return
             }
-            try {
-                val i = Intent(this, EditPresentationActivity::class.java)
-                val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
-                i.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
-                Log.d(FILE_SYSTEM, selectedFile.toString())
-                startActivity(i)
-            } catch (e: FileNotFoundException) {
-                Log.d(FILE_SYSTEM, "file not found")
+            if(isPDF) {
+                try {
+                    val intent = Intent(this, EditPresentationActivity::class.java)
+                    val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
+                    intent.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), dbPresentationId)
+                    Log.d(FILE_SYSTEM, selectedFile.toString())
+                    startActivity(intent)
+                } catch (e: FileNotFoundException) {
+                    Log.d(FILE_SYSTEM, "file not found $selectedFile")
+                }
+            }
+            else {
+                Toast.makeText(this, getString(R.string.pdfErrorMsg), Toast.LENGTH_LONG).show()
+                finish()
             }
         }
 
@@ -98,6 +107,12 @@ class CreatePresentationActivity : AppCompatActivity() {
         } catch (e: Exception) {
             return null
         }
+    }
+
+    private fun isFilePDF(myUri: Uri): Boolean {
+        val temporaryPresentationName = getFileName(myUri, contentResolver)
+        val index = temporaryPresentationName.lastIndexOf(".")
+        return temporaryPresentationName.substring(index) == PDF.type
     }
 
     override fun onBackPressed() {
