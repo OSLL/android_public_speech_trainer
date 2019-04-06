@@ -234,6 +234,7 @@
     <string name="test_time">00:30</string>
     <string name="pause">Пауза</string>
     <string name="continue_">Продолжить</string>
+    <string name="setNumber_function_information">Set the passed number into the NumberPicker</string>
 
     <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
     <string name="continue_training">Продолжить тренировку</string>
@@ -257,7 +258,7 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
-    <string name="pdfErrorMsg">File not in PDF format!</string>
+    <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
