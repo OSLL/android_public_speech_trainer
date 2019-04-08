@@ -199,9 +199,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.maximum_mark_for_training)}"
 
-        x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * 100).toInt()}")
-        y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * 100).toInt()}")
-        z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * 100).toInt()}")
+        x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)).toInt()}")
+        y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)).toInt()}")
+        z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)).toInt()}")
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
