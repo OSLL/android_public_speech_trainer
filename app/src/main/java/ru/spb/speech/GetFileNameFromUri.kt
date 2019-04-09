@@ -25,5 +25,5 @@ fun getFileName(uri: Uri, cr: ContentResolver): String {
             result = result.substring(cut + 1)
         }
     }
-    return result.substring(0, result.indexOf(".pdf"))
+    return result
 }
