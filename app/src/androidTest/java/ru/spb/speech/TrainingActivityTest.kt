@@ -60,13 +60,13 @@ class TrainingActivityTest {
 
     @Test
     fun timerPresEnded() {
-        val presentationName = activityTestRule.activity.getString(R.string.deb_pres_name)
+        val presentationName = activityTestRule.activity.getString(R.string.deb_pres_name) 
         helper.addDebPresentation(presentationName)
 
         device.findObject(UiSelector().text(presentationName)).clickAndWaitForNewWindow()
 
         for (i in 1..SLIDES_COUNT_IN_DEB_PRES) {
-            Thread.sleep(TRAINING_TIME_FULL / SLIDES_COUNT_IN_DEB_PRES)
+            Thread.sleep(TIME_PER_SLIDE)
             device.findObject(UiSelector().text(activityTestRule.activity.getString(R.string.next))).click()
         }
 
