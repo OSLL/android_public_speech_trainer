@@ -27,8 +27,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
-    <string name="pres_name_is_too_long">Слишком длинное имя презентации!</string>
-    <string name="no_internet_connection">Отсутствует соединение с интеренетом</string>
+    <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
     <string name="export_statistics">Экспорт статистики</string>
 
     <string name="the_next">Следующий</string>
@@ -55,6 +54,7 @@
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочня презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
+    <string name="pdf_format">.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
     <string name="pref_default_display_name">John Smith</string>
@@ -201,6 +201,9 @@
     <string name="time_limit_training">Ограничение времени на доклад: </string>
     <string name="num_of_words_spoken">Слов сказано: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
+    <string name="exercise_time_factor"> >>> Попадание в регламент: </string>
+    <string name="speech_speed_factor"> >>> Темп речи: </string>
+    <string name="time_on_slides_factor"> >>> Время на слайдах: </string>
 
     <string name="training_statistic_title">Статистика тренировок: </string>
     <string name="date_of_first_training">Дата первой тренировки: </string>
@@ -234,6 +237,7 @@
     <string name="test_time">00:30</string>
     <string name="pause">Пауза</string>
     <string name="continue_">Продолжить</string>
+    <string name="setNumber_function_information">Set the passed number into the NumberPicker</string>
 
     <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
     <string name="continue_training">Продолжить тренировку</string>
@@ -257,7 +261,7 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
-    <string name="pdfErrorMsg">File not in PDF format!</string>
+    <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
