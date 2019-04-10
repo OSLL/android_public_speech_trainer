@@ -21,7 +21,6 @@
     <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
-    <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
     <string name="title_activity_settings">Settings</string>
