@@ -24,7 +24,15 @@ import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.action.ViewActions.*
-
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.allText
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.firstSlideText
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.s1Speed
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.s2Speed
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.secondSlideText
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.slide1spentTime
+import ru.spb.speech.TrainingStatisticsActivityTest.TestConstants.slide2spentTime
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 @RunWith(AndroidJUnit4::class)
@@ -93,8 +101,11 @@ class TrainingStatisticsActivityTest {
         changeActivityIntent()
 
         val textStatistics = mControllerTestRule.activity.findViewById<TextView>(R.id.textView).text.toString()
-        assertTrue(textStatistics.contains("Средняя скорость: 89,00 слов/мин"))
-        assertTrue(textStatistics.contains("Время тренировки:  00:11"))
+
+        assertTrue(textStatistics.contains(tContext.getString(R.string.average_speed) +
+                " %.2f ${tContext.getString(R.string.speech_speed_units)}\n".format(listOf(s1Speed, s2Speed).average())))
+
+        assertTrue(textStatistics.contains("${tContext.getString(R.string.training_time)} ${formatTime(slide1spentTime + slide2spentTime)}"))
     }
 
 
@@ -108,9 +119,9 @@ class TrainingStatisticsActivityTest {
         val speedChart = mControllerTestRule.activity.findViewById<BarChart>(R.id.speed_bar_chart)
         assertEquals(speedChart.barData.entryCount, 2)
         assertEquals(speedChart.barData.dataSets[0].getEntryForIndex(0).x, 0f)
-        assertEquals(speedChart.barData.dataSets[0].getEntryForIndex(0).y, 108f)
+        assertEquals(speedChart.barData.dataSets[0].getEntryForIndex(0).y, s1Speed)
         assertEquals(speedChart.barData.dataSets[0].getEntryForIndex(1).x, 1f)
-        assertEquals(speedChart.barData.dataSets[0].getEntryForIndex(1).y, 70f)
+        assertEquals(speedChart.barData.dataSets[0].getEntryForIndex(1).y, s2Speed)
         assertEquals(speedChart.barData.dataSets[0].label, tContext.getString(R.string.words_count))
         assertEquals(speedChart.description.text, tContext.getString(R.string.slide_number))
     }
@@ -126,9 +137,9 @@ class TrainingStatisticsActivityTest {
         val slidesTime = mControllerTestRule.activity.findViewById<BarChart>(R.id.time_on_each_slide_chart)
         assertEquals(slidesTime.barData.entryCount, 2)
         assertEquals(slidesTime.barData.dataSets[0].getEntryForIndex(0).x, 0f)
-        assertEquals(slidesTime.barData.dataSets[0].getEntryForIndex(0).y, 5f)
+        assertEquals(slidesTime.barData.dataSets[0].getEntryForIndex(0).y, slide1spentTime.toFloat())
         assertEquals(slidesTime.barData.dataSets[0].getEntryForIndex(1).x, 1f)
-        assertEquals(slidesTime.barData.dataSets[0].getEntryForIndex(1).y, 6f)
+        assertEquals(slidesTime.barData.dataSets[0].getEntryForIndex(1).y, slide2spentTime.toFloat())
         assertEquals(slidesTime.barData.dataSets[0].label, tContext.getString(R.string.slideDurationInSeconds))
         assertEquals(slidesTime.description.text, tContext.getString(R.string.slide_number))
     }
@@ -164,23 +175,20 @@ class TrainingStatisticsActivityTest {
         val trainingHelper = TrainingDBHelper(tContext)
         val slidesHelper = TrainingSlideDBHelper(tContext)
 
-        val firstSlideText = "1 2 3 4 5 6 7 8 9"
-        val secondSlideText = "a b c d e f g"
-
         var training1 = TrainingData()
-        training1.allRecognizedText = "$firstSlideText $secondSlideText"
-        training1.timeStampInSec = 11
+        training1.allRecognizedText = allText
+        training1.timeStampInSec = slide1spentTime + slide2spentTime
 
         trainingHelper.addTrainingInDB(training1, presentationData)
         training1 = db.TrainingDataDao().getLastTraining()
 
         val slide1 = TrainingSlideData()
         slide1.knownWords = firstSlideText
-        slide1.spentTimeInSec = 5
+        slide1.spentTimeInSec = slide1spentTime
 
         val slide2 = TrainingSlideData()
         slide2.knownWords = secondSlideText
-        slide2.spentTimeInSec = 6
+        slide2.spentTimeInSec = slide2spentTime
 
         slidesHelper.addTrainingSlideInDB(slide1, training1)
         slidesHelper.addTrainingSlideInDB(slide2, training1)
@@ -190,7 +198,7 @@ class TrainingStatisticsActivityTest {
 
 
     /**
-     * Обновление активти с добавление интета храняещего иформацию о тестовой перезентации и
+     * Обновление активти с добавлением интета храняещего иформацию о тестовой перезентации и
      * тренировке
      */
     private fun changeActivityIntent() {
@@ -201,4 +209,18 @@ class TrainingStatisticsActivityTest {
 
         mControllerTestRule.launchActivity(intent)
     }
+
+    private object TestConstants {
+        const val slide1spentTime: Long = 5
+        const val slide2spentTime: Long = 6
+        const val firstSlideText = "1 2 3 4 5 6 7 8 9"
+        const val secondSlideText = "a b c d e f g"
+
+        const val allText = "$firstSlideText $secondSlideText"
+        val s1Speed = firstSlideText.split(" ").size.toFloat() / slide1spentTime.toFloat() * 60f
+        val s2Speed = secondSlideText.split(" ").size.toFloat() / slide2spentTime.toFloat() * 60f
+    }
+
+    private fun formatTime(t: Long)
+            = String.format(Locale.getDefault(), " %02d:%02d", TimeUnit.SECONDS.toMinutes(t), t % 60)
 }
