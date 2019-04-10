@@ -23,5 +23,10 @@
     <integer name="defaultPictureQuality">100</integer>
 
     <integer name="max_possible_pres_name_length">48</integer>
+
+    <!-- test constants -->
+    <integer name="training_time_in_milliseconds_to_trigger_an_additional_timer">65000</integer>
+    <integer name="time_in_milliseconds_until_you_can_switch_to_workout_statistics">5000</integer>
+    <integer name="one_minute_report_setting">1</integer>
 </resources>
 
