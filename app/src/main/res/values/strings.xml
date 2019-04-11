@@ -200,6 +200,7 @@
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
     <string name="time_limit_training">Ограничение времени на доклад: </string>
     <string name="num_of_words_spoken">Слов сказано: </string>
+    <string name="training_duration">Длительность тренировки: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
     <string name="exercise_time_factor"> >>> Попадание в регламент: </string>
     <string name="speech_speed_factor"> >>> Темп речи: </string>
