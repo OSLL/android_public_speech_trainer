@@ -75,12 +75,18 @@ class TrainingStatisticsActivityTest {
     fun checkViews() {
         changeActivityIntent()
 
+        onView(withId(R.id.earnOfTrain)).perform(scrollTo())
         onView(withId(R.id.earnOfTrain)).check(matches(isDisplayed()))
+
         onView(withId(R.id.x_exercise_time_factor)).check(matches(isDisplayed()))
         onView(withId(R.id.y_speech_speed_factor)).check(matches(isDisplayed()))
         onView(withId(R.id.z_time_on_slides_factor)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.speed_bar_chart)).perform(scrollTo())
         onView(withId(R.id.speed_bar_chart)).check(matches(isDisplayed()))
         onView(withId(R.id.time_on_each_slide_chart)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.pie_chart)).perform(scrollTo())
         onView(withId(R.id.pie_chart)).check(matches(isDisplayed()))
 
         onView(withId(R.id.returnTraining)).perform(scrollTo()).check(matches(isClickable())).check(matches(isDisplayed()))
