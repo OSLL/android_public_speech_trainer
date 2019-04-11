@@ -72,6 +72,7 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:minHeight="40dp"
+                    android:maxLength="@integer/max_possible_pres_name_length"
                     android:textAlignment="center" />
 
 

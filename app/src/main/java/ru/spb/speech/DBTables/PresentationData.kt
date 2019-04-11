@@ -16,4 +16,8 @@ data class PresentationData(@PrimaryKey(autoGenerate = true) var id: Int?,
 
 ){
     constructor():this(null,"","",null,0, "2019-1-1", false, 0, null, null)
+
+    fun isUnfinished() : Boolean {
+        return (this.name.isNullOrEmpty() || this.pageCount == 0 || imageBLOB == null)
+    }
 }

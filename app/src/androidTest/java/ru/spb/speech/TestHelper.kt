@@ -31,12 +31,17 @@ class TestHelper(private val activity: Activity) {
                 .perform(ViewActions.click())
     }
 
-    fun setNotifications(mode: Boolean) {
-        val sp = PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getTargetContext())
-        val spe = sp.edit()
-        val notificationsMode = activity.getString(R.string.notifications_key)
+    fun addDebugPresentation(presentationName: String = "", notifications: Boolean = false): String {
+        var name = presentationName
+        if (name == "")
+            name = activity.getString(R.string.deb_pres_name).split(".")[0]
 
-        spe.putBoolean(notificationsMode, mode)
-        spe.apply()
+        Espresso.onView(ViewMatchers.withId(R.id.addBtn)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.presentationName)).perform(ViewActions.clearText(), ViewActions.typeText(name), ViewActions.closeSoftKeyboard())
+        if (notifications == true)
+            Espresso.onView(ViewMatchers.withId(R.id.notifications)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.addPresentation)).perform(ViewActions.click())
+
+        return name
     }
 }
