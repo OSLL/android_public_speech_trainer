@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class TrainingActivityTest {
 
     val SLIDES_COUNT_IN_DEB_PRES = 26L
-    val TIME_PER_SLIDE = 4000L
+    val TIME_PER_SLIDE = 6000L
 
     val TRAINING_TIME_FULL = SLIDES_COUNT_IN_DEB_PRES * TIME_PER_SLIDE
     val TRAINING_TIME_EATLY_STOP = 15000L
@@ -39,8 +39,8 @@ class TrainingActivityTest {
     var activityTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     lateinit var helper: TestHelper
-
     lateinit var device: UiDevice
+    lateinit var presentationName: String
 
     @Before
     fun setUp() {
@@ -50,6 +50,10 @@ class TrainingActivityTest {
         helper = TestHelper(activityTestRule.activity).apply {
             setTrainingPresentationMod(true)
         }
+
+
+        presentationName = activityTestRule.activity.getString(R.string.deb_pres_name).split(".")[0]
+        helper.addDebPresentation(presentationName)
     }
 
     @After
@@ -60,10 +64,10 @@ class TrainingActivityTest {
 
     @Test
     fun timerPresEnded() {
-        val presentationName = activityTestRule.activity.getString(R.string.deb_pres_name) 
-        helper.addDebPresentation(presentationName)
-
-        device.findObject(UiSelector().text(presentationName)).clickAndWaitForNewWindow()
+        device.findObject(UiSelector().text(presentationName)).apply {
+            waitForExists(2000)
+            clickAndWaitForNewWindow()
+        }
 
         for (i in 1..SLIDES_COUNT_IN_DEB_PRES) {
             Thread.sleep(TIME_PER_SLIDE)
@@ -79,10 +83,10 @@ class TrainingActivityTest {
 
     @Test
     fun timerEarlyStop() {
-        val presentationName = activityTestRule.activity.getString(R.string.deb_pres_name)
-        helper.addDebPresentation(presentationName)
-
-        device.findObject(UiSelector().text(presentationName)).clickAndWaitForNewWindow()
+        device.findObject(UiSelector().text(presentationName)).apply {
+            waitForExists(2000)
+            clickAndWaitForNewWindow()
+        }
 
         Thread.sleep(TRAINING_TIME_EATLY_STOP / 2)
 
