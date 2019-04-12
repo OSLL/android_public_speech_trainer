@@ -30,6 +30,11 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
     fun enableDebugMode() {
         helper = TestHelper(activityTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
+
+        onView(withId(R.id.addBtn)).perform(click())
+        onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2035, 5, 12))
+        onView(withId(R.id.addPresentation)).perform(click())
+        sleep(2000)
     }
 
     @After
@@ -40,6 +45,7 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun datePickerExist() {
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.datePicker)).check(matches(isDisplayed()))
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
@@ -49,18 +55,18 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
     @Test
     fun setDateForPresentation() {
         // Изменение даты при добавлении
-        onView(withId(R.id.addBtn)).perform(click())
-        onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2035, 5, 12))
-        onView(withId(R.id.addPresentation)).perform(click())
-        sleep(2000)
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText("2035-5-12")).check(matches(isDisplayed()))
 
         // Изменение даты при редактировании
         onView(withText("2035-5-12")).perform(longClick())
         onView(withText("Редактировать")).perform(click())
+        sleep(2000)
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2036, 5, 12))
         onView(withId(R.id.addPresentation)).perform(click())
         sleep(2000)
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText("2036-5-12")).check(matches(isDisplayed()))
     }
 

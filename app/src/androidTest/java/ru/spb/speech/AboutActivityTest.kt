@@ -7,6 +7,7 @@ import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.action.ViewActions.scrollTo
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.intent.Intents.intended
@@ -28,13 +29,16 @@ class AboutActivityTest : BaseInstrumentedTest() {
     @Test
     fun checkButtons() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
-        onView(withText(about)).check(matches(isDisplayed()))
 
+        onView(withText(about)).perform(scrollTo())
+        onView(withText(about)).check(matches(isDisplayed()))
         onView(withText(about)).perform(click())
 
+        onView(withId(R.id.licenses_about)).perform(scrollTo())
         onView(withId(R.id.licenses_about)).check(matches(isDisplayed()))
         onView(withId(R.id.licenses_about)).check(matches(isFocusable()))
 
+        onView(withId(R.id.repository_link_about)).perform(scrollTo())
         onView(withId(R.id.repository_link_about)).check(matches(isDisplayed()))
         onView(withId(R.id.repository_link_about)).check(matches(isFocusable()))
     }
@@ -44,13 +48,16 @@ class AboutActivityTest : BaseInstrumentedTest() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(about)).perform(click())
 
+        onView(withId(R.id.imageView)).perform(scrollTo())
         onView(withId(R.id.imageView)).check(matches(isDisplayed()))
 
+        onView(withId(R.id.textView2)).perform(scrollTo())
         onView(withId(R.id.textView2)).check(matches(isDisplayed()))
         onView(withId(R.id.textView2)).check(matches(withText(app_name)))
 
         onView(withText(version)).check(matches(isDisplayed()))
 
+        onView(withId(R.id.version_about)).perform(scrollTo())
         onView(withId(R.id.version_about)).check(matches(isDisplayed()))
         onView(withId(R.id.version_about)).check(matches(withText(
                 mControllerTestRule.activity
@@ -59,18 +66,23 @@ class AboutActivityTest : BaseInstrumentedTest() {
                         ?.versionName
         )))
 
+        onView(withId(R.id.textView3)).perform(scrollTo())
         onView(withId(R.id.textView3)).check(matches(isDisplayed()))
         onView(withId(R.id.textView3)).check(matches(withText(about_text)))
 
+        onView(withId(R.id.textView4)).perform(scrollTo())
         onView(withId(R.id.textView4)).check(matches(isDisplayed()))
         onView(withId(R.id.textView4)).check(matches(withText(developers)))
 
+        onView(withId(R.id.textView5)).perform(scrollTo())
         onView(withId(R.id.textView5)).check(matches(isDisplayed()))
         onView(withId(R.id.textView5)).check(matches(withText(authors)))
 
+        onView(withId(R.id.licenses_about)).perform(scrollTo())
         onView(withId(R.id.licenses_about)).check(matches(isDisplayed()))
         onView(withId(R.id.licenses_about)).check(matches(withText(licenses)))
 
+        onView(withId(R.id.repository_link_about)).perform(scrollTo())
         onView(withId(R.id.repository_link_about)).check(matches(isDisplayed()))
         onView(withId(R.id.repository_link_about)).check(matches(withText(repositoryLink)))
     }
@@ -83,8 +95,10 @@ class AboutActivityTest : BaseInstrumentedTest() {
         intending(expectedIntent).respondWith(Instrumentation.ActivityResult(0, null))
 
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
-        onView(withText(about)).perform(click())
-        onView(withText(repositoryLink)).perform(click())
+
+        getInstrumentation().waitForIdleSync()
+        onView(withText(about)).perform(scrollTo(), click())
+        onView(withText(repositoryLink)).perform(scrollTo(), click())
 
         intended(expectedIntent)
         Intents.release()
