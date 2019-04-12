@@ -23,6 +23,7 @@ import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.espresso.matcher.ViewMatchers.*
 import org.junit.After
+import ru.spb.speech.DBTables.SpeechDataBase
 
 
 @RunWith(AndroidJUnit4::class)
@@ -30,6 +31,12 @@ class CorrectWordCountTest {
 
     private var mDevice: UiDevice? = null
     private var presName = ""
+    private val tContext = InstrumentationRegistry.getTargetContext()
+    private val db: SpeechDataBase = SpeechDataBase.getInstance(tContext)!!
+
+    init {
+        db.PresentationDataDao().deleteTestPresentations()
+    }
 
     @Before
     fun before() {
@@ -43,6 +50,7 @@ class CorrectWordCountTest {
 
         debSl.putBoolean(OnMode, true)
         debSl.putBoolean(OnAudio, true)
+        debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
 
         debSl.apply()
     }
@@ -81,7 +89,7 @@ class CorrectWordCountTest {
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.training_statistics))).click()
+        onView(withId(android.R.id.button1)).perform(click())
 
         val firstTrainWordCount = sharedPreferences.getInt(mIntentsTestRule.activity.getString(R.string.num_of_words_spoken), mIntentsTestRule.activity.resources.getInteger(R.integer.def_sharedPref_value))
 
@@ -91,7 +99,7 @@ class CorrectWordCountTest {
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.training_statistics))).click()
+        onView(withId(android.R.id.button1)).perform(click())
 
         val secondTrainWordCount = sharedPreferences.getInt(mIntentsTestRule.activity.getString(R.string.num_of_words_spoken), mIntentsTestRule.activity.resources.getInteger(R.integer.def_sharedPref_value))
         val allTrainWordCount = sharedPreferences.getInt(mIntentsTestRule.activity.getString(R.string.total_words_count), mIntentsTestRule.activity.resources.getInteger(R.integer.def_sharedPref_value))
