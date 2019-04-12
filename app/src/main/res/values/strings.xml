@@ -51,7 +51,7 @@
     <string name="deb_speech_audio_key">deb_speech_audio</string>
     <string name="speed_key">speed_key</string>
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
-    <string name="deb_pres">Отладочня презентация</string>
+    <string name="deb_pres">Отладочная презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
     <string name="pdf_format">.pdf</string>
 

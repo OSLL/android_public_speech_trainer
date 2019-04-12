@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
 
 @Ignore
 @RunWith(AndroidJUnit4::class)
-class SoundTrackValidationTest {
+class SoundTrackValidationTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
