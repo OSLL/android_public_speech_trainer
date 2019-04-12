@@ -17,12 +17,24 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.spb.speech.DBTables.SpeechDataBase
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class SoundTrackValidationTest : BaseInstrumentedTest() {
+
+    @Rule
+    @JvmField
+    var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
+
     private var mDevice: UiDevice? = null
     private var presName = ""
+    private val tContext = InstrumentationRegistry.getTargetContext()
+    private val db: SpeechDataBase = SpeechDataBase.getInstance(tContext)!!
+
+    init {
+        db.PresentationDataDao().deleteTestPresentations()
+    }
 
     @Before
     fun before() {
@@ -36,13 +48,10 @@ class SoundTrackValidationTest : BaseInstrumentedTest() {
 
         debSl.putBoolean(onMode, true)
         debSl.putBoolean(onAudio, true)
+        debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
 
         debSl.apply()
     }
-
-    @Rule
-    @JvmField
-    var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     @Test
     fun soundTrackValidationTest(){
@@ -53,7 +62,6 @@ class SoundTrackValidationTest : BaseInstrumentedTest() {
         onView(withId(R.id.addPresentation)).perform(click())
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.good))).click()
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.required_time_in_milliseconds_allotted_for_training).toLong())
 
