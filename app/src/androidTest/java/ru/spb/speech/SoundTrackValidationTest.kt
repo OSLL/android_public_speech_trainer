@@ -69,7 +69,7 @@ class SoundTrackValidationTest : BaseInstrumentedTest() {
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
 
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.training_statistics))).click()
+        onView(withId(android.R.id.button1)).perform(click())
 
         assertEquals(speed_statistics!!.toFloat(),mIntentsTestRule.activity.resources.getDimension(R.dimen.expected_number_of_recognized_words),mIntentsTestRule.activity.resources.getDimension(R.dimen.error_in_the_number_of_recognized_words))
 
