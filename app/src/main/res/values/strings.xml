@@ -261,6 +261,11 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
+    <string name="useStatistics">use_statistics</string>
+    <string name="good">Хорошо</string>
+    <string name="no_thnx">Нет, спасибо</string>
+    <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">
