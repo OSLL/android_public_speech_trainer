@@ -107,11 +107,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
 
+        val drawer = Thread(Runnable {
+            drawPict()
+        })
+        drawer.start()
+
         share1.setOnClickListener {
             try {
-                drawPict()
+                drawer.join()
                 url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
-
             }catch (e: Exception) {
                 Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
             }
@@ -198,6 +202,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
         earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.maximum_mark_for_training)}"
+
+        x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)).toInt()}")
+        y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)).toInt()}")
+        z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)).toInt()}")
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
@@ -339,6 +347,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "${getString(R.string.worked_out_a_slide)} ${trainingStatisticsData?.curSlides} / ${trainingStatisticsData?.slides}\n" +
                 "${getString(R.string.time_limit_training)} ${getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit)}\n" +
                 "${getString(R.string.num_of_words_spoken)} ${trainingStatisticsData?.curWordCount}\n" +
+                "${getString(R.string.training_duration)} ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
                 "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.maximum_mark_for_training)}\n\n" +
                 "\t${getString(R.string.training_statistic_title)}\n" +
                 "${getString(R.string.date_of_first_training)} ${trainingStatisticsData?.dateOfFirstTraining}\n" +

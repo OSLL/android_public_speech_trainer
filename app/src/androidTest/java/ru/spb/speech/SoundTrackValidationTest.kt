@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class SoundTrackValidationTest {
+class SoundTrackValidationTest : BaseInstrumentedTest() {
     private var mDevice: UiDevice? = null
     private var presName = ""
 
