@@ -21,7 +21,6 @@
     <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
-    <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
     <string name="title_activity_settings">Settings</string>
@@ -200,6 +199,7 @@
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
     <string name="time_limit_training">Ограничение времени на доклад: </string>
     <string name="num_of_words_spoken">Слов сказано: </string>
+    <string name="training_duration">Длительность тренировки: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
     <string name="exercise_time_factor"> >>> Попадание в регламент: </string>
     <string name="speech_speed_factor"> >>> Темп речи: </string>

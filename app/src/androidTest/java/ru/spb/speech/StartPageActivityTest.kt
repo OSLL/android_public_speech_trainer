@@ -30,7 +30,6 @@ class StartPageActivityTest : BaseInstrumentedTest() {
     @Test
     fun buttonsExist() {
         onView(withId(R.id.addBtn)).check(matches(isDisplayed()))
-        onView(withText(add_presentation_symbol)).check(matches(isDisplayed()))
     }
 
     @Test
