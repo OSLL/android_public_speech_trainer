@@ -53,6 +53,7 @@ class SoundTrackValidationTest : BaseInstrumentedTest() {
         onView(withId(R.id.addPresentation)).perform(click())
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
+        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.good))).click()
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.required_time_in_milliseconds_allotted_for_training).toLong())
 
