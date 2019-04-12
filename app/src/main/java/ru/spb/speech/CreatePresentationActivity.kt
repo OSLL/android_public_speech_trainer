@@ -25,7 +25,6 @@ const val ACTIVITY_CREATE_PRESENTATION_NAME = ".CreatePresentationActivity"
 class CreatePresentationActivity : AppCompatActivity() {
     private var speechDataBase: SpeechDataBase? = null
     private var changeFileFlag = false
-    private var isPDF = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -37,7 +36,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
             val myUri = Uri.parse(path)
             val intent = Intent(ACTION_OPEN_DOCUMENT)
-                    .setDataAndType(myUri, "*/*")
+                    .setDataAndType(myUri, "application/pdf")
                     .addCategory(CATEGORY_OPENABLE)
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_a_file)), resources.getInteger(R.integer.choose_file_requestCode))
         } else {
@@ -52,7 +51,6 @@ class CreatePresentationActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.choose_file_requestCode) && resultCode == RESULT_OK && data != null && data.data != null) {
             val selectedFile = data.data //The uri with the location of the file
-            isPDF = isFilePDF(selectedFile)
             if (changeFileFlag) {
                 val intent = Intent()
                 intent.putExtra(getString(R.string.NEW_PRESENTATION_URI), selectedFile.toString())
@@ -61,7 +59,7 @@ class CreatePresentationActivity : AppCompatActivity() {
                 overridePendingTransition(0, 0)
                 return
             }
-            if(isPDF) {
+            if(isFilePDF(selectedFile)) {
                 try {
                     val intent = Intent(this, EditPresentationActivity::class.java)
                     val dbPresentationId = checkForPresentationInDB(selectedFile.toString())
@@ -89,6 +87,7 @@ class CreatePresentationActivity : AppCompatActivity() {
             var currentPresID: Int? = newPresentation?.id
 
             if (newPresentation == null) {
+                contentResolver.takePersistableUriPermission(Uri.parse(stringUri), Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 newPresentation = PresentationData()
                 newPresentation.stringUri = stringUri
 
