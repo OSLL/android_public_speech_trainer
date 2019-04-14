@@ -21,7 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class StartPageActivityTest {
+class StartPageActivityTest : BaseInstrumentedTest() {
 
     @Rule
     @JvmField
@@ -30,7 +30,6 @@ class StartPageActivityTest {
     @Test
     fun buttonsExist() {
         onView(withId(R.id.addBtn)).check(matches(isDisplayed()))
-        onView(withText(add_presentation_symbol)).check(matches(isDisplayed()))
     }
 
     @Test

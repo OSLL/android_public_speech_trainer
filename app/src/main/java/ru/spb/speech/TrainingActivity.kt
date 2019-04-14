@@ -17,16 +17,18 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
-import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.appSupport.ProgressHelper
+import kotlinx.android.synthetic.main.activity_training.*
+import kotlinx.coroutines.*
 import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
 import ru.spb.speech.DBTables.TrainingData
 import ru.spb.speech.DBTables.TrainingSlideData
-import kotlinx.android.synthetic.main.activity_training.*
+import ru.spb.speech.DBTables.helpers.TrainingDBHelper
+import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.appSupport.PdfToBitmap
+import ru.spb.speech.appSupport.ProgressHelper
+import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.fixedRateTimer
@@ -82,6 +84,10 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var progressHelper: ProgressHelper
 
+    private var firebaseHelper: FirebaseHelper? = null
+
+    private lateinit var sharedPreferences: SharedPreferences
+
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +112,7 @@ class TrainingActivity : AppCompatActivity() {
 
         pdfReader = PdfToBitmap(presentationData!!, this)
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
         addPermission()
@@ -115,6 +121,8 @@ class TrainingActivity : AppCompatActivity() {
         mIntent = Intent(this@TrainingActivity,SpeechRecognitionService::class.java)
 
         startRecognizingService()
+
+        initFireBaseHelper()
 
         if(!isAudio!!) {
             muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
@@ -166,7 +174,7 @@ class TrainingActivity : AppCompatActivity() {
                     )
 
                     tsd.spentTimeInSec = timeOfSlide
-                  
+
                     tsd.knownWords = curText
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
@@ -385,6 +393,8 @@ class TrainingActivity : AppCompatActivity() {
             val trainingDBHelper = TrainingDBHelper(this)
             trainingDBHelper.addTrainingInDB(trainingData!!,presentationData!!)
 
+            uploadLastTrainingToFireBase()
+
             val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
             if (list != null) {
                 for (i in 0..(list.size - 1)) {
@@ -568,6 +578,33 @@ class TrainingActivity : AppCompatActivity() {
             "%02d min: %02d sec",
             minutes, seconds
         )
+    }
+
+    private fun uploadLastTrainingToFireBase() {
+        if (firebaseHelper == null) return
+
+        GlobalScope.launch {
+            async {
+                firebaseHelper!!.uploadLastTraining(presentationData!!)
+            }
+        }
+    }
+
+    private fun initFireBaseHelper() {
+        if (sharedPreferences.getBoolean(getString(R.string.useStatistics), false)) {
+            GlobalScope.launch {
+                firebaseHelper = withContext(Dispatchers.IO) { FirebaseHelper(this@TrainingActivity) }
+
+                if (sharedPreferences.getBoolean(getString(R.string.firstSyncFlag), true)) {
+                    sharedPreferences.edit().putBoolean(getString(R.string.firstSyncFlag), false).apply()
+
+                    async(Dispatchers.IO) {
+                        firebaseHelper!!.registerNewTester()
+                        firebaseHelper!!.synchronizeAllData()
+                    }
+                }
+            }
+        }
     }
 
     override fun onPause() {

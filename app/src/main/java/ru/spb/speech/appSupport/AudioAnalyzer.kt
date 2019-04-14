@@ -1,4 +1,4 @@
-package ru.spb.speech
+package ru.spb.speech.appSupport
 
 import android.content.Intent
 import android.media.AudioFormat
@@ -8,6 +8,7 @@ import android.os.Environment
 import android.os.Process
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import ru.spb.speech.*
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -49,7 +50,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
     init {
         var bufferSize = AudioRecord.getMinBufferSize(
-            SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
+                SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
             bufferSize = SAMPLING_RATE * 2
         }
@@ -182,7 +183,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                         .filter { it -> it > averageSilenceLength }.size
 
                     slides.add(SlideInfo(slideNumber++, silencePercentageOnSlide,
-                        averageSilenceLength, longPausesAmount))
+                            averageSilenceLength, longPausesAmount))
 
                     totalFragmentsOnSlide = 0
                     silentFragmentsOnSlide = 0
