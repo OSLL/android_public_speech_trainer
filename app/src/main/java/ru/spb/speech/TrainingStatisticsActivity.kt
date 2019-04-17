@@ -108,11 +108,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
 
+        val drawer = Thread(Runnable {
+            drawPict()
+        })
+        drawer.start()
+
         share1.setOnClickListener {
             try {
-                drawPict()
+                drawer.join()
                 url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
-
             }catch (e: Exception) {
                 Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
             }

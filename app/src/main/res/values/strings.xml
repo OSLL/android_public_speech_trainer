@@ -52,7 +52,7 @@
     <string name="notifications_key">notifications_new_message</string>
     <string name="speed_key">speed_key</string>
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
-    <string name="deb_pres">Отладочня презентация</string>
+    <string name="deb_pres">Отладочная презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
     <string name="pdf_format">.pdf</string>
 
@@ -264,6 +264,11 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
+    <string name="useStatistics">use_statistics</string>
+    <string name="good">Хорошо</string>
+    <string name="no_thnx">Нет, спасибо</string>
+    <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">

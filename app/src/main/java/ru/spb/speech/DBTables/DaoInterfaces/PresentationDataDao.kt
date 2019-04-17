@@ -35,4 +35,7 @@ interface PresentationDataDao {
 
     @Query("SELECT * FROM presentationData WHERE notifications = 1")
     fun getPresentationsWithEnabledNotifications(): List<PresentationData>
+
+    @Query("DELETE FROM presentationdata WHERE debugPresentationFlag = 1")
+    fun deleteTestPresentations()
 }

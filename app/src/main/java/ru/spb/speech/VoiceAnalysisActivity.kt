@@ -23,6 +23,8 @@ import android.text.style.StyleSpan
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
+import ru.spb.speech.appSupport.AudioAnalyzer
+import ru.spb.speech.appSupport.SlideInfo
 import java.util.concurrent.TimeUnit
 
 const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"

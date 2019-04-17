@@ -19,16 +19,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class TestDatabase {
+class TestDatabase : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mControllerTestRule = ControlledActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
-    init {
-        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
-        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
     lateinit var helper: TestHelper
 
     @Before
