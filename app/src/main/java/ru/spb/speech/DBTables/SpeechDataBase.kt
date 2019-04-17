@@ -10,7 +10,7 @@ import ru.spb.speech.DBTables.DaoInterfaces.TrainingSlideDataDao
 import ru.spb.speech.R
 
 
-@Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 1)
+@Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 2)
 abstract class SpeechDataBase : RoomDatabase() {
 
     abstract fun PresentationDataDao(): PresentationDataDao
@@ -25,6 +25,9 @@ abstract class SpeechDataBase : RoomDatabase() {
                 synchronized(SpeechDataBase::class) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             SpeechDataBase::class.java, context.getString(R.string.dbName))
+                            .addMigrations(
+                                    MIGRATION_1_2
+                            )
                             .allowMainThreadQueries()
                             .build()
                 }
