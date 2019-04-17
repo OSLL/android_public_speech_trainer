@@ -19,6 +19,7 @@ import android.util.Log
 import android.view.MenuItem
 import ru.spb.speech.notifications.AlarmBootReceiver
 import ru.spb.speech.notifications.AlarmReceiver
+import ru.spb.speech.notifications.NotificationsHelper
 import java.util.*
 
 /**
@@ -128,7 +129,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
+            //bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -144,43 +145,47 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             val key = preference?.key
             val switchNotifications = findPreference("notifications_new_message") as SwitchPreference
             if (key == "notifications_new_message") {
-                val alarmIntent = Intent(activity.application.applicationContext, AlarmReceiver::class.java).let { intent ->
-                    PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                }
-                val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                val receiver = ComponentName(activity, AlarmBootReceiver::class.java)
-                val packageManager = activity.packageManager
-
-                val notificationTime = Calendar.getInstance().apply {
-                    timeInMillis = System.currentTimeMillis()
-                    set(Calendar.HOUR_OF_DAY, 20)
-                    set(Calendar.MINUTE, 30)
-                }
-                if (switchNotifications.isChecked) {
-                    packageManager.setComponentEnabledSetting(
-                            receiver,
-                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                            PackageManager.DONT_KILL_APP
-                    )
-
-                    alarmManager.setInexactRepeating(
-                            AlarmManager.RTC_WAKEUP,
-                            notificationTime.timeInMillis,
-                            AlarmManager.INTERVAL_DAY,
-                            alarmIntent
-                    )
-                }
-                else {
-                    packageManager.setComponentEnabledSetting(
-                            receiver,
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                            PackageManager.DONT_KILL_APP
-                    )
-                    alarmManager.cancel(alarmIntent)
-                }
+                bindNotifications(switchNotifications.isChecked)
             }
             return true
+        }
+
+        private fun bindNotifications(isNotificationsEnabled: Boolean) {
+            val alarmIntent = Intent(activity.application.applicationContext, AlarmReceiver::class.java).let { intent ->
+                PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+            val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val receiver = ComponentName(activity, AlarmBootReceiver::class.java)
+            val packageManager = activity.packageManager
+
+            val notificationTime = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, NotificationsHelper.HOUR_FOR_NOTIFICATION)
+                set(Calendar.MINUTE, NotificationsHelper.MINUTES_FOR_NOTIFICATION)
+            }
+            if (isNotificationsEnabled) {
+                packageManager.setComponentEnabledSetting(
+                        receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP
+                )
+
+                alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        notificationTime.timeInMillis,
+                        AlarmManager.INTERVAL_DAY,
+                        alarmIntent
+                )
+            }
+            else {
+                packageManager.setComponentEnabledSetting(
+                        receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP
+                )
+                alarmManager.cancel(alarmIntent)
+            }
         }
     }
 

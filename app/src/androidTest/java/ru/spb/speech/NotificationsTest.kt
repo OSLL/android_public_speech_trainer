@@ -22,7 +22,7 @@ import ru.spb.speech.notifications.NotificationsHelper
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class NotificationsTest {
+class NotificationsTest: BaseInstrumentedTest() {
     val TIMEOUT = 2500L
 
     @Rule
@@ -32,12 +32,6 @@ class NotificationsTest {
     lateinit var notificationsHelper: NotificationsHelper
     lateinit var testHelper: TestHelper
     lateinit var device: UiDevice
-
-    init {
-        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
-        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
 
     @Before
     fun before() {
@@ -90,7 +84,7 @@ class NotificationsTest {
         assertEquals(title.text, expectedTitle)
         assertEquals(text.text, expectedText)
 
-        device.findObject(UiSelector().text(expectedApplicationName)).swipeRight(10)
+        closeNotification(expectedApplicationName)
     }
 
     @Test
@@ -105,5 +99,12 @@ class NotificationsTest {
         device.wait(Until.findObject(By.textStartsWith(expectedApplicationName)), TIMEOUT).click()
 
         onView(withText(activityTestRule.activity.getString(R.string.activity_start_page_name))).check(matches(isDisplayed()))
+
+        closeNotification(expectedApplicationName)
+    }
+
+    private fun closeNotification(expectedApplicationName: String) {
+        device.openNotification()
+        device.findObject(UiSelector().text(expectedApplicationName)).swipeRight(10)
     }
 }

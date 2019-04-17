@@ -9,6 +9,8 @@ import java.util.*
 
 class AlarmBootReceiver: BroadcastReceiver() {
 
+
+
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == "android.intent.action.BOOT_COMPLETED" ||
                 intent?.action == "android.intent.action.QUICKBOOT_POWERON" ||
@@ -20,8 +22,8 @@ class AlarmBootReceiver: BroadcastReceiver() {
     private fun initAlarm(context: Context?) {
         val notificationTime = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 20)
-            set(Calendar.MINUTE, 30)
+            set(Calendar.HOUR_OF_DAY, NotificationsHelper.HOUR_FOR_NOTIFICATION)
+            set(Calendar.MINUTE, NotificationsHelper.MINUTES_FOR_NOTIFICATION)
         }
 
 
