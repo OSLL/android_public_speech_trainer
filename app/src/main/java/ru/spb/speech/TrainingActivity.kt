@@ -225,7 +225,7 @@ class TrainingActivity : AppCompatActivity() {
                     if(isAudio!!) {
                         mPlayer?.stop()
                     }
-                    stopRecognizingService(true)
+                    stopRecognizingService(true, saveTrainingInDB = true)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
                     val builder = AlertDialog.Builder(this@TrainingActivity)
@@ -286,7 +286,7 @@ class TrainingActivity : AppCompatActivity() {
             Toast.makeText(this, "Pause", Toast.LENGTH_LONG).show()
 
             Handler().postDelayed({
-                stopRecognizingService(true)
+                stopRecognizingService(true, saveTrainingInDB = false)
                 audioManager!!.isMicrophoneMute = false
 
                 pause_button_training_activity.isEnabled = true
@@ -353,7 +353,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     @SuppressLint("LongLogTag")
-    fun stopRecognizingService(waitForRecognitionComplete: Boolean){
+    fun stopRecognizingService(waitForRecognitionComplete: Boolean, saveTrainingInDB: Boolean){
         if (!waitForRecognitionComplete) {
             Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stopRecognizingService called, without waiting for recognition to finish")
             try {
@@ -390,18 +390,10 @@ class TrainingActivity : AppCompatActivity() {
             trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
 
-            val trainingDBHelper = TrainingDBHelper(this)
-            trainingDBHelper.addTrainingInDB(trainingData!!,presentationData!!)
-
-            uploadLastTrainingToFireBase()
-
-            val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
-            if (list != null) {
-                for (i in 0..(list.size - 1)) {
-                    Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act, T $i : ${list[i]}")
-                }
-            } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act: list == null")
+            if (saveTrainingInDB) {
+                val trainingDBHelper = TrainingDBHelper(this)
+                trainingDBHelper.addTrainingInDB(trainingData!!, presentationData!!)
+                uploadLastTrainingToFireBase()
             }
 
             audioManager!!.isMicrophoneMute = false
@@ -621,7 +613,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        stopRecognizingService(false)
+        stopRecognizingService(false, saveTrainingInDB = true)
         unMuteSound()
         pdfReader?.finish()
         super.onDestroy()
