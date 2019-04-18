@@ -18,7 +18,7 @@ import ru.spb.speech.DBTables.helpers.TrainingDBHelper
 import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
-class TrainingActivityTest {
+class TrainingActivityTest: BaseInstrumentedTest() {
 
     val SLIDES_COUNT_IN_DEB_PRES = 26L
     val TIME_PER_SLIDE = 6000L
@@ -26,13 +26,7 @@ class TrainingActivityTest {
     val TRAINING_TIME_FULL = SLIDES_COUNT_IN_DEB_PRES * TIME_PER_SLIDE
     val TRAINING_TIME_EATLY_STOP = 15000L
 
-    val DELTA = 5000L
-
-    init {
-        grantPermissions(android.Manifest.permission.RECORD_AUDIO)
-        grantPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        grantPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
+    val DELTA = 0.1
 
     @Rule
     @JvmField
@@ -78,7 +72,7 @@ class TrainingActivityTest {
         device.pressBack()
         device.pressBack()
 
-        assertEquals(getTrainingTimeInMillis()!!.toFloat(), TRAINING_TIME_FULL.toFloat(), DELTA.toFloat())
+        assertEquals(getTrainingTimeInMillis()!!.toFloat(), TRAINING_TIME_FULL.toFloat(), (TRAINING_TIME_FULL * DELTA).toFloat())
     }
 
     @Test
@@ -98,7 +92,7 @@ class TrainingActivityTest {
         device.pressBack()
         device.pressBack()
 
-        assertEquals(getTrainingTimeInMillis()!!.toFloat(), TRAINING_TIME_EATLY_STOP.toFloat(), DELTA.toFloat())
+        assertEquals(getTrainingTimeInMillis()!!.toFloat(), TRAINING_TIME_EATLY_STOP.toFloat(), (TRAINING_TIME_EATLY_STOP * DELTA).toFloat())
     }
 
     private fun getTrainingTimeInMillis(): Long? {
