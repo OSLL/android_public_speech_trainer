@@ -16,7 +16,7 @@ import android.support.test.espresso.ViewAssertion
 
 
 @RunWith(AndroidJUnit4::class)
-class ScrollViewTest {
+class ScrollViewTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mIntentsTestRule = IntentsTestRule<TrainingStatisticsActivity>(TrainingStatisticsActivity::class.java)

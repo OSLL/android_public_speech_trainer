@@ -39,18 +39,6 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
 
-        supportActionBar?.title = getString(R.string.activity_start_page_name)
-
-        progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
-        presentationDataDao = SpeechDataBase.getInstance(this)!!.PresentationDataDao()
-
-        adapter = GroupAdapter()
-        recyclerview_startpage.adapter = adapter
-        presentationAdapterHelper = PresentationAdapterHelper(recyclerview_startpage, adapter, this)
-        presentationAdapterHelper.setUpdateAdapterListener(this)
-        presentationAdapterHelper.fillAdapter()
-        currentPresentationsCount = presentationDataDao.getAll().size
-
         if (!checkPermissions())
             checkPermissions()
 
@@ -67,6 +55,23 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             val intent = Intent(this, CreatePresentationActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        supportActionBar?.title = getString(R.string.activity_start_page_name)
+
+        progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
+        presentationDataDao = SpeechDataBase.getInstance(this)!!.PresentationDataDao()
+
+        adapter = GroupAdapter()
+        recyclerview_startpage.adapter = adapter
+        presentationAdapterHelper = PresentationAdapterHelper(recyclerview_startpage, adapter, this)
+        presentationAdapterHelper.setUpdateAdapterListener(this)
+        presentationAdapterHelper.fillAdapter()
+        currentPresentationsCount = presentationDataDao.getAll().size
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -114,8 +119,8 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         return true
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         val count = presentationDataDao.getAll().size
         if (count > currentPresentationsCount) {

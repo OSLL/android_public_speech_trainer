@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.appSupport.getFileName
 import ru.spb.speech.constants.AllowableExtension.PDF
 import java.io.FileNotFoundException
 

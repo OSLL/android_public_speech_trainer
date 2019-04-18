@@ -21,7 +21,6 @@
     <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
-    <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
     <string name="title_activity_settings">Settings</string>
@@ -52,7 +51,7 @@
     <string name="deb_speech_audio_key">deb_speech_audio</string>
     <string name="speed_key">speed_key</string>
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
-    <string name="deb_pres">Отладочня презентация</string>
+    <string name="deb_pres">Отладочная презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
     <string name="pdf_format">.pdf</string>
 
@@ -200,6 +199,7 @@
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
     <string name="time_limit_training">Ограничение времени на доклад: </string>
     <string name="num_of_words_spoken">Слов сказано: </string>
+    <string name="training_duration">Длительность тренировки: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
     <string name="exercise_time_factor"> >>> Попадание в регламент: </string>
     <string name="speech_speed_factor"> >>> Темп речи: </string>
@@ -261,6 +261,11 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
+    <string name="useStatistics">use_statistics</string>
+    <string name="good">Хорошо</string>
+    <string name="no_thnx">Нет, спасибо</string>
+    <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">
