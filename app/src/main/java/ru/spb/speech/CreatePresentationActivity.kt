@@ -87,12 +87,13 @@ class CreatePresentationActivity : AppCompatActivity() {
             var currentPresID: Int? = newPresentation?.id
 
             if (newPresentation == null) {
-                contentResolver.takePersistableUriPermission(Uri.parse(stringUri), Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 newPresentation = PresentationData()
                 newPresentation.stringUri = stringUri
 
                 if (stringUri == getString(R.string.deb_pres_name))
                     newPresentation.debugFlag = 1
+                else
+                    contentResolver.takePersistableUriPermission(Uri.parse(stringUri), Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
                 speechDataBase?.PresentationDataDao()?.insert(newPresentation)
                 currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
