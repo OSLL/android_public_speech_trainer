@@ -45,8 +45,4 @@
     <dimen name="top_indent_multiplier_40">40px</dimen>
     <dimen name="top_indent_multiplier_200">200px</dimen>
 
-    <!-- test constants -->
-    <dimen name="expected_number_of_recognized_words">27px</dimen>
-    <dimen name="error_in_the_number_of_recognized_words">10px</dimen>
-
 </resources>
