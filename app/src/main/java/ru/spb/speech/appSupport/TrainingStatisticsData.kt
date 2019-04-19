@@ -91,13 +91,13 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             }
         }
     //Оценка за тренировку:
-    val trainingGrade: Int
+    val trainingGrade: Float
         get() {
             return if(trainData != null){
-                calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainData), presData?.timeLimit!!.toFloat()).toInt()
+                calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainData), presData?.timeLimit!!.toFloat())
             } else {
                 Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_cur_training_data))
-                -1
+                -1f
             }
         }
 
