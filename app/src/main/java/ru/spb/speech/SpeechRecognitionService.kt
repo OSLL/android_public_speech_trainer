@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.os.*
+import android.preference.PreferenceManager
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -22,6 +23,8 @@ public class SpeechRecognitionService: Service() {
     @Volatile protected var mIsCountDownOn: Boolean = false
     private var mIsStreamSolo: Boolean = false
 
+    private var isAudioMode = false
+
     internal val MSG_RECOGNIZER_START_LISTENING = 1
     internal val MSG_RECOGNIZER_CANCEL = 2
 
@@ -32,6 +35,10 @@ public class SpeechRecognitionService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        isAudioMode = prefs.getBoolean(getString(R.string.deb_speech_audio_key), false)
+
         Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING, "SERVICE: onCreate called")
         mAudioManager = (getSystemService(Context.AUDIO_SERVICE) as AudioManager?)!!
 
@@ -91,7 +98,7 @@ public class SpeechRecognitionService: Service() {
     protected var mNoSpeechCountDown: CountDownTimer = object : CountDownTimer(5000, 500) {
 
         override fun onTick(millisUntilFinished: Long) {
-            if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0)
+            if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0 && !isAudioMode)
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
         }
 
