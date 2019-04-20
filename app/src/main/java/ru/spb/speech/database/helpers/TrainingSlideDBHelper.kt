@@ -5,12 +5,7 @@ import ru.spb.speech.DBTables.SpeechDataBase
 import ru.spb.speech.DBTables.TrainingData
 import ru.spb.speech.DBTables.TrainingSlideData
 
-class TrainingSlideDBHelper {
-    private var context: Context
-
-    constructor(context: Context) {
-        this.context = context
-    }
+class TrainingSlideDBHelper(private val context: Context) {
 
     fun addTrainingSlideInDB(tsd: TrainingSlideData, trainingData: TrainingData) {
         val trainingDataDao = SpeechDataBase.getInstance(context)?.TrainingDataDao()
@@ -20,7 +15,7 @@ class TrainingSlideDBHelper {
         val trainingSlideData = trainingSlideDataDao?.getLastSlide()
 
         if (trainingData.trainingSlideId != null) {
-            var trainingSlideDataPtr = trainingSlideDataDao?.getSlideWithId(trainingData?.trainingSlideId!!)
+            var trainingSlideDataPtr = trainingSlideDataDao?.getSlideWithId(trainingData.trainingSlideId!!)
             while (trainingSlideDataPtr?.nextSlideId != null) trainingSlideDataPtr = trainingSlideDataDao?.getSlideWithId(trainingSlideDataPtr.nextSlideId!!)
 
             trainingSlideDataPtr?.nextSlideId = trainingSlideData?.id
@@ -42,7 +37,7 @@ class TrainingSlideDBHelper {
         list.add(trainingSlideDataPtr!!)
 
         while (trainingSlideDataPtr?.nextSlideId != null) {
-            trainingSlideDataPtr = trainingSlideDataDao?.getSlideWithId(trainingSlideDataPtr?.nextSlideId!!)
+            trainingSlideDataPtr = trainingSlideDataDao?.getSlideWithId(trainingSlideDataPtr.nextSlideId!!)
             list.add(trainingSlideDataPtr!!)
         }
         return list
