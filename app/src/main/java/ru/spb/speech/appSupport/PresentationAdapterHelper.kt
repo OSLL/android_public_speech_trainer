@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import ru.spb.speech.database.helpers.PresentationDBHelper
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -82,7 +83,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
                     Log.d(APST_TAG, "no clicked position")
                 }
 
-                presentationDataDao.deletePresentationWithId(row.presentationId!!)
+                PresentationDBHelper(context).removePresentation(row.presentationId!!)
                 updateListener?.onAdapterUpdate()
             }
 

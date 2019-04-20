@@ -14,9 +14,13 @@ class PresentationDBHelper {
     private val pdfToBitmap: PdfToBitmap
     private val defaultPictureSize: Int
     private val defaultPictureQuality: Int
+    private val db: SpeechDataBase
+    private val ctx: Context
 
     constructor(ctx: Context) {
-        presentationDataDao = SpeechDataBase.getInstance(ctx)!!.PresentationDataDao()
+        this.ctx = ctx
+        db = SpeechDataBase.getInstance(ctx)!!
+        presentationDataDao = db.PresentationDataDao()
         pdfToBitmap = PdfToBitmap(ctx)
         defaultPictureSize = ctx.resources.getInteger(R.integer.defaultPictureSize)
         defaultPictureQuality = ctx.resources.getInteger(R.integer.defaultPictureQuality)
@@ -29,6 +33,20 @@ class PresentationDBHelper {
         presentation.imageBLOB = stream.toByteArray()
         presentationDataDao.updatePresentation(presentation)
         stream.close()
+    }
+
+    fun removePresentation(id: Int) {
+        val slidesHelper = TrainingSlideDBHelper(ctx)
+        val pd = presentationDataDao.getPresentationWithId(id) ?: return
+        val trainings = TrainingDBHelper(ctx).getAllTrainingsForPresentation(pd)
+        db.PresentationDataDao().deletePresentationWithId(pd.id!!)
+        if (trainings == null) return
+
+        for (t in trainings) {
+            for (s in slidesHelper.getAllSlidesForTraining(t) ?: continue)
+                db.TrainingSlideDataDao().deleteSlideWithId(s.id!!)
+            db.TrainingDataDao().deleteTrainingWithId(t.id!!)
+        }
     }
 
     suspend fun saveDefaultPresentationImage(presentationId: Int) {
