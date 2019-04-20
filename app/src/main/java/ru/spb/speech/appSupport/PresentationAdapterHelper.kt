@@ -18,8 +18,8 @@ import ru.spb.speech.EditPresentationActivity
 import ru.spb.speech.R
 import ru.spb.speech.TrainingActivity
 import ru.spb.speech.views.PresentationStartpageItemRow
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.APST_TAG
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item

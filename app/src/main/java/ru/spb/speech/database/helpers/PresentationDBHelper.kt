@@ -1,12 +1,12 @@
-package ru.spb.speech.DBTables.helpers
+package ru.spb.speech.database.helpers
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.R
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.SpeechDataBase
 import java.io.ByteArrayOutputStream
 
 class PresentationDBHelper {

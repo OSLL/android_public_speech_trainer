@@ -10,8 +10,8 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.appSupport.getFileName
 import ru.spb.speech.constants.AllowableExtension.PDF
 import java.io.FileNotFoundException

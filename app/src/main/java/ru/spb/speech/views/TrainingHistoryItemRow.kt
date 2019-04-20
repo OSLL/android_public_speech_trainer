@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.DateUtils
 import android.view.View
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
-import ru.spb.speech.DBTables.TrainingData
+import ru.spb.speech.database.TrainingData
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.training_history_row.view.*
