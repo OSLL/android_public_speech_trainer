@@ -12,7 +12,6 @@ import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
 import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,11 +19,11 @@ import org.junit.runner.RunWith
 import ru.spb.speech.DBTables.SpeechDataBase
 import java.lang.Thread.sleep
 
-const val expected_number_of_recognized_words = 27f
-const val error_in_the_number_of_recognized_words = 10f
-
 @RunWith(AndroidJUnit4::class)
 class SoundTrackValidationTest : BaseInstrumentedTest() {
+
+    private val expectedNumberOfRecognizedWords = 27f
+    private val errorInTheNumberOfRecognizedWords = 10f
 
     @Rule
     @JvmField
@@ -74,7 +73,7 @@ class SoundTrackValidationTest : BaseInstrumentedTest() {
 
         onView(withId(android.R.id.button1)).perform(click())
 
-        assertEquals(speed_statistics!!.toFloat(), expected_number_of_recognized_words, error_in_the_number_of_recognized_words)
+        assertEquals(speed_statistics!!.toFloat(), expectedNumberOfRecognizedWords, errorInTheNumberOfRecognizedWords)
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_wait_after_test).toLong())
 
