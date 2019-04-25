@@ -90,9 +90,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             }
             R.id.action_voice_analysis -> {
                 val intent = Intent(this, VoiceAnalysisActivity::class.java)
-                startActivity(intent
-
-
+                startActivity(intent)
                 return true
             }
             R.id.action_video_instruction -> {
