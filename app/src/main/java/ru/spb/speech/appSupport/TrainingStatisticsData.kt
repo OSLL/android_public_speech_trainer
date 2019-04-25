@@ -1,4 +1,4 @@
-package ru.spb.speech
+package ru.spb.speech.appSupport
 
 import android.content.Context
 import android.text.format.DateUtils
@@ -9,6 +9,10 @@ import ru.spb.speech.DBTables.TrainingSlideData
 import ru.spb.speech.DBTables.helpers.TrainingDBHelper
 import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import kotlin.math.sqrt
+import ru.spb.speech.ACTIVITY_TRAINING_STATISTIC_NAME
+import ru.spb.speech.APST_TAG
+import ru.spb.speech.R
+
 
 class TrainingStatisticsData (myContext: Context, presentationData: PresentationData?, trainingData: TrainingData?) {
 
@@ -100,6 +104,26 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 -1f
             }
         }
+
+    val countOfParasites: Int
+        get() {
+            return if(trainData != null) {
+                val verbalGarbage = context.resources.getStringArray(R.array.verbalGarbage)
+                var finalCount = 0
+                val recText = trainData.allRecognizedText.toLowerCase()
+                for (word in verbalGarbage) {
+                    finalCount += countWords(recText, word)
+                }
+                finalCount
+            } else {
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_cur_training_data))
+                -1
+            }
+        }
+
+    private fun countWords(where: String, what: String): Int {
+        return (where.length - where.replace(what, "").length) / what.length
+    }
 
     //--------------------Статистика тренировок:---------------------//
 
@@ -252,7 +276,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     }
 
     data class TimeOfTraining(val maxTime: Long, val minTime: Long, val averageExtraTime: Long, val averageTime: Long)
-    private fun calcMinAndMaxTime(): TimeOfTraining{
+    private fun calcMinAndMaxTime(): TimeOfTraining {
         if (trainingList != null && presData != null && trainingCount != null){
             var maxTime = 0L
             var minTime = 0L

@@ -10,7 +10,6 @@ import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -33,14 +32,12 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import ru.spb.speech.DBTables.TrainingSlideData
+import ru.spb.speech.appSupport.TrainingStatisticsData
 import java.io.*
-import java.lang.Math.*
 import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.math.sqrt
 
 var url = ""
 var speed_statistics: Int? = null
@@ -212,7 +209,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
+                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}\n" +
+                getString(R.string.word_share_of_parasites) + " ${((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent)
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
