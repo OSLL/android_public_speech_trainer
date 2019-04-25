@@ -144,6 +144,7 @@
     </string>
     <string name="settings">Настройки</string>
     <string name="voice_analysis">Анализ речи</string>
+    <string name="video_instruction">Видеоинструкция</string>
     <string name="countdown_volume_levels">Уровни громкости при обратном отсчёте</string>
     <string name="maximal">Максимальный</string>
     <string name="minimal">Минимальный</string>

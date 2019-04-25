@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -89,6 +90,11 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             }
             R.id.action_voice_analysis -> {
                 val intent = Intent(this, VoiceAnalysisActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.action_video_instruction -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=gZQDMmsUKsg"))
                 startActivity(intent)
                 return true
             }
