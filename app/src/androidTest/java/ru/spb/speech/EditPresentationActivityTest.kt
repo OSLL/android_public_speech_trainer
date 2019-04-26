@@ -84,9 +84,9 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.presentationName)).perform(replaceText(activityTestRule.activity.getString(R.string.first_debug_presentation_name)))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(2000)
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText(R.string.first_debug_presentation_name)).check(matches(isDisplayed()))
-
         // Изменение названия презентации при редактировании
         onView(withText(R.string.first_debug_presentation_name)).perform(longClick())
         onView(withText(R.string.edit)).perform(click())
@@ -105,6 +105,7 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
         onView(withId(R.id.numberPicker1)).perform(setNumber(activityTestRule.activity.resources.getInteger(R.integer.one_minute)))
         onView(withId(R.id.addPresentation)).perform(click())
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        sleep(2000)
         onView(withText(R.string.first_debug_time)).check(matches(isDisplayed()))
 
         // Изменение длительности презентации при редактировании
@@ -114,6 +115,7 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
         onView(withId(R.id.numberPicker1)).perform(setNumber(activityTestRule.activity.resources.getInteger(R.integer.two_minutes)))
         onView(withId(R.id.addPresentation)).perform(click())
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        sleep(2000)
         onView(withText(R.string.second_debug_time)).check(matches(isDisplayed()))
     }
 
