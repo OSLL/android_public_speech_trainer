@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import ru.spb.speech.APST_TAG
 import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
@@ -21,6 +19,9 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.time_on_each_slide_chart_fragment.*
+import android.content.Context
+import android.util.DisplayMetrics
+import android.view.WindowManager
 
 const val FRAGMENT_TIME_ON_EACH_SLIDE = ".FragmentTimeOnEachSlide"
 
@@ -68,7 +69,6 @@ class TimeOnEachSlideChartFragment: Fragment() {
         averageTimeOnEachSlide /= entries.size
         Log.d(FRAGMENT_TIME_ON_EACH_SLIDE, "averageTime = $averageTimeOnEachSlide")
 
-
         for(entry in entries) {
             labels.add((entry.x + 1).toInt().toString())
 
@@ -81,7 +81,16 @@ class TimeOnEachSlideChartFragment: Fragment() {
             )
         }
 
-        val barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds))
+        val displayMetrics = DisplayMetrics()
+        (context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).getDefaultDisplay().getMetrics(displayMetrics)
+        val width = displayMetrics.widthPixels
+
+        var barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds))
+
+        if(width < resources.getInteger(R.integer.screen_width)){
+            barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds_max1080))
+        }
+
         barDataSet.colors = colors
 
         val data = BarData(barDataSet)
