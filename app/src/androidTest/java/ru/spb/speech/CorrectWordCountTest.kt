@@ -64,6 +64,7 @@ class CorrectWordCountTest {
         mDevice!!.pressBack()
 
         onView(withText(presName)).perform(longClick())
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_the_delete_button).toLong())
         onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
     }
 
