@@ -27,6 +27,11 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //Название презентации:
     val presName = presentationData?.name
 
+    //Критерии оценивания тренировки:
+    var xExerciseTimeFactor = 0f
+    var ySpeechSpeedFactor = 0f
+    var zTimeOnSlidesFactor = 0f
+
     //--------------------Текущая тренировка:---------------------//
 
     //Дата и время начала:
@@ -86,13 +91,13 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             }
         }
     //Оценка за тренировку:
-    val trainingGrade: Int
+    val trainingGrade: Float
         get() {
             return if(trainData != null){
-                calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainData), presData?.timeLimit!!.toFloat()).toInt()
+                calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainData), presData?.timeLimit!!.toFloat())
             } else {
                 Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_cur_training_data))
-                -1
+                -1f
             }
         }
 
@@ -326,9 +331,9 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         }
 
         dzTimeDispersionOnSlides /= timeList.size
-        val xExerciseTimeFactor  = context.resources.getDimension(R.dimen.unit_float) - (dxDiffBtwTrainTimeAndLim/x0ReportTimeLimit)
-        val ySpeechSpeedFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
-        val zTimeOnSlidesFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
+        xExerciseTimeFactor  = context.resources.getDimension(R.dimen.unit_float) - (dxDiffBtwTrainTimeAndLim/x0ReportTimeLimit)
+        ySpeechSpeedFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
+        zTimeOnSlidesFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
 
         return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor)/context.resources.getDimension(R.dimen.number_of_factors))
     }

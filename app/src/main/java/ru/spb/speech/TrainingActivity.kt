@@ -17,16 +17,18 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
-import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.appSupport.ProgressHelper
+import kotlinx.android.synthetic.main.activity_training.*
+import kotlinx.coroutines.*
 import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.PresentationData
 import ru.spb.speech.DBTables.SpeechDataBase
 import ru.spb.speech.DBTables.TrainingData
 import ru.spb.speech.DBTables.TrainingSlideData
-import kotlinx.android.synthetic.main.activity_training.*
+import ru.spb.speech.DBTables.helpers.TrainingDBHelper
+import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.appSupport.PdfToBitmap
+import ru.spb.speech.appSupport.ProgressHelper
+import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.fixedRateTimer
@@ -82,6 +84,10 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var progressHelper: ProgressHelper
 
+    private var firebaseHelper: FirebaseHelper? = null
+
+    private lateinit var sharedPreferences: SharedPreferences
+
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +112,7 @@ class TrainingActivity : AppCompatActivity() {
 
         pdfReader = PdfToBitmap(presentationData!!, this)
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
         addPermission()
@@ -115,6 +121,8 @@ class TrainingActivity : AppCompatActivity() {
         mIntent = Intent(this@TrainingActivity,SpeechRecognitionService::class.java)
 
         startRecognizingService()
+
+        initFireBaseHelper()
 
         if(!isAudio!!) {
             muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
@@ -166,7 +174,7 @@ class TrainingActivity : AppCompatActivity() {
                     )
 
                     tsd.spentTimeInSec = timeOfSlide
-                  
+
                     tsd.knownWords = curText
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
@@ -217,7 +225,7 @@ class TrainingActivity : AppCompatActivity() {
                     if(isAudio!!) {
                         mPlayer?.stop()
                     }
-                    stopRecognizingService(true)
+                    stopRecognizingService(true, saveTrainingInDB = true)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
                     val builder = AlertDialog.Builder(this@TrainingActivity)
@@ -278,7 +286,7 @@ class TrainingActivity : AppCompatActivity() {
             Toast.makeText(this, "Pause", Toast.LENGTH_LONG).show()
 
             Handler().postDelayed({
-                stopRecognizingService(true)
+                stopRecognizingService(true, saveTrainingInDB = false)
                 audioManager!!.isMicrophoneMute = false
 
                 pause_button_training_activity.isEnabled = true
@@ -345,7 +353,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     @SuppressLint("LongLogTag")
-    fun stopRecognizingService(waitForRecognitionComplete: Boolean){
+    fun stopRecognizingService(waitForRecognitionComplete: Boolean, saveTrainingInDB: Boolean){
         if (!waitForRecognitionComplete) {
             Log.d(SPEECH_RECOGNITION_SERVICE_DEBUGGING + ACTIVITY_TRAINING_NAME,"stopRecognizingService called, without waiting for recognition to finish")
             try {
@@ -382,16 +390,10 @@ class TrainingActivity : AppCompatActivity() {
             trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
 
-            val trainingDBHelper = TrainingDBHelper(this)
-            trainingDBHelper.addTrainingInDB(trainingData!!,presentationData!!)
-
-            val list = trainingDBHelper.getAllTrainingsForPresentation(presentationData!!)
-            if (list != null) {
-                for (i in 0..(list.size - 1)) {
-                    Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act, T $i : ${list[i]}")
-                }
-            } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "train act: list == null")
+            if (saveTrainingInDB) {
+                val trainingDBHelper = TrainingDBHelper(this)
+                trainingDBHelper.addTrainingInDB(trainingData!!, presentationData!!)
+                uploadLastTrainingToFireBase()
             }
 
             audioManager!!.isMicrophoneMute = false
@@ -570,6 +572,33 @@ class TrainingActivity : AppCompatActivity() {
         )
     }
 
+    private fun uploadLastTrainingToFireBase() {
+        if (firebaseHelper == null) return
+
+        GlobalScope.launch {
+            async {
+                firebaseHelper!!.uploadLastTraining(presentationData!!)
+            }
+        }
+    }
+
+    private fun initFireBaseHelper() {
+        if (sharedPreferences.getBoolean(getString(R.string.useStatistics), false)) {
+            GlobalScope.launch {
+                firebaseHelper = withContext(Dispatchers.IO) { FirebaseHelper(this@TrainingActivity) }
+
+                if (sharedPreferences.getBoolean(getString(R.string.firstSyncFlag), true)) {
+                    sharedPreferences.edit().putBoolean(getString(R.string.firstSyncFlag), false).apply()
+
+                    async(Dispatchers.IO) {
+                        firebaseHelper!!.registerNewTester()
+                        firebaseHelper!!.synchronizeAllData()
+                    }
+                }
+            }
+        }
+    }
+
     override fun onPause() {
         progressHelper.show()
         if (pause_button_text_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
@@ -584,7 +613,7 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        stopRecognizingService(false)
+        stopRecognizingService(false, saveTrainingInDB = true)
         unMuteSound()
         pdfReader?.finish()
         super.onDestroy()

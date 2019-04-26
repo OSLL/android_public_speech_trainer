@@ -26,5 +26,16 @@
 
     <integer name="one_minute">1</integer>
     <integer name="two_minutes">2</integer>
+
+    <integer name="num_of_dec_in_the_training_score">1</integer>
+
+    <!-- test constants -->
+    <integer name="training_time_in_milliseconds_to_trigger_an_additional_timer">65000</integer>
+    <integer name="time_in_milliseconds_until_you_can_switch_to_workout_statistics">3000</integer>
+    <integer name="required_time_in_milliseconds_allotted_for_training">23000</integer>
+    <integer name="workout_time_in_milliseconds_for_word_counting">8000</integer>
+    <integer name="def_sharedPref_value">-1</integer>
+    <integer name="one_minute_report_setting">1</integer>
+
 </resources>
 

@@ -24,12 +24,42 @@
                 android:id="@+id/earnOfTrain"
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
-                android:layout_marginHorizontal="15dp"
+                android:layout_marginHorizontal="13dp"
                 android:layout_marginVertical="10dp"
                 android:layout_weight="1"
                 android:text="@string/earnings_of_training"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textSize="22sp" />
+                android:textSize="21sp" />
+
+            <TextView
+                android:id="@+id/x_exercise_time_factor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:text="@string/exercise_time_factor"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/y_speech_speed_factor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:text="@string/speech_speed_factor"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/z_time_on_slides_factor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:text="@string/time_on_slides_factor"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="14sp"/>
 
             <View
                 android:id="@+id/view"

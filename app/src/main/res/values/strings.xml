@@ -21,7 +21,6 @@
     <string name="presentation_file_replacement">Изменить файл\nпрезентации</string>
     <string name="activity_presentation_name">Презентация</string>
     <string name="activity_preference">Настройки</string>
-    <string name="add_presentation_symbol">+</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
     <string name="title_activity_settings">Settings</string>
@@ -60,6 +59,7 @@
     <string name="first_debug_time">01 min: 00 sec</string>
     <string name="second_debug_time">02 min: 00 sec</string>
     <string name="edit">"Редактировать"</string>
+    <string name="pdf_format">.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
     <string name="pref_default_display_name">John Smith</string>
@@ -205,7 +205,11 @@
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
     <string name="time_limit_training">Ограничение времени на доклад: </string>
     <string name="num_of_words_spoken">Слов сказано: </string>
+    <string name="training_duration">Длительность тренировки: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
+    <string name="exercise_time_factor"> >>> Попадание в регламент: </string>
+    <string name="speech_speed_factor"> >>> Темп речи: </string>
+    <string name="time_on_slides_factor"> >>> Время на слайдах: </string>
 
     <string name="training_statistic_title">Статистика тренировок: </string>
     <string name="date_of_first_training">Дата первой тренировки: </string>
@@ -239,6 +243,7 @@
     <string name="test_time">00:30</string>
     <string name="pause">Пауза</string>
     <string name="continue_">Продолжить</string>
+    <string name="setNumber_function_information">Set the passed number into the NumberPicker</string>
 
     <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
     <string name="continue_training">Продолжить тренировку</string>
@@ -262,6 +267,11 @@
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
     <string name="dbName">apst.0.2</string>
+    <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
+    <string name="useStatistics">use_statistics</string>
+    <string name="good">Хорошо</string>
+    <string name="no_thnx">Нет, спасибо</string>
+    <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
     <string-array name="prepositionsAndConjunctions">

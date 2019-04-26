@@ -4,15 +4,16 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-
 import ru.spb.speech.EditPresentationActivity
 import ru.spb.speech.R
 import ru.spb.speech.TrainingActivity
@@ -20,7 +21,6 @@ import ru.spb.speech.views.PresentationStartpageItemRow
 import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
 import ru.spb.speech.DBTables.SpeechDataBase
 import ru.spb.speech.APST_TAG
-
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -39,15 +39,27 @@ const val timeLimit = 2500
 class PresentationAdapterHelper(private val rw: RecyclerView, private val adapter: GroupAdapter<ViewHolder>, private val context: Context) {
     private val presentationDataDao: PresentationDataDao = SpeechDataBase.getInstance(context)!!.PresentationDataDao()
     private var updateListener: UpdateAdapterListener? = null
+    private val sharedPreferences: SharedPreferences
 
     init {
+        sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(context)
+
         adapter.setOnItemClickListener { item: Item<ViewHolder>, _ ->
-            if (isOnline()) {
-                val row = item as PresentationStartpageItemRow
-                val i = Intent(context, TrainingActivity::class.java)
-                i.putExtra(context.getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)
-                startActivity(context, i, null)
-            } else Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show()
+            if (!sharedPreferences.getBoolean(context.getString(R.string.useStatistics), false)) {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage(context.getString(R.string.attention))
+                builder.setPositiveButton(context.getString(R.string.good)) { _, _ ->
+                    sharedPreferences.edit()
+                            .putBoolean(context.getString(R.string.useStatistics), true)
+                            .apply()
+
+                    startTraining(item as PresentationStartpageItemRow)
+                }
+                builder.setNegativeButton(context.getString(R.string.no_thnx)) { _, _ ->
+                    startTraining(item as PresentationStartpageItemRow)
+                }
+                builder.create().show()
+            } else startTraining(item as PresentationStartpageItemRow)
         }
 
         adapter.setOnItemLongClickListener { item: Item<ViewHolder>, view ->
@@ -89,6 +101,14 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
             dialog.show()
             true
         }
+    }
+
+    private fun startTraining(row: PresentationStartpageItemRow) {
+        if (isOnline()) {
+            val i = Intent(context, TrainingActivity::class.java)
+            i.putExtra(context.getString(R.string.CURRENT_PRESENTATION_ID), row.presentationId)
+            startActivity(context, i, null)
+        } else Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show()
     }
 
     fun setUpdateAdapterListener(l: UpdateAdapterListener) {

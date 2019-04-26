@@ -68,7 +68,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private lateinit var progressHelper: ProgressHelper
 
-    private var trainingStatisticsData: TrainingStatisticsData? = null
+    var trainingStatisticsData: TrainingStatisticsData? = null
 
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,11 +107,15 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
 
+        val drawer = Thread(Runnable {
+            drawPict()
+        })
+        drawer.start()
+
         share1.setOnClickListener {
             try {
-                drawPict()
+                drawer.join()
                 url = MediaStore.Images.Media.insertImage(this.contentResolver, finishBmp, "title", null)
-
             }catch (e: Exception) {
                 Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, e.toString())
             }
@@ -197,7 +201,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
-        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.maximum_mark_for_training)}"
+        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+
+        x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
+        y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
+        z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
@@ -208,7 +216,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+        sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
     }
+
+    fun Float.format(digits: Int) = java.lang.String.format("%.${digits}f", this)!!
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
@@ -290,7 +301,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             ltC.drawText(getString(R.string.worked_out_a_slide) + " " + trainingStatisticsData?.curSlides + " / " + trainingStatisticsData?.slides, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_89), ltP)
             ltC.drawText(getString(R.string.time_limit_training) + " " + getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_112), ltP)
             ltC.drawText(getString(R.string.num_of_words_spoken) + " " + trainingStatisticsData?.curWordCount, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_135), ltP)
-            ltC.drawText("${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.maximum_mark_for_training)}", resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_158), ltP)
+            ltC.drawText("${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}", resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_158), ltP)
 
             val trainingStatisticsBmp = Bitmap.createBitmap(nWidth, resources.getInteger(R.integer.block_height_with_training_statistics), Bitmap.Config.ARGB_8888)
             val tsC = Canvas(trainingStatisticsBmp)
@@ -317,9 +328,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
             tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
             tsC.drawText(getString(R.string.average_earning_2) + " " +
-                    trainingStatisticsData?.averageEarn?.toInt() + " / " +
-                    trainingStatisticsData?.minEarn?.toInt() + " / " +
-                    trainingStatisticsData?.maxEarn?.toInt(), resources.getDimension(R.dimen.x_indent_multiplier_90),
+                    trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)) + " / " +
+                    trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)) + " / " +
+                    trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)), resources.getDimension(R.dimen.x_indent_multiplier_90),
                     resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
 
             val canvas = Canvas(finishBmp)
@@ -339,7 +350,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "${getString(R.string.worked_out_a_slide)} ${trainingStatisticsData?.curSlides} / ${trainingStatisticsData?.slides}\n" +
                 "${getString(R.string.time_limit_training)} ${getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit)}\n" +
                 "${getString(R.string.num_of_words_spoken)} ${trainingStatisticsData?.curWordCount}\n" +
-                "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade} ${getString(R.string.maximum_mark_for_training)}\n\n" +
+                "${getString(R.string.training_duration)} ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
+                "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}\n\n" +
                 "\t${getString(R.string.training_statistic_title)}\n" +
                 "${getString(R.string.date_of_first_training)} ${trainingStatisticsData?.dateOfFirstTraining}\n" +
                 "${getString(R.string.training_completeness)} ${trainingStatisticsData?.countOfCompleteTraining} / ${trainingStatisticsData?.trainingCount}\n" +
@@ -349,7 +361,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "${getString(R.string.min_training_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.minTrainTime)}\n" +
                 "${getString(R.string.average_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.averageTime)}\n" +
                 "${getString(R.string.total_words_count)} ${trainingStatisticsData?.allWords}\n" +
-                "${getString(R.string.average_earning_1)}\n\t ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.toInt()} / ${trainingStatisticsData?.minEarn?.toInt()} / ${trainingStatisticsData?.maxEarn?.toInt()}"
+                "${getString(R.string.average_earning_1)}\n\t ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))}"
 
     }
 

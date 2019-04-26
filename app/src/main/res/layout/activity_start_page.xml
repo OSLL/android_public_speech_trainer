@@ -8,19 +8,6 @@
     android:background="@color/activityBackground"
     tools:context=".StartPageActivity">
 
-    <Button
-        android:id="@+id/addBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="right|bottom"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/oval_button"
-        android:text="@string/add_presentation_symbol"
-        android:textAppearance="@android:style/TextAppearance.Holo.Large.Inverse"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_startpage"
         android:layout_width="match_parent"
@@ -29,7 +16,9 @@
         android:longClickable="true"
         android:paddingBottom="100dp"
         android:visibility="visible"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" >
+
+    </android.support.v7.widget.RecyclerView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/recycler_progress_startpage"
@@ -49,5 +38,16 @@
             android:background="@android:color/transparent" />
 
     </android.support.v7.widget.CardView>
+
+    <ImageView
+        android:id="@+id/addBtn"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_gravity="right|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/pdf_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </FrameLayout>
