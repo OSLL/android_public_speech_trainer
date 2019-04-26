@@ -1,9 +1,9 @@
-package ru.spb.speech.DBTables.helpers
+package ru.spb.speech.database.helpers
 
 import android.content.Context
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.TrainingData
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
+import ru.spb.speech.database.TrainingData
 
 class TrainingDBHelper {
 

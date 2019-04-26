@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings
 import android.util.Log
-import android.view.MenuItem
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
+import ru.spb.speech.database.helpers.TrainingDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
 import ru.spb.speech.TrainingStatisticsData
 import ru.spb.speech.firebase.model.FullTrainingStatistic

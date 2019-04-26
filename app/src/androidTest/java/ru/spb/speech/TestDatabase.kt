@@ -1,15 +1,11 @@
 package ru.spb.speech
 
-import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.action.ViewActions.longClick
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.SpeechDataBase
 import junit.framework.Assert.*
 import kotlinx.android.synthetic.main.activity_start_page.*
 import org.junit.After

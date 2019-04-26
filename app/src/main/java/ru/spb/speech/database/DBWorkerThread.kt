@@ -1,4 +1,4 @@
-package ru.spb.speech.DBTables
+package ru.spb.speech.database
 
 import android.os.Handler
 import android.os.HandlerThread
