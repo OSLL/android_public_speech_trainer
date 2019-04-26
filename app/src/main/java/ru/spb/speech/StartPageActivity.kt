@@ -13,8 +13,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import ru.spb.speech.appSupport.ProgressHelper
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*

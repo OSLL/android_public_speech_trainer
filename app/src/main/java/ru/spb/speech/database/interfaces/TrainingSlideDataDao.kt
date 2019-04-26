@@ -1,7 +1,7 @@
-package ru.spb.speech.DBTables.DaoInterfaces
+package ru.spb.speech.database.interfaces
 
 import android.arch.persistence.room.*
-import ru.spb.speech.DBTables.TrainingSlideData
+import ru.spb.speech.database.TrainingSlideData
 
 @Dao
 interface TrainingSlideDataDao {

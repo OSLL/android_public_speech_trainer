@@ -8,9 +8,9 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.*
 import ru.spb.speech.APST_TAG
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.SpeechDataBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
