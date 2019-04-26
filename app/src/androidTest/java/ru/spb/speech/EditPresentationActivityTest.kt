@@ -63,7 +63,7 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun setDateForPresentation() {
-        // Изменение даты при добавлен
+        // Изменение даты при добавлении
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText("2035-5-12")).check(matches(isDisplayed()))
 
