@@ -12,7 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import ru.spb.speech.APST_TAG
 import ru.spb.speech.R
-import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.database.PresentationData
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

@@ -3,11 +3,11 @@ package ru.spb.speech.appSupport
 import android.content.Context
 import android.text.format.DateUtils
 import android.util.Log
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.TrainingData
-import ru.spb.speech.DBTables.TrainingSlideData
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.TrainingData
+import ru.spb.speech.database.TrainingSlideData
+import ru.spb.speech.database.helpers.TrainingDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import kotlin.math.sqrt
 import ru.spb.speech.ACTIVITY_TRAINING_STATISTIC_NAME
 import ru.spb.speech.APST_TAG

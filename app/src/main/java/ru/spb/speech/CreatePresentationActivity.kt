@@ -10,8 +10,8 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.appSupport.getFileName
 import ru.spb.speech.constants.AllowableExtension.PDF
 import java.io.FileNotFoundException
@@ -87,12 +87,13 @@ class CreatePresentationActivity : AppCompatActivity() {
             var currentPresID: Int? = newPresentation?.id
 
             if (newPresentation == null) {
-                contentResolver.takePersistableUriPermission(Uri.parse(stringUri), Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 newPresentation = PresentationData()
                 newPresentation.stringUri = stringUri
 
                 if (stringUri == getString(R.string.deb_pres_name))
                     newPresentation.debugFlag = 1
+                else
+                    contentResolver.takePersistableUriPermission(Uri.parse(stringUri), Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
                 speechDataBase?.PresentationDataDao()?.insert(newPresentation)
                 currentPresID = speechDataBase?.PresentationDataDao()?.getPresentationDataWithUri(stringUri)?.id
