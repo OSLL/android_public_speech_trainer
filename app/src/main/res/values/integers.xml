@@ -31,6 +31,8 @@
     <!-- test constants -->
     <integer name="training_time_in_milliseconds_to_trigger_an_additional_timer">65000</integer>
     <integer name="time_in_milliseconds_until_you_can_switch_to_workout_statistics">3000</integer>
+    <integer name="time_in_milliseconds_to_display_the_delete_button">2000</integer>
+    <integer name="time_in_milliseconds_to_load_the_workout_page">2000</integer>
     <integer name="required_time_in_milliseconds_allotted_for_training">23000</integer>
     <integer name="workout_time_in_milliseconds_for_word_counting">8000</integer>
     <integer name="def_sharedPref_value">-1</integer>
