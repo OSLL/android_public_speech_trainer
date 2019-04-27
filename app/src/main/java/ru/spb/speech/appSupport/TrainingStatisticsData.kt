@@ -105,11 +105,12 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             }
         }
 
-    val countOfParasites: Int
+    //Количество слов-паразитов
+    val countOfParasites: Long
         get() {
             return if(trainData != null) {
                 val verbalGarbage = context.resources.getStringArray(R.array.verbalGarbage)
-                var finalCount = 0
+                var finalCount = 0L
                 val recText = trainData.allRecognizedText.toLowerCase()
                 for (word in verbalGarbage) {
                     finalCount += countWords(recText, word)
@@ -121,8 +122,8 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             }
         }
 
-    private fun countWords(where: String, what: String): Int {
-        return (where.length - where.replace(what, "").length) / what.length
+    private fun countWords(where: String, what: String): Long {
+        return ((where.length - where.replace(what, "").length) / what.length).toLong()
     }
 
     //--------------------Статистика тренировок:---------------------//

@@ -28,6 +28,7 @@ import ru.spb.speech.DBTables.helpers.TrainingDBHelper
 import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
+import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -387,8 +388,11 @@ class TrainingActivity : AppCompatActivity() {
 
             allRecognizedText += curText
 
+            val trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
+
             trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
+            trainingData?.shareOfParasiticWords = "${((trainingStatisticsData.countOfParasites.toFloat() / trainingStatisticsData.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent)
 
             if (saveTrainingInDB) {
                 val trainingDBHelper = TrainingDBHelper(this)
@@ -405,6 +409,8 @@ class TrainingActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun Float.format(digits: Int) = java.lang.String.format("%.${digits}f", this)!!
 
     private val mConnection = object : ServiceConnection {
         @SuppressLint("LongLogTag")
