@@ -271,6 +271,11 @@
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
     <string name="closeRatingInformation">Ок</string>
+    <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом трех критериев: </string>
+    <string name="regulations_description">Проверка успешности попадания в условия временного ограничения.\n\n\t\tdx - модуль разницы между временем тренировки и ограничением на доклад.\n\t\tx0 - ограничение на доклад. </string>
+    <string name="pace_description">Скорость речи на каждом из слайдов.\n\n\t\tdy - дисперсия скорости речи на слайдах.</string>
+    <string name="time_description">Длительность тренировки по слайдам.\n\n\t\tdz - дисперсия времени на слайдах.</string>
+    <string name="final_assessment_value">Финальным значение оценки является среднее арифметическое перечисленных критериев: \n</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

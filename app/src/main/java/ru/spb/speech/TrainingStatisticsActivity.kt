@@ -114,7 +114,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             val dialog = BottomSheetDialog(this)
             val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
 
-            bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
+            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
 
             dialog.setContentView(bottomSheet)
             dialog.show()
