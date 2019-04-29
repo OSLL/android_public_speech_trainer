@@ -22,7 +22,7 @@ import ru.spb.speech.database.SpeechDataBase
 
 
 @RunWith(AndroidJUnit4::class)
-class CorrectWordCountTest {
+class CorrectWordCountTest : BaseInstrumentedTest(){
 
     private var mDevice: UiDevice? = null
     private var presName = ""
