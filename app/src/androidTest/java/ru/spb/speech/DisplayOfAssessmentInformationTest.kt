@@ -24,7 +24,7 @@ import ru.spb.speech.database.SpeechDataBase
 
 
 @RunWith(AndroidJUnit4::class)
-class DisplayOfAssessmentInformationTest {
+class DisplayOfAssessmentInformationTest : BaseInstrumentedTest(){
 
     private var mDevice: UiDevice? = null
     private var presName = ""
