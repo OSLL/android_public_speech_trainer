@@ -9,13 +9,12 @@ import android.content.Intent
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.util.Log
-import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.TrainingData
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
 import ru.spb.speech.StartPageActivity
+import ru.spb.speech.database.SpeechDataBase
+import ru.spb.speech.database.TrainingData
+import ru.spb.speech.database.helpers.TrainingDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
