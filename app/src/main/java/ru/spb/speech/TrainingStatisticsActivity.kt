@@ -10,22 +10,21 @@ import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.helpers.TrainingDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.vocabulary.PrepositionsAndConjunctions
 import ru.spb.speech.fragments.TimeOnEachSlideChartFragment
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.TrainingData
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
+import ru.spb.speech.database.TrainingData
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
@@ -33,14 +32,11 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import ru.spb.speech.DBTables.TrainingSlideData
 import java.io.*
-import java.lang.Math.*
 import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.math.sqrt
 
 var url = ""
 var speed_statistics: Int? = null

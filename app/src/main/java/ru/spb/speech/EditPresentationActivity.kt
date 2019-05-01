@@ -12,10 +12,10 @@ import android.view.View
 import android.widget.Toast
 import ru.spb.speech.views.PresentationStartpageItemRow
 import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.helpers.PresentationDBHelper
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
+import ru.spb.speech.database.helpers.PresentationDBHelper
 import ru.spb.speech.appSupport.ProgressHelper
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.util.*

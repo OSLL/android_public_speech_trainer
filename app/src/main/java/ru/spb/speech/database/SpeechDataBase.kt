@@ -1,12 +1,12 @@
-package ru.spb.speech.DBTables
+package ru.spb.speech.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.DaoInterfaces.TrainingDataDao
-import ru.spb.speech.DBTables.DaoInterfaces.TrainingSlideDataDao
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.interfaces.TrainingDataDao
+import ru.spb.speech.database.interfaces.TrainingSlideDataDao
 import ru.spb.speech.R
 
 

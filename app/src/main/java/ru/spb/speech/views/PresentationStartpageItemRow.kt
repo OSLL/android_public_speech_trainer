@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.database.PresentationData
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.presentation_startpage_row.view.*
