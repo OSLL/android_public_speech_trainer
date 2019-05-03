@@ -173,7 +173,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printSpeedLineChart(presentationSpeedData)
 
-        val presentationTop10Words = TextHelper(this.resources)
+        val presentationTop10Words = TextHelper(this.resources.getStringArray(R.array.prepositionsAndConjunctions))
                 .getTop10WordsRmConjStemm(trainingData!!.allRecognizedText)
 
         val entries = ArrayList<PieEntry>()

@@ -1,14 +1,11 @@
 package ru.spb.speech.vocabulary
 
-import android.content.res.Resources
-import ru.spb.speech.R
 import java.text.BreakIterator
 import java.util.regex.Pattern
 
 
-class TextHelper(private val res: Resources) {
+class TextHelper(private val conjAndPrep: Array<String>) {
     private val stemmer = StemmerPorterRU()
-    private val conjAndPrep = res.getStringArray(R.array.prepositionsAndConjunctions)
 
     fun removeConjunctionsAndPrepositionsFromText(sourceText: String): String {
         var text = sourceText.toLowerCase()
@@ -52,8 +49,8 @@ class TextHelper(private val res: Resources) {
             endIndex = iterator.next()
             if (endIndex != BreakIterator.DONE && Character.isLetterOrDigit(text[startIndex])) {
                 val word = text.substring(startIndex, endIndex)
-                val count = dictionary[word] ?: 0
                 val stemmedWord = stemmer.stem(word)
+                val count = dictionary[stemmedWord] ?: 0
                 val original = originals[stemmedWord] ?: ""
                 dictionary[stemmedWord] = count + 1
                 if (original.isEmpty()) originals[stemmedWord] = word
