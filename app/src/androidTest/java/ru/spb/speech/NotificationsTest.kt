@@ -101,6 +101,7 @@ class NotificationsTest: BaseInstrumentedTest() {
         onView(withText(activityTestRule.activity.getString(R.string.activity_start_page_name))).check(matches(isDisplayed()))
 
         closeNotification(expectedApplicationName)
+        device.pressHome()
     }
 
     private fun closeNotification(expectedApplicationName: String) {
