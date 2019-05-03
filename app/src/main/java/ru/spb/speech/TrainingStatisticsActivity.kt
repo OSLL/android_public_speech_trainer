@@ -60,6 +60,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var currentTrainingTime: Long = 0
 
+    private var wordCount: Int = 0
     private val activityRequestCode = 101
 
     private lateinit var progressHelper: ProgressHelper
@@ -276,8 +277,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                     nameC.drawText(presName, resources.getDimension(R.dimen.x_indent_multiplier_20), resources.getDimension(R.dimen.y_indent_multiplier_30), namePaint)
             }
 
-
-
             val lastTrainingBmp = Bitmap.createBitmap(nWidth, resources.getInteger(R.integer.block_height_with_last_workout), Bitmap.Config.ARGB_8888)
             val ltC = Canvas(lastTrainingBmp)
             ltC.drawPaint(whitePaint)
@@ -335,7 +334,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             canvas.drawBitmap(nameBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat(), paint)
             canvas.drawBitmap(lastTrainingBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat() + resources.getDimension(R.dimen.top_indent_multiplier_40), paint)
             canvas.drawBitmap(trainingStatisticsBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat() + resources.getDimension(R.dimen.top_indent_multiplier_200), paint)
-
         }
     }
 
@@ -494,6 +492,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 val word = text.substring(startIndex, endIndex)
                 val count = dictionary[word] ?: 0
                 dictionary[word] = count + 1
+                wordCount++
             }
         }
 
