@@ -23,7 +23,6 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var activityTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
-
     lateinit var helper: TestHelper
 
     @Before

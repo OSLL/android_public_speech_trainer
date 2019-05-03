@@ -98,5 +98,4 @@ class TestDatabase : BaseInstrumentedTest() {
         assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
         assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
     }
-
 }
