@@ -128,41 +128,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             finish()
         }
 
-        export.setOnClickListener {
-            val trainingsFile: File?
-            val sdState = android.os.Environment.getExternalStorageState()
-            trainingsFile = if (sdState == android.os.Environment.MEDIA_MOUNTED) {
-                val sdDir = android.os.Environment.getExternalStorageDirectory()
-                File(sdDir, getString(R.string.training_statistics_directory))
-            } else {
-                this.cacheDir
-            }
-            if (!trainingsFile!!.exists())
-                trainingsFile.mkdir()
-
-            val curTrainingFile: File?
-            curTrainingFile = if (sdState == android.os.Environment.MEDIA_MOUNTED) {
-                val sdDir = android.os.Environment.getExternalStorageDirectory()
-                File(sdDir, "${getString(R.string.training_statistics_directory)}/${trainingStatisticsData?.presName}")
-            } else {
-                this.cacheDir
-            }
-            if (!curTrainingFile!!.exists())
-                curTrainingFile.mkdir()
-
-            try {
-                val textFile = File(Environment.getExternalStorageDirectory(), "${getString(R.string.training_statistics_directory)}/${trainingStatisticsData?.presName}/${trainingStatisticsData?.dateOfCurTraining}.txt")
-                val fos = FileOutputStream(textFile)
-                fos.write(trainStatInTxtFormat().toByteArray())
-                fos.close()
-                Toast.makeText(this, "${getString(R.string.successful_export_statistics)} ${getString(R.string.training_statistics_directory)}", Toast.LENGTH_LONG).show()
-            } catch (e: Exception) {
-                Log.d(ACTIVITY_TRAINING_STATISTIC_NAME, getString(R.string.error_creating_text_file))
-                Toast.makeText(this, getString(R.string.error_export_statistics), Toast.LENGTH_LONG).show()
-                e.printStackTrace()
-            }
-        }
-
         val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSpeedData = HashMap<Int, Float>()
         val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
@@ -337,28 +302,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             canvas.drawBitmap(trainingStatisticsBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat() + resources.getDimension(R.dimen.top_indent_multiplier_200), paint)
 
         }
-    }
-
-    private fun trainStatInTxtFormat():String {
-        return "${getString(R.string.name_of_pres)} ${trainingStatisticsData?.presName}\n\n" +
-                "\t${getString(R.string.cur_training_title)}\n" +
-                "${getString(R.string.date_and_time_to_start_training)} ${trainingStatisticsData?.dateOfCurTraining}\n" +
-                "${getString(R.string.worked_out_a_slide)} ${trainingStatisticsData?.curSlides} / ${trainingStatisticsData?.slides}\n" +
-                "${getString(R.string.time_limit_training)} ${getStringPresentationTimeLimit(trainingStatisticsData?.reportTimeLimit)}\n" +
-                "${getString(R.string.num_of_words_spoken)} ${trainingStatisticsData?.curWordCount}\n" +
-                "${getString(R.string.training_duration)} ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}\n\n" +
-                "\t${getString(R.string.training_statistic_title)}\n" +
-                "${getString(R.string.date_of_first_training)} ${trainingStatisticsData?.dateOfFirstTraining}\n" +
-                "${getString(R.string.training_completeness)} ${trainingStatisticsData?.countOfCompleteTraining} / ${trainingStatisticsData?.trainingCount}\n" +
-                "${getString(R.string.getting_into_the_regulations)} ${trainingStatisticsData?.fallIntoReg} / ${trainingStatisticsData?.trainingCount}\n" +
-                "${getString(R.string.mean_deviation_from_the_limit)} ${getStringPresentationTimeLimit(trainingStatisticsData?.averageExtraTime)}\n" +
-                "${getString(R.string.max_training_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.maxTrainTime)}\n" +
-                "${getString(R.string.min_training_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.minTrainTime)}\n" +
-                "${getString(R.string.average_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.averageTime)}\n" +
-                "${getString(R.string.total_words_count)} ${trainingStatisticsData?.allWords}\n" +
-                "${getString(R.string.average_earning_1)}\n\t ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))}"
-
     }
 
     private fun getCase(n: Int? , case1: String, case2: String, case3: String): String {
