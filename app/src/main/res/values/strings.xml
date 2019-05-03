@@ -269,7 +269,7 @@
     <string name="good">Хорошо</string>
     <string name="no_thnx">Нет, спасибо</string>
     <string name="start_training">Начать тренировку?</string>
-    <string name="yes">Да</string>
+    <string name="yes">ДА</string>
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
 
