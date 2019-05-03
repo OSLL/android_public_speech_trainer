@@ -33,6 +33,9 @@ interface PresentationDataDao {
     @Query("SELECT * from presentationdata WHERE id = (SELECT MAX(id) from presentationdata)")
     fun getLastPresentation(): PresentationData
 
+    @Query("SELECT * FROM presentationData WHERE notifications = 1")
+    fun getPresentationsWithEnabledNotifications(): List<PresentationData>
+
     @Query("DELETE FROM presentationdata WHERE debugPresentationFlag = 1")
     fun deleteTestPresentations()
 }

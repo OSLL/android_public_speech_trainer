@@ -49,6 +49,7 @@
     </string>
     <string name="pref_title_enable_deb_pres">Включить тестовые презентации</string>
     <string name="deb_speech_audio_key">deb_speech_audio</string>
+    <string name="notifications_key">notifications_new_message</string>
     <string name="speed_key">speed_key</string>
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочная презентация</string>
@@ -109,15 +110,17 @@
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
-
     <string name="pref_header_deb_mode">Debug mode</string>
-
     <string name="pref_title_new_message_notifications">Напоминание о тренировках</string>
-
     <string name="pref_title_ringtone">Рингтон</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Вибрация</string>
+    <string name="notification_channel_name">Напоминания о тренировках</string>
+    <string name="message_enable_notifications">Необходимо включить уведомления в настройках</string>
+
+    <string name="notifications_title">Вы давно не тренировались</string>
+    <string name="notifications_text">Нажмите, чтобы перейти к тренировкам</string>
+
     <string name="words_count">Количество слов в минуту</string>
     <string name="slide_number">Номер слайда</string>
     <string name="name_of_presentation">Название презентации</string>
