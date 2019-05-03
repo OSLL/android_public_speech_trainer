@@ -21,27 +21,31 @@ class TestDatabase : BaseInstrumentedTest() {
     var mControllerTestRule = ControlledActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     lateinit var helper: TestHelper
+    private val db: SpeechDataBase
+    private val startDbSize: Float
+
+    init {
+        db = SpeechDataBase.getInstance(getTargetContext())!!
+        db.PresentationDataDao().deleteTestPresentations()
+        startDbSize = db.PresentationDataDao().getAll().size.toFloat()
+    }
 
     @Before
     fun enableDebugMode() {
         helper = TestHelper(mControllerTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
+        mControllerTestRule.relaunchActivity()
     }
 
     @After
     fun disableDebugMode() {
         helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+        db.PresentationDataDao().deleteTestPresentations()
     }
 
     @Test
     fun addNewPresentationManuallyTest() {
-        val db = SpeechDataBase.getInstance(getTargetContext())?.PresentationDataDao()
-
-        db?.deleteAll() // удаление всех элементов БД
-        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
-
-        mControllerTestRule.relaunchActivity() // перезапуск активити для обновления recyclerView
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize) // проверка кол-ва элементов в RV
 
         // Добавление новой презентации
         onView(withId(R.id.addBtn)).perform(click())
@@ -49,19 +53,13 @@ class TestDatabase : BaseInstrumentedTest() {
 
         Thread.sleep(2000) // ожидание асинхронного сохраенения первого слайда в БД
 
-        assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
+        assertEquals(db.PresentationDataDao().getAll().size.toFloat(), startDbSize + 1f) // проверка на добавление нового эл-та в БД
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize + 1f) // проверка добавление эл-та в RV
     }
 
     @Test
     fun addDuplicatePresentationTest() {
-        val db = SpeechDataBase.getInstance(getTargetContext())?.PresentationDataDao()
-
-        db?.deleteAll() // удаление всех элементов БД
-        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
-
-        mControllerTestRule.relaunchActivity() // перезапуск активити для обновления recyclerView
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize) // проверка кол-ва элементов в RV
 
         // Добавление новой презентации
         for (i in 0..1) {
@@ -70,19 +68,13 @@ class TestDatabase : BaseInstrumentedTest() {
             Thread.sleep(2000)
         }
 
-        assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
+        assertEquals(db.PresentationDataDao().getAll().size.toFloat(), startDbSize + 1f) // проверка на добавление нового эл-та в БД
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize + 1f) // проверка добавление эл-та в RV
     }
 
     @Test
     fun removePresentationTest() {
-        val db = SpeechDataBase.getInstance(getTargetContext())?.PresentationDataDao()
-
-        db?.deleteAll() // удаление всех элементов БД
-        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
-
-        mControllerTestRule.relaunchActivity() // перезапуск активити для обновления recyclerView
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize) // проверка кол-ва элементов в RV
 
         // Добавление новой презентации
         onView(withId(R.id.addBtn)).perform(click())
@@ -90,13 +82,34 @@ class TestDatabase : BaseInstrumentedTest() {
 
         Thread.sleep(2000) // ожидание асинхронного сохраенения первого слайда в БД
 
-        assertEquals(db?.getAll()?.size?.toFloat(), 1f) // проверка на добавление нового эл-та в БД
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 1f) // проверка добавление эл-та в RV
+        assertEquals(db.PresentationDataDao().getAll().size.toFloat(), startDbSize + 1f) // проверка на добавление нового эл-та в БД
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize + 1f) // проверка добавление эл-та в RV
 
-        helper.removeDebugSlides()
+        val testPres = db.PresentationDataDao().getLastPresentation()
+        assertNotNull(testPres.id)
 
-        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), 0f) // проверка кол-ва элементов в RV
-        assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
+        // Добавление тестовой статистики для презентации
+        val response = helper.addDummyStatisticsForPresentation(testPres.id!!, getTargetContext())
+        assertNotNull(response)
+
+        // Проверка на наличие статистики в БД
+        for (training in response!!.trainings)
+            assertNotNull(db.TrainingDataDao().getTrainingWithId(training.id!!))
+
+        for (slide in response.slides)
+            assertNotNull(db.TrainingSlideDataDao().getSlideWithId(slide.id!!))
+
+        // Удаление тестовой презентации
+        helper.removePresentationFromRecyclerView(startDbSize.toInt())
+
+        // Проверка на удаление статистики презентации из БД
+        for (training in response.trainings)
+            assertNull(db.TrainingDataDao().getTrainingWithId(training.id!!))
+
+        for (slide in response.slides)
+            assertNull(db.TrainingSlideDataDao().getSlideWithId(slide.id!!))
+
+        assertEquals(mControllerTestRule.activity.recyclerview_startpage.childCount.toFloat(), startDbSize) // проверка кол-ва элементов в RV
+        assertEquals(db.PresentationDataDao().getAll().size.toFloat(), startDbSize) // проверка БД на пустоту
     }
-
 }
