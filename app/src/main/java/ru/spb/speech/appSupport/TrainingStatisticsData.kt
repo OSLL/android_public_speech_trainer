@@ -18,7 +18,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
 
     private val context = myContext
     private val presData = presentationData
-    private val trainData = trainingData
+    val trainData = trainingData
 
     private var trainingSlideDBHelper: TrainingSlideDBHelper? = TrainingSlideDBHelper(context)
     private var trainingDBHelper = TrainingDBHelper(context)
@@ -106,21 +106,8 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         }
 
     //Количество слов-паразитов
-    val countOfParasites: Long
-        get() {
-            return if(trainData != null) {
-                val verbalGarbage = context.resources.getStringArray(R.array.verbalGarbage)
-                var finalCount = 0L
-                val recText = trainData.allRecognizedText.toLowerCase()
-                for (word in verbalGarbage) {
-                    finalCount += countWords(recText, word)
-                }
-                finalCount
-            } else {
-                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_cur_training_data))
-                -1
-            }
-        }
+    private val countingParasitesHelper = CountingNumberOfWordsParasites()
+    val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
 
     private fun countWords(where: String, what: String): Long {
         return ((where.length - where.replace(what, "").length) / what.length).toLong()
@@ -361,6 +348,23 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         zTimeOnSlidesFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
 
         return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor)/context.resources.getDimension(R.dimen.number_of_factors))
+    }
+
+}
+
+class CountingNumberOfWordsParasites {
+
+    fun counting(allRecognizedText: String, arrayWhereFind: Array<String>): Long{
+        var finalCount = 0L
+        val recText = allRecognizedText.toLowerCase()
+        for (word in arrayWhereFind) {
+            finalCount += countWords(recText, word)
+        }
+        return finalCount
+    }
+
+    private fun countWords(where: String, what: String): Long {
+        return ((where.length - where.replace(what, "").length) / what.length).toLong()
     }
 
 }
