@@ -118,7 +118,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             val key = preference?.key
             val switchStatisticsCollection = findPreference("statistics_collection") as SwitchPreference
             if (key == "statistics_collection") {
-                Log.d("qweqweqwe", "${switchStatisticsCollection.isChecked}")
                 activity.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE).edit()
                         .putBoolean(getString(R.string.useStatistics), switchStatisticsCollection.isChecked)
                         .apply()
