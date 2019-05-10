@@ -1,7 +1,7 @@
-package ru.spb.speech.DBTables.DaoInterfaces
+package ru.spb.speech.database.interfaces
 
 import android.arch.persistence.room.*
-import ru.spb.speech.DBTables.PresentationData
+import ru.spb.speech.database.PresentationData
 
 
 @Dao
@@ -32,6 +32,9 @@ interface PresentationDataDao {
 
     @Query("SELECT * from presentationdata WHERE id = (SELECT MAX(id) from presentationdata)")
     fun getLastPresentation(): PresentationData
+
+    @Query("SELECT * FROM presentationData WHERE notifications = 1")
+    fun getPresentationsWithEnabledNotifications(): List<PresentationData>
 
     @Query("DELETE FROM presentationdata WHERE debugPresentationFlag = 1")
     fun deleteTestPresentations()

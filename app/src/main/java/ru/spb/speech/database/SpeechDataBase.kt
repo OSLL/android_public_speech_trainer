@@ -1,16 +1,17 @@
-package ru.spb.speech.DBTables
+package ru.spb.speech.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.DaoInterfaces.TrainingDataDao
-import ru.spb.speech.DBTables.DaoInterfaces.TrainingSlideDataDao
+import ru.spb.speech.DBTables.MIGRATION_1_2
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.interfaces.TrainingDataDao
+import ru.spb.speech.database.interfaces.TrainingSlideDataDao
 import ru.spb.speech.R
 
 
-@Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 1)
+@Database(entities = arrayOf(PresentationData::class, TrainingData::class, TrainingSlideData::class), version = 2)
 abstract class SpeechDataBase : RoomDatabase() {
 
     abstract fun PresentationDataDao(): PresentationDataDao
@@ -25,6 +26,9 @@ abstract class SpeechDataBase : RoomDatabase() {
                 synchronized(SpeechDataBase::class) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             SpeechDataBase::class.java, context.getString(R.string.dbName))
+                            .addMigrations(
+                                    MIGRATION_1_2
+                            )
                             .allowMainThreadQueries()
                             .build()
                 }

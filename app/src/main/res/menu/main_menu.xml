@@ -9,7 +9,15 @@
         android:orderInCategory="2"
         android:title="@string/voice_analysis" />
     <item
-        android:id="@+id/about"
+        android:id="@+id/action_video_instruction"
         android:orderInCategory="3"
+        android:title="@string/video_instruction" />
+    <item
+        android:id="@+id/action_feedback"
+        android:orderInCategory="4"
+        android:title="@string/feedback" />
+    <item
+        android:id="@+id/about"
+        android:orderInCategory="5"
         android:title="@string/about" />
 </menu>

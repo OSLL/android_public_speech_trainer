@@ -6,7 +6,6 @@ import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.espresso.intent.rule.IntentsTestRule
-import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
@@ -17,17 +16,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.Thread.sleep
-import android.app.Activity
-import android.support.test.runner.lifecycle.Stage
-import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
-import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.espresso.matcher.ViewMatchers.*
 import org.junit.After
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.SpeechDataBase
 
 
 @RunWith(AndroidJUnit4::class)
-class CorrectWordCountTest {
+class CorrectWordCountTest : BaseInstrumentedTest(){
 
     private var mDevice: UiDevice? = null
     private var presName = ""
@@ -69,6 +64,7 @@ class CorrectWordCountTest {
         mDevice!!.pressBack()
 
         onView(withText(presName)).perform(longClick())
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_the_delete_button).toLong())
         onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
     }
 
