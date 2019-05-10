@@ -28,9 +28,9 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     val presName = presentationData?.name
 
     //Критерии оценивания тренировки:
-    var xExerciseTimeFactor = (calculateX(presData?.timeLimit!!.toFloat()).toString().replace(',','.')).toFloat()
-    var ySpeechSpeedFactor = (calculateY(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!)).toString().replace(',','.')).toFloat()
-    var zTimeOnSlidesFactor = (calculateZ(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!)).toString().replace(',','.')).toFloat()
+    var xExerciseTimeFactor = calculateX(presData?.timeLimit!!.toFloat())
+    var ySpeechSpeedFactor = calculateY(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
+    var zTimeOnSlidesFactor = calculateZ(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
 
     //--------------------Текущая тренировка:---------------------//
 
