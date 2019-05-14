@@ -85,6 +85,7 @@ class NotificationsTest: BaseInstrumentedTest() {
         assertEquals(text.text, expectedText)
 
         closeNotification(expectedApplicationName)
+        device.pressHome()
     }
 
     @Test
