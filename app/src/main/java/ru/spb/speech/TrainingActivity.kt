@@ -616,16 +616,19 @@ class TrainingActivity : AppCompatActivity() {
         if (pause_button_text_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
         }
+        audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.PAUSE
         super.onPause()
     }
 
     override fun onResume() {
         progressHelper.hide()
+        audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.RESUME
         super.onResume()
     }
 
     override fun onDestroy() {
         stopRecognizingService(false, saveTrainingInDB = true)
+        audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.FINISH
         unMuteSound()
         pdfReader?.finish()
         super.onDestroy()

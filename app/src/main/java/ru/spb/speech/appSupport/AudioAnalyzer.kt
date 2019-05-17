@@ -82,15 +82,10 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
 
         controller?.observe(activity as TrainingActivity, android.arch.lifecycle.Observer {
             when (it) {
-                AudioAnalyzerState.FINISH -> {
-                    this.continueCondition = false
-                    Log.d(AUDIO_RECORDING, "event finish")
-                }
+                AudioAnalyzerState.FINISH -> this.continueCondition = false
                 AudioAnalyzerState.START_RECORD -> startRecordSpeechAudio()
-                AudioAnalyzerState.PAUSE -> {
-                }
-                AudioAnalyzerState.RESUME -> {
-                }
+                AudioAnalyzerState.PAUSE -> { }
+                AudioAnalyzerState.RESUME -> { }
                 AudioAnalyzerState.NEXT_SLIDE -> this.nextSlide = true
             }
         })
