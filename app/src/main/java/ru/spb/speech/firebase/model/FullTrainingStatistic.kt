@@ -12,10 +12,9 @@ class FullTrainingStatistic(
         var minTrainingTime: String,
         var averageTrainingTime: String,
         var countOfAllWords: String,
-        var average_min_maxMarks: String,
-        var detailedMark: String
+        var average_min_maxMarks: String
 ) {
     constructor(trainingID: Int): this(trainingID, "", "", "",
             "", "", "", "",
-            "", "", "", "", "")
+            "", "", "", "")
 }
