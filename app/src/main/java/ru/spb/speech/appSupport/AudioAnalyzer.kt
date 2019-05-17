@@ -1,5 +1,7 @@
 package ru.spb.speech.appSupport
 
+import android.app.Activity
+import android.arch.lifecycle.MutableLiveData
 import android.content.Intent
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -19,7 +21,7 @@ import kotlin.concurrent.thread
 data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
                      val pauseAverageLength: Long, val longPausesAmount: Int)
 
-class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
+class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<AudioAnalyzerState>? = null) {
     private val silenceCoefficient = 1.0
     private val shortPauseLength = 0.1
     private val shortSpeechLength = 0.05
@@ -48,6 +50,24 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     private var isPause = false
     private var pauseStartTime: Long = 0
 
+    private var nextSlide = false
+    private var continueCondition = true
+
+    enum class AudioAnalyzerState {
+        START_RECORD,
+        FINISH,
+        PAUSE,// TODO
+        RESUME,// TODO
+        NEXT_SLIDE
+    }
+
+    companion object {
+        suspend fun getInstance(act: Activity, controller: MutableLiveData<AudioAnalyzerState>)
+                = AudioAnalyzer(act, controller)
+
+        const val AUDIO_LOG_RESULT = "AUDIO_LOG_RESULT"
+    }
+
     init {
         var bufferSize = AudioRecord.getMinBufferSize(
                 SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
@@ -59,12 +79,22 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
         countdownRecord = initAudioRecording(bufferSize)
         speechRecord = initAudioRecording(bufferSize)
+
+        controller?.observe(activity as TrainingActivity, android.arch.lifecycle.Observer {
+            when (it) {
+                AudioAnalyzerState.FINISH -> this.continueCondition = false
+                AudioAnalyzerState.START_RECORD -> startRecordSpeechAudio()
+                AudioAnalyzerState.PAUSE -> { }
+                AudioAnalyzerState.RESUME -> { }
+                AudioAnalyzerState.NEXT_SLIDE -> this.nextSlide = true
+            }
+        })
     }
 
     private fun initAudioRecording(bufferSize: Int): AudioRecord {
         val record = AudioRecord(
-            MediaRecorder.AudioSource.MIC, SAMPLING_RATE,
-            AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize)
+                MediaRecorder.AudioSource.MIC, SAMPLING_RATE,
+                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize)
         if (record.state != AudioRecord.STATE_INITIALIZED) {
             Log.e(AUDIO_RECORDING, "can't initialize audio countdownRecord")
             // TODO maybe an exception
@@ -113,7 +143,169 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
         }
     }
 
-    fun recordSpeechAudio(continueCondition: () -> Boolean, nextSlide: () -> Boolean){
+    private fun startRecordSpeechAudio() {
+        thread {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
+
+            speechRecord.startRecording()
+            Log.i(AUDIO_RECORDING, "started speech audio recording")
+
+            val startTime = System.currentTimeMillis()
+
+            var speechStartTime: Long = 0
+
+            var totalFragmentsRead: Long = 0
+            var silentFragmentsRead: Long = 0
+            var totalFragmentsOnSlide: Long = 0
+            var silentFragmentsOnSlide: Long = 0
+
+            var slideNumber = 1
+
+
+            // TODO: измерять уровень тишины (возможна калибровка в настройках и т.п)
+            // в VoiceAnalysisActivity для опеределения уровня тишины использовался 5 секундный таймер
+            silenceLevel = 50.0
+//            if (silenceLevel == null) {
+//                silenceLevel = getAudioVolumeLevel(getAverageCountdownVolumeLevel(),
+//                        getMaximalCountdownVolumeLevel())
+//            }
+
+            while (this.continueCondition) {
+                val shortsRead = speechRecord.read(audioBuffer, 0, audioBuffer.size)
+                val fragmentVolume = calculateVolume(shortsRead)
+                speechVolumesList.add(fragmentVolume)
+                if (fragmentVolume < silenceLevel!!) {
+                    if (!isPause) {
+                        isPause = true
+                        if (millisecondsToSeconds(System.currentTimeMillis() - speechStartTime) < shortSpeechLength) {
+                            // the pause is still continuing, so we remove the pause in the list
+                            // and later it will be replaced with the current, longer pause
+                            // which has the same start time
+                            pausesPerSlide.dropLast(1)
+                        } else {
+                            pauseStartTime = System.currentTimeMillis()
+                        }
+                    }
+                    silentFragmentsRead++
+                    silentFragmentsOnSlide++
+                } else if (isPause) {
+                    val pauseLength = System.currentTimeMillis() - pauseStartTime
+                    if (millisecondsToSeconds(pauseLength) >= shortPauseLength) {
+                        pausesPerSlide.add(pauseLength)
+                    }
+                    isPause = false
+                    speechStartTime = System.currentTimeMillis()
+                }
+                totalFragmentsOnSlide++
+                totalFragmentsRead++
+
+                if (this.nextSlide || !this.continueCondition) {
+                    Log.d(AUDIO_RECORDING, "next slide")
+                    this.nextSlide = false
+
+                    val silencePercentageOnSlide = silentFragmentsOnSlide.toDouble() /
+                            totalFragmentsOnSlide * silenceCoefficient
+                    val averageSilenceLength = pausesPerSlide.average().toLong()
+                    val longPausesAmount = pausesPerSlide
+                            .filter { it -> it > averageSilenceLength }.size
+
+                    slides.add(SlideInfo(slideNumber++, silencePercentageOnSlide,
+                            averageSilenceLength, longPausesAmount).apply {
+                        Log.d(AUDIO_RECORDING, "added slide: $this")
+                    })
+
+                    totalFragmentsOnSlide = 0
+                    silentFragmentsOnSlide = 0
+                    pausesPerSlide.clear()
+                }
+
+                val bufferBytes = ByteBuffer.allocate(shortsRead * 2)
+                bufferBytes.order(ByteOrder.LITTLE_ENDIAN)
+                bufferBytes.asShortBuffer().put(audioBuffer, 0, shortsRead)
+                val bytes = bufferBytes.array()
+                byteArrayOutputStream.write(bytes)
+            }
+
+            val duration = System.currentTimeMillis() - startTime
+            Log.i(AUDIO_RECORDING, "finished audio recording at ${getCurrentDateForLog()}")
+            Log.i(AUDIO_RECORDING, "audio file length: " + formatTime(duration))
+
+            speechDuration = duration
+
+            val silencePercentage = silentFragmentsRead.toDouble() /
+                    totalFragmentsRead * silenceCoefficient
+            this.silencePercentage = silencePercentage
+
+            Log.i(AUDIO_RECORDING, "silence: $silencePercentage")
+
+            speechVolumesList.sort()
+
+            speechRecord.stop()
+            speechRecord.release()
+
+            logStatistics()
+            saveFile(byteArrayOutputStream)
+        }
+    }
+
+    /**
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     *
+     * Ниже пример доступа к всевозможной статистике
+     * Посмтреть ее можно по логу: AUDIO_LOG_RESULT
+     */
+    private fun log(vararg content: String) { for (s in content) Log.d(AUDIO_LOG_RESULT, s) }
+    private fun getString(id: Int) = activity.getString(id)
+
+    private fun outputPausesInfo(silencePercentage: Double) {
+        when {
+            tooMuchPauses(silencePercentage) -> {
+                if (tooMuchPausesWarning(silencePercentage)) {
+                    log(getString(R.string.too_much_pauses),
+                            getString(R.string.revise_text_recommendation))
+                } else {
+                    log(getString(R.string.overly_many_pauses),
+                            getString(R.string.revise_text))
+                }
+
+                log(getString(R.string.speak_faster))
+            }
+            notEnoughPauses(silencePercentage) ->
+                log(getString(R.string.speak_slower))
+            else -> log(getString(R.string.good_speech))
+        }
+    }
+
+    private fun outputSlideInformation(slideInfo: SlideInfo) {
+        val margin = "  "
+
+        log("${getString(R.string.slide)} ${slideInfo.slideNumber}:\n")
+        log("$margin${getString(R.string.silence_percentage_on_slide)}: " +
+                "%.2f".format(slideInfo.silencePercentage * 100) + "%\n")
+        log("$margin${getString(R.string.average_pause_length)}: " +
+                "${formatTimeToSeconds(slideInfo.pauseAverageLength)} ${getString(R.string.seconds)}\n")
+        log("$margin${getString(R.string.long_pauses_amount)}: " +
+                "${slideInfo.longPausesAmount}\n")
+    }
+
+    private fun logStatistics() {
+        if (speechTooSilent()) {
+            if (speechTooSilentWarning()) log(getString(R.string.quiet_speech))
+            else log(getString(R.string.overly_quiet_speech))
+            log(getString(R.string.speak_louder))
+        } else log(getString(R.string.good_volume))
+
+        outputPausesInfo(getSilencePercentage())
+        log(getString(R.string.duration),"\n${formatTime(getSpeechDuration())}\n")
+        log(getString(R.string.breakdown_by_slide))
+        getSlideInfo().forEach { outputSlideInformation(it) }
+    }
+
+    /**
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     */
+
+    fun recordSpeechAudio(continueCondition: () -> Boolean, nextSlide: () -> Boolean) {
         thread {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
 
@@ -134,7 +326,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
 
             if (silenceLevel == null) {
                 silenceLevel = getAudioVolumeLevel(getAverageCountdownVolumeLevel(),
-                    getMaximalCountdownVolumeLevel())
+                        getMaximalCountdownVolumeLevel())
             }
 
 
@@ -170,6 +362,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                 if (nextSlide.invoke() || !(continueCondition.invoke())) {
                     Log.d(AUDIO_RECORDING, "next slide")
 
+                    this.nextSlide = false
                     sendBroadcastIntent(Intent(NEXT_SLIDE_BUTTON_ACTION))
 
                     synchronized(obj) {
@@ -180,7 +373,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
                             totalFragmentsOnSlide * silenceCoefficient
                     val averageSilenceLength = pausesPerSlide.average().toLong()
                     val longPausesAmount = pausesPerSlide
-                        .filter { it -> it > averageSilenceLength }.size
+                            .filter { it -> it > averageSilenceLength }.size
 
                     slides.add(SlideInfo(slideNumber++, silencePercentageOnSlide,
                             averageSilenceLength, longPausesAmount))
@@ -223,7 +416,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     }
 
     private fun getAudioVolumeLevel(maxLevel: Double, avgLevel: Double): Double =
-        (maxLevel + avgLevel) / 2
+            (maxLevel + avgLevel) / 2
 
     private fun sendBroadcastIntent(intent: Intent) {
         val context = activity?.applicationContext
@@ -241,7 +434,7 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     }
 
     fun isRoomNoisy(): Boolean = getAudioVolumeLevel(getMaximalCountdownVolumeLevel(),
-        getAverageCountdownVolumeLevel()) > maxAcceptableSilenceLevel
+            getAverageCountdownVolumeLevel()) > maxAcceptableSilenceLevel
 
     /*fun getCountdownVolumeLevels(): Triple<Double, Double, Double> =
         getVolumeLevels(countdownVolumesList)*/
@@ -255,20 +448,19 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     fun getSlideInfo(): List<SlideInfo> = slides
 
     fun tooMuchPausesWarning(silencePercentage: Double): Boolean =
-        silencePercentage > maxWarningSilencePercentage
+            silencePercentage > maxWarningSilencePercentage
 
     fun tooMuchPauses(silencePercentage: Double): Boolean =
-        silencePercentage> maxSilencePercentage
+            silencePercentage > maxSilencePercentage
 
     fun notEnoughPauses(silencePercentage: Double): Boolean =
-        silencePercentage < minWarningSilencePercentage
+            silencePercentage < minWarningSilencePercentage
 
     fun speechTooSilentWarning(): Boolean =
-        silenceAndSpeechLevelsDifference() < minWarningSilenceAndSpeechLevelsDifference
+            silenceAndSpeechLevelsDifference() < minWarningSilenceAndSpeechLevelsDifference
 
     fun speechTooSilent(): Boolean =
-        silenceAndSpeechLevelsDifference() < minSilenceAndSpeechLevelsDifference
-
+            silenceAndSpeechLevelsDifference() < minSilenceAndSpeechLevelsDifference
 
 
     private fun getMaximalCountdownVolumeLevel(): Double {
@@ -288,8 +480,8 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
     }
 
     private fun silenceAndSpeechLevelsDifference(): Double =
-        getAudioVolumeLevel(getAverageRecordingVolumeLevel(), getMaximalRecordingVolumeLevel()) -
-        getAudioVolumeLevel(getAverageCountdownVolumeLevel(), getMaximalCountdownVolumeLevel())
+            getAudioVolumeLevel(getAverageRecordingVolumeLevel(), getMaximalRecordingVolumeLevel()) -
+                    getAudioVolumeLevel(getAverageCountdownVolumeLevel(), getMaximalCountdownVolumeLevel())
 
     private fun saveFile(byteArrayOutputStream: ByteArrayOutputStream) {
         val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
@@ -328,4 +520,5 @@ class AudioAnalyzer(private val activity: VoiceAnalysisActivity?) {
         return timeInMillis / 1000.toDouble()
     }
 }
+
 
