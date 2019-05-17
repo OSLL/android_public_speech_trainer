@@ -3,6 +3,7 @@ package ru.spb.speech
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Service
+import android.arch.lifecycle.MutableLiveData
 import android.content.*
 import android.content.pm.PackageManager
 import android.media.AudioManager
@@ -19,6 +20,7 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import kotlinx.coroutines.*
+import ru.spb.speech.appSupport.AudioAnalyzer
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
@@ -88,10 +90,18 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    private var audioAnalyzer: AudioAnalyzer? = null
+    private val audioAnalyzerController = MutableLiveData<AudioAnalyzer.AudioAnalyzerState>()
+            .apply { value = AudioAnalyzer.AudioAnalyzerState.START_RECORD }
+
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+
+        GlobalScope.launch {
+            audioAnalyzer = AudioAnalyzer.getInstance(this@TrainingActivity, audioAnalyzerController)
+        }
 
         progressHelper = ProgressHelper(this, training_activity_root_view, listOf())
 
@@ -144,6 +154,7 @@ class TrainingActivity : AppCompatActivity() {
 
         curSlide.text = "1/${presentationData?.pageCount}"
         next.setOnClickListener {
+            audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.NEXT_SLIDE
             next.isEnabled = false
             next.alpha = 0.3f
 
@@ -202,6 +213,7 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+            audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.FINISH
             finishFlag = true
             mainTimer?.cancel()
             extraTimeTimer?.cancel()
