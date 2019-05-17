@@ -33,26 +33,26 @@ class StartPageActivityTest : BaseInstrumentedTest() {
     }
 
     @Test
-    fun test_from_start_page_to_preference(){
+    fun testFromStartPageToPreference(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(activity_preference)).perform(click())
         intended(hasComponent(ComponentName(getTargetContext(), SettingsActivity::class.java)))
     }
 
     @Test
-    fun test_from_sta6rt_page_to_video_instruction(){
+    fun testFromStartPageToVideoInstruction(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(video_instruction)).check(matches(isDisplayed()))
     }
 
     @Test
-    fun test_from_start_page_to_feedback(){
+    fun testFromStartPageToFeedback(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(feedback)).check(matches((isDisplayed())))
     }
 
     @Test
-    fun test_from_start_page_to_open_file_dialog(){
+    fun testFromStartPageToOpenFileDialog(){
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
         intended(hasComponent(ComponentName(getTargetContext(), CreatePresentationActivity::class.java)))
