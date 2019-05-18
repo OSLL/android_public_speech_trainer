@@ -81,7 +81,6 @@ class FirebaseHelper(private val context: Context) {
         presRef.updateChildren(mapOf(Pair("averageDeviationLimitRestriction", fts.averageDeviationLimitRestriction)))
         presRef.updateChildren(mapOf(Pair("averageTrainingTime", fts.averageTrainingTime)))
         presRef.updateChildren(mapOf(Pair("average_min_maxMarks", fts.average_min_maxMarks)))
-        presRef.updateChildren(mapOf(Pair("detailedMark(regulations, speed, time_on_slides)", fts.detailedMark)))
         presRef.updateChildren(mapOf(Pair("copedCount_allCount", fts.copedCount_allCount)))
         presRef.updateChildren(mapOf(Pair("countOfAllWords", fts.countOfAllWords)))
         presRef.updateChildren(mapOf(Pair("finishedTrainings_allTrainings", fts.finishedTrainings_allTrainings)))
@@ -114,11 +113,8 @@ class FirebaseHelper(private val context: Context) {
         fts.averageTrainingTime = getStringPresentationTimeLimit(trainingStatisticsData.averageTime)
         fts.countOfAllWords = " ${trainingStatisticsData.allWords}"
         fts.average_min_maxMarks = "${trainingStatisticsData.averageEarn.toInt()} / ${trainingStatisticsData.minEarn.toInt()} / ${trainingStatisticsData.maxEarn.toInt()}"
-        fts.detailedMark = "(${(trainingStatisticsData.xExerciseTimeFactor * context.resources.getInteger(R.integer.transfer_to_interest)/context.resources.getDimension(R.dimen.number_of_factors)).format(1)}, ${(trainingStatisticsData.ySpeechSpeedFactor * context.resources.getInteger(R.integer.transfer_to_interest)/context.resources.getDimension(R.dimen.number_of_factors)).format(1)}, ${(trainingStatisticsData.zTimeOnSlidesFactor * context.resources.getInteger(R.integer.transfer_to_interest)/context.resources.getDimension(R.dimen.number_of_factors)).format(1)})"
         return fts
     }
-
-    fun Float.format(digits: Int) = java.lang.String.format("%.${digits}f", this)!!
 
     @SuppressLint("UseSparseArrays")
     private fun getStringPresentationTimeLimit(t: Long?): String {

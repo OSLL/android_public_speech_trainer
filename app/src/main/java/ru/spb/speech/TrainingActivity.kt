@@ -3,6 +3,7 @@ package ru.spb.speech
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Service
+import android.arch.lifecycle.MutableLiveData
 import android.content.*
 import android.content.pm.PackageManager
 import android.media.AudioManager
@@ -19,6 +20,7 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import kotlinx.coroutines.*
+import ru.spb.speech.appSupport.AudioAnalyzer
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
@@ -89,10 +91,18 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    private var audioAnalyzer: AudioAnalyzer? = null
+    private val audioAnalyzerController = MutableLiveData<AudioAnalyzer.AudioAnalyzerState>()
+            .apply { value = AudioAnalyzer.AudioAnalyzerState.START_RECORD }
+
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+
+        GlobalScope.launch {
+            audioAnalyzer = AudioAnalyzer.getInstance(this@TrainingActivity, audioAnalyzerController)
+        }
 
         progressHelper = ProgressHelper(this, training_activity_root_view, listOf())
 
@@ -145,6 +155,7 @@ class TrainingActivity : AppCompatActivity() {
 
         curSlide.text = "1/${presentationData?.pageCount}"
         next.setOnClickListener {
+            audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.NEXT_SLIDE
             next.isEnabled = false
             next.alpha = 0.3f
 
@@ -203,6 +214,7 @@ class TrainingActivity : AppCompatActivity() {
         }
 
         finish.setOnClickListener{
+            audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.FINISH
             finishFlag = true
             mainTimer?.cancel()
             extraTimeTimer?.cancel()
@@ -393,6 +405,10 @@ class TrainingActivity : AppCompatActivity() {
             trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
             trainingData?.shareOfParasiticWords = "${((trainingStatisticsData.countOfParasites.toFloat() / trainingStatisticsData.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent)
+            trainingData?.exerciseTimeFactorMarkX = (trainingStatisticsData.xExerciseTimeFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.speechSpeedFactorMarkY = (trainingStatisticsData.ySpeechSpeedFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.timeOnSlidesFactorMarkZ = (trainingStatisticsData.zTimeOnSlidesFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.trainingGrade = trainingStatisticsData.trainingGrade.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)).replace(",", ".")
 
             if (saveTrainingInDB) {
                 val trainingDBHelper = TrainingDBHelper(this)
@@ -610,16 +626,19 @@ class TrainingActivity : AppCompatActivity() {
         if (pause_button_text_training_activity.text.toString() != getString(R.string.continue_) && !isTrainingFinish) {
             pause_button_training_activity.performClick()
         }
+        audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.PAUSE
         super.onPause()
     }
 
     override fun onResume() {
         progressHelper.hide()
+        audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.RESUME
         super.onResume()
     }
 
     override fun onDestroy() {
         stopRecognizingService(false, saveTrainingInDB = true)
+        audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.FINISH
         unMuteSound()
         pdfReader?.finish()
         super.onDestroy()

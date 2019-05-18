@@ -6,6 +6,11 @@
         android:summary="@string/pref_description_enable_statistics"
         android:title="@string/pref_title_enable_statistics" />
 
+    <SwitchPreference
+        android:key="statistics_collection"
+        android:summary="@string/pref_description_statistics_collection"
+        android:title="@string/pref_title_statistics_collection" />
+
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference

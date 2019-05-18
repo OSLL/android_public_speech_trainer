@@ -223,6 +223,7 @@
     <string name="total_words_count">Сказано слов всего: </string>
     <string name="average_earning_1">Средняя / минимальная</string>
     <string name="average_earning_2">/ максимальная оценка: </string>
+    <string name="scores">баллов</string>
 
     <string name="training_statistics_directory">training_statistics</string>
     <string name="error_creating_text_file">Ошибка в создании текстового файла</string>
@@ -275,6 +276,9 @@
     <string name="no_thnx">Нет, спасибо</string>
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
+    <string name="first_run">first run</string>
+    <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
+    <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
