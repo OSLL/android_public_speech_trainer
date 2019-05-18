@@ -109,10 +109,6 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     private val countingParasitesHelper = CountingNumberOfWordsParasites()
     val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
 
-    private fun countWords(where: String, what: String): Long {
-        return ((where.length - where.replace(what, "").length) / what.length).toLong()
-    }
-
     //--------------------Статистика тренировок:---------------------//
 
     //Дата первой тренировки:
@@ -384,7 +380,7 @@ class CountingNumberOfWordsParasites {
         return finalCount
     }
 
-    private fun countWords(where: String, what: String): Long {
-        return ((where.length - where.replace(what, "").length) / what.length).toLong()
+    private fun countWords(searchString: String, stringWeAreLookingFor: String): Long {
+        return ((searchString.length - searchString.replace(stringWeAreLookingFor, "").length) / stringWeAreLookingFor.length).toLong()
     }
 }
