@@ -51,7 +51,6 @@ class DisplayShareOfWordsParasitesTest : BaseInstrumentedTest() {
 
         debSl.putBoolean(onMode, true)
         debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
-
         debSl.apply()
     }
 
@@ -64,21 +63,14 @@ class DisplayShareOfWordsParasitesTest : BaseInstrumentedTest() {
         onView(withId(R.id.addPresentation)).perform(click())
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
-
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_check_display_parasites).toLong())
-
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
-
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
-
         onView(withId(android.R.id.button1)).perform(click())
-
         onView(withText(containsString(mIntentsTestRule.activity.getString(R.string.word_share_of_parasites)))).perform(scrollTo()).check(matches(isDisplayed()))
-
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_wait_after_test).toLong())
 
         mDevice!!.pressBack()
-
         onView(withText(presName)).perform(longClick())
         onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
 
