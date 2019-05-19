@@ -16,10 +16,21 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
                      val pauseAverageLength: Long, val longPausesAmount: Int)
+
+const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"
+const val RECORD_AUDIO_PERMISSION = 200 // change constant?
+const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
+const val POST_COUNTDOWN_ACTION = "ru.spb.speech.ACTION_POST_COUNTDOWN" // TODO: change name later when we get a new package name
+const val POST_SPEECH_ACTION = "ru.spb.speech.ACTION_POST_RECORDING"
+const val NEXT_SLIDE_BUTTON_ACTION = "ru.spb.speech.ACTION_NEXT_SLIDE_BUTTON"
+const val SAMPLING_RATE = 44100
+
+val obj = Object()
 
 class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<AudioAnalyzerState>? = null) {
     private val silenceCoefficient = 1.0
@@ -519,6 +530,21 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
     private fun millisecondsToSeconds(timeInMillis: Long): Double {
         return timeInMillis / 1000.toDouble()
     }
+
+    private fun formatTimeToSeconds(timeInMillis: Long): String {
+        return "%.2f".format(timeInMillis.toDouble() / 1000)
+    }
+
+    private fun formatTime(timeInMillis: Long): String {
+        return "${formatNumberTwoDigits(TimeUnit.MILLISECONDS.toMinutes(timeInMillis) / 60)}:" +
+                "${formatNumberTwoDigits(TimeUnit.MILLISECONDS.toMinutes(timeInMillis) % 60)}:" +
+                formatNumberTwoDigits(TimeUnit.MILLISECONDS.toSeconds(timeInMillis) % 60)
+    }
+
+    private fun formatNumberTwoDigits(number: Long): String {
+        return String.format("%02d", number)
+    }
+
 }
 
 

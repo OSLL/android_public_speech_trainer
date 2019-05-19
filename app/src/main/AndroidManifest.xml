@@ -64,8 +64,6 @@
             android:name=".SpeechRecognitionService"
             android:enabled="true" />
 
-        <activity android:name=".VoiceAnalysisActivity" />
-
         <receiver android:name=".notifications.AlarmReceiver"/>
         <receiver android:name=".notifications.AlarmBootReceiver">
             <intent-filter>
