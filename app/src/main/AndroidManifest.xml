@@ -21,13 +21,17 @@
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
-        <activity android:name=".StartPageActivity"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".RecomendationActivity"
+            android:label="">
+        </activity>
+        <activity
+            android:name=".StartPageActivity"
             android:configChanges="orientation|screenSize">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,9 +60,9 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
+            android:name=".AboutActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/about"
-            android:name=".AboutActivity"/>
+            android:label="@string/about" />
 
         <service
             android:name=".SpeechRecognitionService"
@@ -66,12 +70,12 @@
 
         <activity android:name=".VoiceAnalysisActivity" />
 
-        <receiver android:name=".notifications.AlarmReceiver"/>
+        <receiver android:name=".notifications.AlarmReceiver" />
         <receiver android:name=".notifications.AlarmBootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT" />
             </intent-filter>
         </receiver>
     </application>
