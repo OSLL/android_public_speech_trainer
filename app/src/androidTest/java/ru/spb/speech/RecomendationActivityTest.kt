@@ -1,21 +1,5 @@
 package ru.spb.speech
-/*import android.content.ComponentName
-import android.support.test.InstrumentationRegistry
-import android.support.test.espresso.Espresso
-import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.assertion.ViewAssertions
-import android.support.test.espresso.intent.Intents
-import android.support.test.espresso.intent.matcher.IntentMatchers
-import android.support.test.espresso.intent.rule.IntentsTestRule
-import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.runner.AndroidJUnit4
-import ru.spb.speech.R.string.*
-import android.support.test.uiautomator.UiDevice
-import android.view.View
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import ru.spb.speech.**/
+
 import android.content.ComponentName
 import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
