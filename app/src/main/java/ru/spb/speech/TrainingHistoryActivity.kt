@@ -1,10 +1,14 @@
 package ru.spb.speech
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.MenuItem
@@ -90,6 +94,12 @@ class TrainingHistoryActivity : AppCompatActivity() {
         }
 
         export_training_history.setOnClickListener {
+            if (!checkStoragePermission()) {
+                checkStoragePermission()
+                Toast.makeText(this, getString(R.string.try_again), Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()
             trainingsFile = if (sdState == android.os.Environment.MEDIA_MOUNTED) {
@@ -172,6 +182,20 @@ class TrainingHistoryActivity : AppCompatActivity() {
                 " %02d:%02d",
                 minutes, seconds
         )
+    }
+
+    private fun checkStoragePermission(): Boolean {
+        val readPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val writePerm = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        val arr = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        if (readPerm != PackageManager.PERMISSION_GRANTED || writePerm != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arr,
+                    1)
+            return false
+        }
+        return true
     }
 
 
