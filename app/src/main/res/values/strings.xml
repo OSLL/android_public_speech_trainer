@@ -288,6 +288,7 @@
     <string name="first_run">first run</string>
     <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
+    <string name="try_again">Попробуйте снова</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
