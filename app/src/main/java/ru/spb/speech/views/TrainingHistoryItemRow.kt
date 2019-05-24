@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.DateUtils
 import android.view.View
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
-import ru.spb.speech.DBTables.TrainingData
+import ru.spb.speech.database.TrainingData
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.training_history_row.view.*
@@ -25,7 +25,8 @@ class TrainingHistoryItemRow(private val training: TrainingData, private val sli
         viewHolder.itemView.date_training_history_row.text = DateUtils.formatDateTime(
                 ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_DATE) + " | " +
                 DateUtils.formatDateTime(
-                        ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_TIME)
+                        ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_TIME) +
+                " (${training.trainingGrade} ${ctx.resources.getString(R.string.scores)})"
 
         val helper = TrainingSlideDBHelper(ctx)
         val slides = helper.getAllSlidesForTraining(training)

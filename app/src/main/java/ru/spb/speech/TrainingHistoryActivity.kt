@@ -9,11 +9,11 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
+import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.views.TrainingHistoryItemRow
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder

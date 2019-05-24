@@ -3,11 +3,11 @@ package ru.spb.speech
 import android.content.Context
 import android.text.format.DateUtils
 import android.util.Log
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.TrainingData
-import ru.spb.speech.DBTables.TrainingSlideData
-import ru.spb.speech.DBTables.helpers.TrainingDBHelper
-import ru.spb.speech.DBTables.helpers.TrainingSlideDBHelper
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.TrainingData
+import ru.spb.speech.database.TrainingSlideData
+import ru.spb.speech.database.helpers.TrainingDBHelper
+import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import kotlin.math.sqrt
 
 class TrainingStatisticsData (myContext: Context, presentationData: PresentationData?, trainingData: TrainingData?) {
@@ -28,9 +28,9 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     val presName = presentationData?.name
 
     //Критерии оценивания тренировки:
-    var xExerciseTimeFactor = 0f
-    var ySpeechSpeedFactor = 0f
-    var zTimeOnSlidesFactor = 0f
+    var xExerciseTimeFactor = calculateX(presData?.timeLimit!!.toFloat())
+    var ySpeechSpeedFactor = calculateY(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
+    var zTimeOnSlidesFactor = calculateZ(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
 
     //--------------------Текущая тренировка:---------------------//
 
@@ -94,7 +94,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     val trainingGrade: Float
         get() {
             return if(trainData != null){
-                calcOfTheTrainingGrade(trainingSlideDBHelper?.getAllSlidesForTraining(trainData), presData?.timeLimit!!.toFloat())
+                calcOfTheTrainingGrade()
             } else {
                 Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_cur_training_data))
                 -1f
@@ -195,7 +195,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             return if(trainingList != null && trainingCount != null && presData != null) {
                 var averageEarnTemp = context.resources.getDimension(R.dimen.zero_float)
                 for (training in trainingList){
-                    val score = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(training), presData.timeLimit!!.toFloat())
+                    val score = calcOfTheTrainingGrade()
                     averageEarnTemp += score
                 }
                 averageEarnTemp/trainingCount
@@ -208,9 +208,9 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     val minEarn: Float
         get(){
             return if(trainingList != null && trainingCount != null && presData != null) {
-                var minEarnTemp = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(trainingList[0]), presData.timeLimit!!.toFloat())
+                var minEarnTemp = calcOfTheTrainingGrade()
                 for (training in trainingList){
-                    val score = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(training), presData.timeLimit!!.toFloat())
+                    val score = calcOfTheTrainingGrade()
                     if (minEarnTemp > score){
                         minEarnTemp = score
                     }
@@ -225,9 +225,9 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     val maxEarn: Float
         get(){
             return if(trainingList != null && trainingCount != null && presData != null) {
-                var maxEarnTemp = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(trainingList[0]), presData.timeLimit!!.toFloat())
+                var maxEarnTemp = calcOfTheTrainingGrade()
                 for (training in trainingList){
-                    val score = calcOfTheTrainingGrade( trainingSlideDBHelper?.getAllSlidesForTraining(training), presData.timeLimit!!.toFloat())
+                    val score = calcOfTheTrainingGrade()
                     if (maxEarnTemp < score){
                         maxEarnTemp = score
                     }
@@ -291,12 +291,18 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         }
     }
 
-    private fun calcOfTheTrainingGrade(slideInTraining: MutableList<TrainingSlideData>?, x0ReportTimeLimit: Float) : Float{
+    private fun calcOfTheTrainingGrade() : Float{
+        return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor)/context.resources.getDimension(R.dimen.number_of_factors))
+    }
 
+    private fun calculateX(x0ReportTimeLimit: Float) : Float{
         val dxDiffBtwTrainTimeAndLim: Float = if (currentTrainingTime > x0ReportTimeLimit*3){
             x0ReportTimeLimit
         } else Math.abs(currentTrainingTime - x0ReportTimeLimit)
+        return context.resources.getDimension(R.dimen.unit_float) - (dxDiffBtwTrainTimeAndLim/x0ReportTimeLimit)
+    }
 
+    private fun calculateY(slideInTraining: MutableList<TrainingSlideData>?) : Float{
         var dySpeechVelDispersion = context.resources.getDimension(R.dimen.zero_float)
 
         val speedList = ArrayList<Float>()
@@ -324,6 +330,25 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
 
         dySpeechVelDispersion /= speedList.size
 
+        return context.resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
+    }
+
+    private fun calculateZ(slideInTraining: MutableList<TrainingSlideData>?) : Float{
+        val timeList = ArrayList<Long>()
+        var curAverTime = context.resources.getDimension(R.dimen.zero_float)
+        if (slideInTraining != null) {
+            for (slide in slideInTraining) {
+                timeList.add(slide.spentTimeInSec!!)
+            }
+        } else {
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_training_slides))
+            return -1f
+        }
+        for (i in timeList){
+            curAverTime += i
+        }
+        curAverTime/=timeList.size
+
         var dzTimeDispersionOnSlides = context.resources.getDimension(R.dimen.zero_float)
 
         for (i in timeList){
@@ -331,11 +356,6 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         }
 
         dzTimeDispersionOnSlides /= timeList.size
-        xExerciseTimeFactor  = context.resources.getDimension(R.dimen.unit_float) - (dxDiffBtwTrainTimeAndLim/x0ReportTimeLimit)
-        ySpeechSpeedFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
-        zTimeOnSlidesFactor = context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
-
-        return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor)/context.resources.getDimension(R.dimen.number_of_factors))
+        return context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
     }
-
 }

@@ -19,8 +19,8 @@ import ru.spb.speech.EditPresentationActivity
 import ru.spb.speech.R
 import ru.spb.speech.TrainingActivity
 import ru.spb.speech.views.PresentationStartpageItemRow
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.APST_TAG
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import ru.spb.speech.database.helpers.PresentationDBHelper
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -46,21 +47,14 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(context)
 
         adapter.setOnItemClickListener { item: Item<ViewHolder>, _ ->
-            if (!sharedPreferences.getBoolean(context.getString(R.string.useStatistics), false)) {
-                val builder = AlertDialog.Builder(context)
-                builder.setMessage(context.getString(R.string.attention))
-                builder.setPositiveButton(context.getString(R.string.good)) { _, _ ->
-                    sharedPreferences.edit()
-                            .putBoolean(context.getString(R.string.useStatistics), true)
-                            .apply()
-
-                    startTraining(item as PresentationStartpageItemRow)
-                }
-                builder.setNegativeButton(context.getString(R.string.no_thnx)) { _, _ ->
-                    startTraining(item as PresentationStartpageItemRow)
-                }
-                builder.create().show()
-            } else startTraining(item as PresentationStartpageItemRow)
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage(context.getString(R.string.start_training))
+            builder.setPositiveButton(context.getString(R.string.yes)) { _, _ ->
+                startTraining(item as PresentationStartpageItemRow)
+            }
+            builder.setNegativeButton(context.getString(R.string.no)) { _, _ ->
+            }
+            builder.create().show()
         }
 
         adapter.setOnItemLongClickListener { item: Item<ViewHolder>, view ->
@@ -83,7 +77,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
                     Log.d(APST_TAG, "no clicked position")
                 }
 
-                presentationDataDao.deletePresentationWithId(row.presentationId!!)
+                PresentationDBHelper(context).removePresentation(row.presentationId!!)
                 updateListener?.onAdapterUpdate()
             }
 

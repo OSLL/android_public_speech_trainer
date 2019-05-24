@@ -1,14 +1,11 @@
 package ru.spb.speech
 
-import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
-import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.longClick
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.PickerActions
-import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
@@ -23,7 +20,6 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var activityTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
-
     lateinit var helper: TestHelper
 
     @Before

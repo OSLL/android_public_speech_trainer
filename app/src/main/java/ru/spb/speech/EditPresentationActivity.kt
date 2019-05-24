@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
@@ -11,10 +12,10 @@ import android.view.View
 import android.widget.Toast
 import ru.spb.speech.views.PresentationStartpageItemRow
 import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.PresentationData
-import ru.spb.speech.DBTables.SpeechDataBase
-import ru.spb.speech.DBTables.helpers.PresentationDBHelper
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.PresentationData
+import ru.spb.speech.database.SpeechDataBase
+import ru.spb.speech.database.helpers.PresentationDBHelper
 import ru.spb.speech.appSupport.ProgressHelper
 import kotlinx.android.synthetic.main.activity_edit_presentation.*
 import java.util.*
@@ -40,7 +41,7 @@ class EditPresentationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_presentation)
 
-        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName, datePicker))
+        progressHelper = ProgressHelper(this, edit_presentation_activity_root, listOf(addPresentation, numberPicker1, presentationName, datePicker, notifications))
 
         numberPicker1.maxValue = 100
         numberPicker1.minValue = 1
@@ -58,6 +59,7 @@ class EditPresentationActivity : AppCompatActivity() {
                 Log.d(APST_TAG, "edit_pres_act: wrong ID")
                 return
             }
+
             val presentationUri = presentationData?.stringUri
             val changePresentationFlag = intent.getIntExtra(getString(R.string.changePresentationFlag), valueWhenMissedIntent) == PresentationStartpageItemRow.activatedChangePresentationFlag
 
@@ -66,6 +68,7 @@ class EditPresentationActivity : AppCompatActivity() {
             pdf_view.setImageBitmap(pdfReader.getBitmapForSlide(0))
 
             val date = presentationData?.presentationDate
+            notifications.isChecked = presentationData!!.notifications
 
             if (changePresentationFlag) {
                 title = getString(R.string.presentationEditing)
@@ -109,8 +112,13 @@ class EditPresentationActivity : AppCompatActivity() {
                 presentationData?.name = presentationName.text.toString()
                 presentationData?.timeLimit = numberPicker1.value.toLong() * 60L
                 presentationData?.presentationDate = "${datePicker.year}-${datePicker.month + 1}-${datePicker.dayOfMonth}"
-
+                presentationData?.notifications = notifications.isChecked
                 presentationDataDao?.updatePresentation(presentationData!!)
+
+                // TODO: передвинуть
+                if (notifications.isChecked && !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("notifications_new_message", false))
+                    Toast.makeText(this, R.string.message_enable_notifications, Toast.LENGTH_SHORT).show()
+
 
                 if (changePresentationFlag) {
                     val intent = Intent()

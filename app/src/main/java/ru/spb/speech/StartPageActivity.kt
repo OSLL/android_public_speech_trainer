@@ -3,23 +3,27 @@ package ru.spb.speech
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import ru.spb.speech.appSupport.ProgressHelper
-import ru.spb.speech.DBTables.DaoInterfaces.PresentationDataDao
-import ru.spb.speech.DBTables.SpeechDataBase
+import ru.spb.speech.database.interfaces.PresentationDataDao
+import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
 import ru.spb.speech.appSupport.PresentationAdapterHelper
 import ru.spb.speech.appSupport.UpdateAdapterListener
+import ru.spb.speech.views.PresentationStartpageItemRow
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
@@ -51,6 +55,28 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             putBoolean(getString(R.string.audio_recording), true)
             apply()
         }
+
+        if (sharedPref.getBoolean(getString(R.string.first_run), true)) {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(getString(R.string.attention))
+            builder.setPositiveButton(getString(R.string.good)) { _, _ ->
+                sharedPref.edit()
+                        .putBoolean(getString(R.string.useStatistics), true)
+                        .apply()
+            }
+            builder.setNegativeButton(getString(R.string.no_thnx)) { dialogInterface, i ->
+                sharedPref.edit()
+                        .putBoolean(getString(R.string.useStatistics), false)
+                        .apply()
+                dialogInterface.dismiss()
+            }
+            builder.create().show()
+
+            sharedPref.edit()
+                    .putBoolean(getString(R.string.first_run), false)
+                    .apply()
+        }
+
         addBtn.setOnClickListener{
             val intent = Intent(this, CreatePresentationActivity::class.java)
             startActivity(intent)
@@ -89,6 +115,16 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             }
             R.id.action_voice_analysis -> {
                 val intent = Intent(this, VoiceAnalysisActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.action_video_instruction -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=gZQDMmsUKsg"))
+                startActivity(intent)
+                return true
+            }
+            R.id.action_feedback -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://forms.gle/qvPVusnteVSH8N427"))
                 startActivity(intent)
                 return true
             }
