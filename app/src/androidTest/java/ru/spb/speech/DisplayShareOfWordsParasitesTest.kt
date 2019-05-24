@@ -22,6 +22,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import org.hamcrest.CoreMatchers.containsString
+import org.junit.After
 
 
 @RunWith(AndroidJUnit4::class)
@@ -31,8 +32,8 @@ class DisplayShareOfWordsParasitesTest : BaseInstrumentedTest() {
     @JvmField
     var mIntentsTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
 
-    private var mDevice: UiDevice? = null
-    private var presName = ""
+    lateinit var helper: TestHelper
+    private lateinit var mDevice: UiDevice
     private val tContext = InstrumentationRegistry.getTargetContext()
     private val db: SpeechDataBase = SpeechDataBase.getInstance(tContext)!!
 
@@ -43,42 +44,30 @@ class DisplayShareOfWordsParasitesTest : BaseInstrumentedTest() {
     @Before
     fun before() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        assertThat(mDevice, CoreMatchers.notNullValue())
+        helper = TestHelper(mIntentsTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
+    }
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-        val debSl = sharedPreferences.edit()
-        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-
-        debSl.putBoolean(onMode, true)
-        debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
-        debSl.apply()
+    @After
+    fun disableDebugMode() {
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+        helper.removeDebugSlides()
     }
 
     @Test
-    fun soundTrackValidationTest(){
-
+    fun displayShareOfWordsParasite(){
         onView(withId(R.id.addBtn)).perform(click())
-        presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring (0, mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(mIntentsTestRule.activity.getString(R.string.pdf_format)))
-        onView(withId(R.id.presentationName)).perform(clearText(), typeText(presName), closeSoftKeyboard())
+        onView(withId(R.id.presentationName)).perform(replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.addPresentation)).perform(click())
+        helper.startTrainingDialog(mDevice)
 
-        mDevice!!.findObject(UiSelector().text(presName)).click()
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_check_display_parasites).toLong())
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        mDevice.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
         onView(withId(android.R.id.button1)).perform(click())
         onView(withText(containsString(mIntentsTestRule.activity.getString(R.string.word_share_of_parasites)))).perform(scrollTo()).check(matches(isDisplayed()))
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_wait_after_test).toLong())
 
-        mDevice!!.pressBack()
-        onView(withText(presName)).perform(longClick())
-        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-        val debSl = sharedPreferences.edit()
-        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        debSl.putBoolean(onMode, false)
-        debSl.apply()
+        mDevice.pressBack()
     }
-
 }
