@@ -10,4 +10,10 @@
         android:key="@string/deb_speech_audio_key"
         android:title="@string/pref_title_enable_deb_speech_audio" />
 
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="deb_statistics_export"
+        android:title="Экспорт статистики" />
+
 </PreferenceScreen>

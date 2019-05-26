@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
-import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -33,12 +32,12 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.math.round
 
 var url = ""
 var speed_statistics: Int? = null
@@ -71,6 +70,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training_statistics)
 
@@ -110,16 +110,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             drawPict()
         })
         drawer.start()
-
-        question.setOnClickListener {
-            val dialog = BottomSheetDialog(this)
-            val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
-
-            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
-
-            dialog.setContentView(bottomSheet)
-            dialog.show()
-        }
 
         share1.setOnClickListener {
             try {
@@ -202,13 +192,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printPiechart(entries)
 
-        val averageSpeed = getAverageSpeed(trainingSpeedData)
-
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+        val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
+
+        val averageSpeed = getAverageSpeed(trainingSpeedData)
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
+
+        if (!isExportVisible){
+            export.visibility = View.VISIBLE
+        }
 
         earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
 
