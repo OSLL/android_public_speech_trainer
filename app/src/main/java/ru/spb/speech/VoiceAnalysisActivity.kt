@@ -204,14 +204,14 @@ class VoiceAnalysisActivity : AppCompatActivity() {
 
     inner class PostCountdownReceiver : AudioAnalyzerReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            /*if (audioAnalyzer.isRoomNoisy()) {
+            if (audioAnalyzer.isRoomNoisy()) {
                 outputText(getString(R.string.noisy_room))
                 startRecordingButton.isEnabled = true
                 stopRecordingButton.isEnabled = false
-            } else {*/
+            } else {
                 outputText(getString(R.string.start_speaking))
                 initAudioRecording()
-            //}
+            }
         }
     }
 
