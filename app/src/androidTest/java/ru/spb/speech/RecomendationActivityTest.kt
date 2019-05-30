@@ -4,11 +4,8 @@ import android.content.ComponentName
 import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
-import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.intent.Intents.intended
@@ -18,20 +15,12 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
-import android.text.method.Touch.scrollTo
-import android.util.Log
-import android.view.View
-import ru.spb.speech.database.SpeechDataBase
-import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import android.R.id
-import android.widget.ScrollView
-
 
 
 @RunWith(AndroidJUnit4::class)
@@ -52,11 +41,11 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         assertThat(mDevice, CoreMatchers.notNullValue())
 
-        val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val OnAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
+        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
+        val onAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
 
-        debSl.putBoolean(OnMode, true)
-        debSl.putBoolean(OnAudio, true)
+        debSl.putBoolean(onMode, true)
+        debSl.putBoolean(onAudio, true)
         debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
 
         debSl.apply()
@@ -75,11 +64,11 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
     @After
     fun after(){
-        val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val OnAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
+        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
+        val onAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
 
-        debSl.putBoolean(OnMode, false)
-        debSl.putBoolean(OnAudio, false)
+        debSl.putBoolean(onMode, false)
+        debSl.putBoolean(onAudio, false)
         debSl.apply()
 
         onView(withText(presName)).perform(ViewActions.longClick())
@@ -94,7 +83,7 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
         intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), TrainingStatisticsActivity::class.java)))
 
         onView(withId(R.id.improve_mark_button)).perform(ViewActions.click())
-        
+
         onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
         Intents.intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), StartPageActivity::class.java)))
     }
