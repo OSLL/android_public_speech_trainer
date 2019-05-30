@@ -111,6 +111,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         })
         drawer.start()
 
+        improve_mark_button.setOnClickListener {
+            val intent = Intent(this, RecommendationActivity::class.java)
+            startActivity(intent)
+        }
+
         question.setOnClickListener {
             val dialog = BottomSheetDialog(this)
             val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
