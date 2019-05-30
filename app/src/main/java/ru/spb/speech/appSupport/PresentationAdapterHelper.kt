@@ -46,7 +46,14 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(context)
 
         adapter.setOnItemClickListener { item: Item<ViewHolder>, _ ->
-            startTraining(item as PresentationStartpageItemRow)
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage(context.getString(R.string.start_training))
+            builder.setPositiveButton(context.getString(R.string.yes)) { _, _ ->
+                startTraining(item as PresentationStartpageItemRow)
+            }
+            builder.setNegativeButton(context.getString(R.string.no)) { _, _ ->
+            }
+            builder.create().show()
         }
 
         adapter.setOnItemLongClickListener { item: Item<ViewHolder>, view ->

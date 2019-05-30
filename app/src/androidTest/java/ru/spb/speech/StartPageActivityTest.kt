@@ -16,6 +16,8 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import ru.spb.speech.R.string.*
 import android.support.test.uiautomator.UiDevice
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +28,19 @@ class StartPageActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    lateinit var helper: TestHelper
+
+    @Before
+    fun enableDebugMode() {
+        helper = TestHelper(mIntentsTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
+    }
+
+    @After
+    fun disableDebugMode() {
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+    }
 
     @Test
     fun buttonsExist() {
