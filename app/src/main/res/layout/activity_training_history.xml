@@ -18,16 +18,4 @@
         android:clipToPadding="false"
         />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/export_training_history"
-        style="@style/Widget.Design.FloatingActionButton"
-        android:src="@drawable/ic_arrow_downward_black_24dp"
-        android:backgroundTint="@color/colorPrimary"
-        app:borderWidth="0dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"/>
-
-
 </FrameLayout>

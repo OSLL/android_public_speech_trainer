@@ -39,6 +39,7 @@ import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 var url = ""
 var speed_statistics: Int? = null
@@ -61,6 +62,14 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var bmpBase: Bitmap? = null
 
     private var currentTrainingTime: Long = 0
+
+    private var middleSlideTime: Double = 0.0
+    private var constantMiddleTime: Double = 10.0
+    private var middleTimeError: Double = 5.0
+
+    private var recommendationString: String = ""
+
+
 
     private var wordCount: Int = 0
     private val activityRequestCode = 101
@@ -101,8 +110,48 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
 
-        for (slide in trainingSlidesList)
+        var indexOfSlide: Int = 0
+        var slidesWithUpError = arrayListOf<Int>()
+        var slidesWithLowError = arrayListOf<Int>()
+
+        for (slide in trainingSlidesList){
             currentTrainingTime += slide.spentTimeInSec!!
+        }
+
+
+        middleSlideTime = currentTrainingTime.toDouble()/trainingSlidesList.size
+        if (abs(middleSlideTime - constantMiddleTime) > middleTimeError){
+            recommendationString = "Скорость демонстрации слайдов вашей презентации существенно отличается от рекомендуемой. "
+            if (middleSlideTime > constantMiddleTime){
+                recommendationString += "Попробуйте понизить время отображения слайдов"
+            }
+            else{
+                recommendationString += "Попробуйте повысить время отображения слайдов"
+            }
+        }
+        else {
+            for (slide in trainingSlidesList) {
+                currentTrainingTime += slide.spentTimeInSec!!
+                indexOfSlide++
+                if (abs((slide.spentTimeInSec!! - middleSlideTime)) > middleTimeError)
+                    if (slide.spentTimeInSec!! - middleSlideTime > 0){
+                        slidesWithUpError.add(indexOfSlide)
+                    }
+                    else slidesWithLowError.add(indexOfSlide)
+            }
+            recommendationString = "Cкорость демонстрации слайдов "
+            for (i in slidesWithUpError){
+                Log.d("hihi", "${i}")
+                recommendationString = recommendationString + i + " "
+            }
+            recommendationString += "существенно превышает среднее значение. Рекомендуется повысить время отображение указанных слайдов. " +
+                                    " При этом, скорость демонстрации слайдов "
+            for (i in slidesWithLowError){
+                recommendationString = recommendationString + i + " "
+            }
+            recommendationString += "существенно ниже среднего значения. Рекомендуется снизить время отобржения указанных слайдов."
+        }
+
 
         trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
 
@@ -110,6 +159,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             drawPict()
         })
         drawer.start()
+
+        improve_mark_button.setOnClickListener {
+            val intent = Intent(this, RecomendationActivity::class.java)
+            intent.putExtra("recommendation",recommendationString)
+            startActivity(intent)
+        }
 
         question.setOnClickListener {
             val dialog = BottomSheetDialog(this)
