@@ -90,16 +90,17 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun IntentIsDisplayedCheck(){
-        Log.d("HIHI","1234")
+        onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
         intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), TrainingStatisticsActivity::class.java)))
+
         onView(withId(R.id.improve_mark_button)).perform(ViewActions.click())
-        onView(withId(R.id.toHomeScreen)).perform(ViewActions.click())
+        
+        onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
         Intents.intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), StartPageActivity::class.java)))
     }
 
     @Test
     fun textViewAndButtonWithTextCheck() {
-        Log.d("HIHI","123")
         onView(withId(R.id.recomendationLabel)).check(matches(withText("Рекомендации к выступлению")))
         onView(withId(R.id.slidesTimeLabel)).check(matches(withText("Время слайдов")))
         onView(withId(R.id.slidesTimeRecomendation)).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
@@ -109,7 +110,7 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
         onView(withId(R.id.scumWordsRecomendation)).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
         onView(withId(R.id.backToStatistics)).check(matches(withText("Назад к статистике")))
         onView(withId(R.id.toHomeScreen)).check(matches(withText("На главную")))
-        Log.d("HIHI","123")
+
         mDevice!!.pressBack()
         mDevice!!.pressBack()
     }
