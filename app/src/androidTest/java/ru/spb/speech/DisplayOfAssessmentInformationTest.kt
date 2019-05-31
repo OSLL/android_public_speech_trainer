@@ -5,6 +5,8 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
+import android.support.test.espresso.assertion.ViewAssertions
+import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
@@ -22,7 +24,7 @@ import ru.spb.speech.database.SpeechDataBase
 
 
 @RunWith(AndroidJUnit4::class)
-class CorrectWordCountTest : BaseInstrumentedTest(){
+class DisplayOfAssessmentInformationTest : BaseInstrumentedTest(){
 
     private var mDevice: UiDevice? = null
     private var presName = ""
@@ -41,10 +43,8 @@ class CorrectWordCountTest : BaseInstrumentedTest(){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
         val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val OnAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
 
         debSl.putBoolean(OnMode, true)
-        debSl.putBoolean(OnAudio, true)
         debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
 
         debSl.apply()
@@ -55,12 +55,11 @@ class CorrectWordCountTest : BaseInstrumentedTest(){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
         val debSl = sharedPreferences.edit()
         val OnMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val OnAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
 
         debSl.putBoolean(OnMode, false)
-        debSl.putBoolean(OnAudio, false)
         debSl.apply()
 
+        mDevice!!.pressBack()
         mDevice!!.pressBack()
 
         onView(withText(presName)).perform(longClick())
@@ -73,8 +72,7 @@ class CorrectWordCountTest : BaseInstrumentedTest(){
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     @Test
-    fun correctWordCount() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
+    fun displayInformation() {
 
         onView(withId(R.id.addBtn)).perform(click())
         presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring (mIntentsTestRule.activity.resources.getInteger(R.integer.zero), mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(mIntentsTestRule.activity.getString(R.string.pdf_format)))
@@ -82,24 +80,13 @@ class CorrectWordCountTest : BaseInstrumentedTest(){
         onView(withId(R.id.addPresentation)).perform(click())
 
         mDevice!!.findObject(UiSelector().text(presName)).click()
-        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_load_the_workout_page).toLong())
         mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
         onView(withId(android.R.id.button1)).perform(click())
 
-        val firstTrainWordCount = sharedPreferences.getInt(mIntentsTestRule.activity.getString(R.string.num_of_words_spoken), mIntentsTestRule.activity.resources.getInteger(R.integer.def_sharedPref_value))
+        onView(withId(R.id.question)).perform(click())
+        onView(withText(R.string.assessment_for_training_title)).check(matches(isDisplayed()))
 
-        mDevice!!.pressBack()
-
-        mDevice!!.findObject(UiSelector().text(presName)).click()
-        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
-        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
-        onView(withId(android.R.id.button1)).perform(click())
-
-        val secondTrainWordCount = sharedPreferences.getInt(mIntentsTestRule.activity.getString(R.string.num_of_words_spoken), mIntentsTestRule.activity.resources.getInteger(R.integer.def_sharedPref_value))
-        val allTrainWordCount = sharedPreferences.getInt(mIntentsTestRule.activity.getString(R.string.total_words_count), mIntentsTestRule.activity.resources.getInteger(R.integer.def_sharedPref_value))
-
-        assertEquals(firstTrainWordCount + secondTrainWordCount, allTrainWordCount)
     }
 }

@@ -1,21 +1,26 @@
 package ru.spb.speech
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
-import android.preference.RingtonePreference
+import android.preference.*
 import android.text.TextUtils
+import android.util.Log
 import android.view.MenuItem
+import ru.spb.speech.notifications.AlarmBootReceiver
+import ru.spb.speech.notifications.AlarmReceiver
+import ru.spb.speech.notifications.NotificationsHelper
+import java.util.*
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -97,6 +102,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference("example_text"))
             bindPreferenceSummaryToValue(findPreference("example_list"))
             bindPreferenceSummaryToValue(findPreference(getString(R.string.speed_key)))
+            bindPreferenceSummaryToValue(findPreference("statistics_collection"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -106,6 +112,17 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
+        }
+
+        override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
+            val key = preference?.key
+            val switchStatisticsCollection = findPreference("statistics_collection") as SwitchPreference
+            if (key == "statistics_collection") {
+                activity.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE).edit()
+                        .putBoolean(getString(R.string.useStatistics), switchStatisticsCollection.isChecked)
+                        .apply()
+            }
+            return true
         }
     }
 
@@ -124,7 +141,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
+            //bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -134,6 +151,53 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
+        }
+
+        override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
+            val key = preference?.key
+            val switchNotifications = findPreference("notifications_new_message") as SwitchPreference
+            if (key == "notifications_new_message") {
+                bindNotifications(switchNotifications.isChecked)
+            }
+            return true
+        }
+
+        private fun bindNotifications(isNotificationsEnabled: Boolean) {
+            val alarmIntent = Intent(activity.application.applicationContext, AlarmReceiver::class.java).let { intent ->
+                PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+            val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val receiver = ComponentName(activity, AlarmBootReceiver::class.java)
+            val packageManager = activity.packageManager
+
+            val notificationTime = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, NotificationsHelper.HOUR_FOR_NOTIFICATION)
+                set(Calendar.MINUTE, NotificationsHelper.MINUTES_FOR_NOTIFICATION)
+            }
+            if (isNotificationsEnabled) {
+                packageManager.setComponentEnabledSetting(
+                        receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP
+                )
+
+                alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        notificationTime.timeInMillis,
+                        AlarmManager.INTERVAL_DAY,
+                        alarmIntent
+                )
+            }
+            else {
+                packageManager.setComponentEnabledSetting(
+                        receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP
+                )
+                alarmManager.cancel(alarmIntent)
+            }
         }
     }
 
@@ -165,6 +229,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
          */
         private val sBindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->
             val stringValue = value.toString()
+
+            if (preference?.key == "statistics_collection") {
+                val statisticsCollectionStatus = preference.context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+                        .getBoolean(preference.context.getString(R.string.useStatistics), true)
+                val switch = preference as SwitchPreference
+                switch.isChecked = statisticsCollectionStatus
+                return@OnPreferenceChangeListener true
+            }
 
             if (preference is ListPreference) {
                 // For list preferences, look up the correct display value in
@@ -232,10 +304,19 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
             // Trigger the listener immediately with the preference's
             // current value.
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.context)
-                            .getString(preference.key, ""))
+            if (preference.key == "statistics_collection") {
+                sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                        PreferenceManager
+                                .getDefaultSharedPreferences(preference.context)
+                                .getBoolean(preference.key, false))
+            }
+            else {
+                sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                        PreferenceManager
+                                .getDefaultSharedPreferences(preference.context)
+                                .getString(preference.key, ""))
+            }
+
         }
     }
 }
