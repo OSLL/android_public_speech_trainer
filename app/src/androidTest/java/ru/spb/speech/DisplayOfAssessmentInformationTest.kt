@@ -85,7 +85,7 @@ class DisplayOfAssessmentInformationTest : BaseInstrumentedTest(){
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
         onView(withId(android.R.id.button1)).perform(click())
 
-        //onView(withId(R.id.question)).perform(click())
+        onView(withId(R.id.question)).perform(click())
         onView(withText(R.string.assessment_for_training_title)).check(matches(isDisplayed()))
 
     }
