@@ -25,7 +25,8 @@ class TrainingHistoryItemRow(private val training: TrainingData, private val sli
         viewHolder.itemView.date_training_history_row.text = DateUtils.formatDateTime(
                 ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_DATE) + " | " +
                 DateUtils.formatDateTime(
-                        ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_TIME)
+                        ctx, training.timeStampInSec!! * 1000, DateUtils.FORMAT_SHOW_TIME) +
+                " (${training.trainingGrade} ${ctx.resources.getString(R.string.scores)})"
 
         val helper = TrainingSlideDBHelper(ctx)
         val slides = helper.getAllSlidesForTraining(training)
