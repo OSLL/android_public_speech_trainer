@@ -64,8 +64,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var currentTrainingTime: Long = 0
 
     private var middleSlideTime: Double = 0.0
-    private var constantMiddleTime: Double = 10.0
-    private var middleTimeError: Double = 5.0
+    private var constantMiddleTime: Double = 58.8
+    private var middleTimeError: Double = 30.8
 
     private var recommendationString: String = ""
 
@@ -139,17 +139,27 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                     }
                     else slidesWithLowError.add(indexOfSlide)
             }
-            recommendationString = "Cкорость демонстрации слайдов "
-            for (i in slidesWithUpError){
-                Log.d("hihi", "${i}")
-                recommendationString = recommendationString + i + " "
+
+            if (!slidesWithUpError.isEmpty()) {
+                recommendationString += "Cкорость демонстрации слайдов "
+                for (i in slidesWithUpError) {
+                    recommendationString = recommendationString + i + " "
+                }
+                recommendationString += "существенно превышает среднее значение. Рекомендуется повысить время отображение указанных слайдов. " +
+                        " При этом, скорость демонстрации слайдов "
             }
-            recommendationString += "существенно превышает среднее значение. Рекомендуется повысить время отображение указанных слайдов. " +
-                                    " При этом, скорость демонстрации слайдов "
-            for (i in slidesWithLowError){
-                recommendationString = recommendationString + i + " "
+            else{
+                if (!slidesWithLowError.isEmpty()) {
+                    recommendationString += "Скорость демонстрации слайдов "
+                }
             }
-            recommendationString += "существенно ниже среднего значения. Рекомендуется снизить время отобржения указанных слайдов."
+
+            if (!slidesWithLowError.isEmpty()) {
+                for (i in slidesWithLowError) {
+                    recommendationString = recommendationString + i + " "
+                }
+                recommendationString += "существенно ниже среднего значения. Рекомендуется снизить время отобржения указанных слайдов."
+            }
         }
 
 
