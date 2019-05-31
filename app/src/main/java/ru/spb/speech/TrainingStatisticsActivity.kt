@@ -33,7 +33,7 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import ru.spb.speech.appSupport.TrainingStatisticsData
+import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
@@ -221,8 +221,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}\n" +
-                getString(R.string.word_share_of_parasites) + " ${((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent)
+                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
@@ -334,13 +333,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             tsC.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(trainingStatisticsData?.averageTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_186), tsP)
             tsC.drawText(getString(R.string.total_words_count) + " " + trainingStatisticsData?.allWords, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_209), tsP)
 
-            tsC.drawText(getString(R.string.word_share_of_parasites) + " ${((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
-            tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
+            tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
             tsC.drawText(getString(R.string.average_earning_2) + " " +
                     trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)) + " / " +
                     trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)) + " / " +
-                    trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)), resources.getDimension(R.dimen.x_indent_multiplier_60),
-                    resources.getDimension(R.dimen.y_indent_multiplier_278), tsP)
+                    trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)), resources.getDimension(R.dimen.x_indent_multiplier_90),
+                    resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
 
             val canvas = Canvas(finishBmp)
             val paint = Paint()
@@ -369,7 +367,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "${getString(R.string.min_training_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.minTrainTime)}\n" +
                 "${getString(R.string.average_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.averageTime)}\n" +
                 "${getString(R.string.total_words_count)} ${trainingStatisticsData?.allWords}\n" +
-                "${getString(R.string.average_earning_1)}\n ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))}"
+                "${getString(R.string.average_earning_1)}\n\t ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))}"
 
     }
 
