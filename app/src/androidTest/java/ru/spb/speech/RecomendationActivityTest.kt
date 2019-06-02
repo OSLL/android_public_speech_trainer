@@ -78,7 +78,7 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
 
     @Test
-    fun IntentIsDisplayedCheck(){
+    fun intentIsDisplayedCheck(){
         onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
         intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), TrainingStatisticsActivity::class.java)))
 
