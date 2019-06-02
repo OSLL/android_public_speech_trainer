@@ -29,7 +29,13 @@
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
     <string name="export_statistics">Экспорт статистики</string>
     <string name="improve_mark">Как улучшить оценку?</string>
-    
+    <string name="recommendation_key">recommendation</string>
+    <string name="recommendation_speed_with_error">Скорость демонстрации слайдов вашей презентации существенно отличается от рекомендуемой. Попробуйте %1$s время отображения слайдов.</string>
+    <string name="recommendation_speed_without_error">Cкорость демонстрации слайдов %1$s</string>
+    <string name="recommenfation_speed_increase_info">существенно превышает среднее значение. Рекомендуется увеличить время отображение указанных слайдов.</string>
+    <string name="recommenfation_speed_decrease_info">существенно ниже среднего значения. Рекомендуется уменьшить время отображение указанных слайдов.</string>
+
+
     <string name="performance_recomendations">Рекомендации к выступлению</string>
     <string name="slide_time">Время слайдов</string>
     <string name="slides_time_recomendation">Рекомендации по времени слайдов - заглушка"</string>
