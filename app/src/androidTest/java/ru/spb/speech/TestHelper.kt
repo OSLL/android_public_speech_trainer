@@ -43,6 +43,16 @@ class TestHelper(private val activity: Activity) {
         }
     }
 
+    fun changeExportStatisticsFlag() {
+        val exportFlagCheck = "deb_statistics_export"
+        val sp = PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getTargetContext())
+        val spe = sp.edit()
+        if (sp.getBoolean(exportFlagCheck, false)){
+            spe.putBoolean(exportFlagCheck, true).apply()
+        }
+        else spe.putBoolean(exportFlagCheck, false)
+    }
+
     fun removeDebugSlides(){
         Espresso.onView(ViewMatchers.withText("making_presentation")).
                 perform(ViewActions.longClick()) // Вызов диалогового окна удаления презентации

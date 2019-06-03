@@ -206,6 +206,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+        val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
@@ -215,6 +216,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
+
+        if (!isExportVisible){
+            export.visibility = View.VISIBLE
+        }
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
