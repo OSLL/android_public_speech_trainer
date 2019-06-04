@@ -1,5 +1,6 @@
 package ru.spb.speech
 
+import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
@@ -10,9 +11,11 @@ import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
+import android.support.test.uiautomator.UiSelector
 import ru.spb.speech.database.SpeechDataBase
 import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.containsString
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -32,14 +35,14 @@ class DebugSlidesTest : BaseInstrumentedTest() {
     fun enableDebugMode() {
         helper = TestHelper(mIntentsTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
-        //helper.changeExportStatisticsFlag()
+        helper.changeExportStatisticsFlag()
     }
 
     @After
     fun disableDebugMode() {
         helper.setTrainingPresentationMod(false) // выключение тестовой презентации
         helper.removeDebugSlides()
-        //helper.changeExportStatisticsFlag()
+        helper.changeExportStatisticsFlag()
     }
 
     @Test
@@ -55,11 +58,35 @@ class DebugSlidesTest : BaseInstrumentedTest() {
 
     @Test
     fun exportStasisticsFlagTest(){
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        assertThat(mDevice, CoreMatchers.notNullValue())
+        onView(withId(R.id.addBtn)).perform(ViewActions.click())
+        onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
+        onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+        helper.startTrainingDialog(mDevice!!)
+
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
+        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
+        onView(withId(android.R.id.button1)).perform(ViewActions.click())
 
         onView(withId(R.id.export)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+
         mDevice!!.pressBack()
     }
 
+    @Test
+    fun checkNoWordsTraining(){
+        onView(withId(R.id.addBtn)).perform(ViewActions.click())
+        onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
+        onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+        helper.startTrainingDialog(mDevice!!)
+
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
+        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
+        onView(withId(android.R.id.button1)).perform(ViewActions.click())
+
+        onView(withId(R.id.earnOfTrain)).check(matches(withContentDescription(containsString("0.0"))))
+
+        mDevice!!.pressBack()
+    }
 }
