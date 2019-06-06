@@ -224,7 +224,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.count_of_slides) + " ${trainingSlidesList.size}\n" +
                 getString(R.string.word_share_of_parasites) + " ${((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent)
 
-
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
     }

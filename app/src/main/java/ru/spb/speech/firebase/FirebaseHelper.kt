@@ -6,6 +6,7 @@ import android.provider.Settings
 import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
+import ru.spb.speech.BuildConfig
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.database.helpers.TrainingDBHelper
@@ -40,14 +41,14 @@ class FirebaseHelper(private val context: Context) {
         val lastTraining = db.TrainingDataDao().getLastTraining()
 
         firebaseDB
-                .getReference("/testers/$androidID/${presentationData.id}/trainings/${lastTraining.id}")
+                .getReference(checkBuild() + "/$androidID/${presentationData.id}/trainings/${lastTraining.id}")
                 .setValue(lastTraining)
 
         val slides = trainingSlideDBHelper.getAllSlidesForTraining(lastTraining) ?: return
 
         for (slide in slides) {
             firebaseDB
-                    .getReference("/testers/$androidID/${presentationData.id}/trainings/${lastTraining.id}/slides/${slide.id}")
+                    .getReference(checkBuild() + "/$androidID/${presentationData.id}/trainings/${lastTraining.id}/slides/${slide.id}")
                     .setValue(slide)
         }
     }
@@ -63,12 +64,12 @@ class FirebaseHelper(private val context: Context) {
                 val slides = trainingSlideDBHelper.getAllSlidesForTraining(training) ?: continue
 
                 firebaseDB
-                        .getReference("/testers/$androidID/${presentation.id}/trainings/${training.id}")
+                        .getReference(checkBuild() + "/$androidID/${presentation.id}/trainings/${training.id}")
                         .setValue(training)
 
                 for (slide in slides) {
                     firebaseDB
-                            .getReference("/testers/$androidID/${presentation.id}/trainings/${training.id}/slides/${slide.id}")
+                            .getReference(checkBuild() + "/$androidID/${presentation.id}/trainings/${training.id}/slides/${slide.id}")
                             .setValue(slide)
                 }
             }
@@ -76,7 +77,7 @@ class FirebaseHelper(private val context: Context) {
     }
 
     private fun updatePresentationStatistic(fts: FullTrainingStatistic, presentationId: Int?) {
-        val presRef = firebaseDB.getReference("/testers/$androidID/$presentationId")
+        val presRef = firebaseDB.getReference(checkBuild() + "/$androidID/$presentationId")
 
         presRef.updateChildren(mapOf(Pair("averageDeviationLimitRestriction", fts.averageDeviationLimitRestriction)))
         presRef.updateChildren(mapOf(Pair("averageTrainingTime", fts.averageTrainingTime)))
@@ -92,7 +93,7 @@ class FirebaseHelper(private val context: Context) {
 
     private fun synchronizePresentationStatistic(fts: FullTrainingStatistic) {
         firebaseDB
-                .getReference("/testers/$androidID/${fts.trainingID}")
+                .getReference(checkBuild() + "/$androidID/${fts.trainingID}")
                 .setValue(fts)
                 .addOnSuccessListener { Log.d(firebaseLog, "success update: $fts") }
                 .addOnFailureListener { Log.d(firebaseLog, "failed update (e: $it): $fts") }
@@ -115,6 +116,15 @@ class FirebaseHelper(private val context: Context) {
         fts.average_min_maxMarks = "${trainingStatisticsData.averageEarn.toInt()} / ${trainingStatisticsData.minEarn.toInt()} / ${trainingStatisticsData.maxEarn.toInt()}"
         return fts
     }
+
+    private fun checkBuild() : String {
+        if(BuildConfig.DEBUG){
+            return "/testers/debug"
+        }
+        else return "/testers/release"
+    }
+
+    fun Float.format(digits: Int) = java.lang.String.format("%.${digits}f", this)!!
 
     @SuppressLint("UseSparseArrays")
     private fun getStringPresentationTimeLimit(t: Long?): String {
