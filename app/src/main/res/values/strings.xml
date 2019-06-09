@@ -272,6 +272,8 @@
     <string name="useStatistics">use_statistics</string>
     <string name="good">Хорошо</string>
     <string name="no_thnx">Нет, спасибо</string>
+    <string name="start_training">Начать тренировку?</string>
+    <string name="yes">ДА</string>
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
     <string name="closeRatingInformation">Ок</string>
@@ -283,6 +285,7 @@
     <string name="first_run">first run</string>
     <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
+    <string name="try_again">Попробуйте снова</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
