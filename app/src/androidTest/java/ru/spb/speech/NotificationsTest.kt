@@ -84,24 +84,25 @@ class NotificationsTest: BaseInstrumentedTest() {
         assertEquals(title.text, expectedTitle)
         assertEquals(text.text, expectedText)
 
-        closeNotification(expectedApplicationName)
+        closeNotification(expectedTitle)
         device.pressHome()
     }
 
     @Test
     fun tapOnNotification() {
         val expectedApplicationName = activityTestRule.activity.getString(R.string.app_name)
+        val expectedTitle = activityTestRule.activity.getString(R.string.notifications_title)
 
         notificationsHelper.sendNotification()
 
         device.pressHome()
 
         device.openNotification()
-        device.wait(Until.findObject(By.textStartsWith(expectedApplicationName)), TIMEOUT).click()
+        device.wait(Until.findObject(By.textStartsWith(expectedTitle)), TIMEOUT).click()
 
         onView(withText(activityTestRule.activity.getString(R.string.activity_start_page_name))).check(matches(isDisplayed()))
 
-        closeNotification(expectedApplicationName)
+        closeNotification(expectedTitle)
         device.pressHome()
     }
 
