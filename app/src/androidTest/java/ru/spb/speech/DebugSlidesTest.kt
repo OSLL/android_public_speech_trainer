@@ -5,8 +5,12 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.rule.IntentsTestRule
+import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
+import android.support.test.uiautomator.UiDevice
+import android.support.test.uiautomator.UiSelector
+import android.util.Log
 import ru.spb.speech.database.SpeechDataBase
 import junit.framework.Assert.assertEquals
 import org.junit.After
@@ -22,6 +26,7 @@ class DebugSlidesTest : BaseInstrumentedTest() {
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     lateinit var helper: TestHelper
+    private var mDevice: UiDevice? = null
 
     @Before
     fun enableDebugMode() {
@@ -44,6 +49,24 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         onView(withText(R.string.making_presentation)).check(matches(isDisplayed()))
         onView(withText("26")).check(matches(isDisplayed()))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+    }
+
+
+    @Test
+    fun exportStasisticsFlagTest(){
+        onView(withId(R.id.addBtn)).perform(ViewActions.click())
+        onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
+        onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+        helper.startTrainingDialog(mDevice!!)
+
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
+        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
+        onView(withId(android.R.id.button1)).perform(ViewActions.click())
+
+        onView(withId(R.id.export)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+
+        mDevice!!.pressBack()
     }
 
 
