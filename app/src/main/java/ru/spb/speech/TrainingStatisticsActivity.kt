@@ -39,6 +39,7 @@ import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 var url = ""
 var speed_statistics: Int? = null
@@ -64,6 +65,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var wordCount: Int = 0
     private val activityRequestCode = 101
+
+    private var recommendationString: String = ""
 
     private lateinit var progressHelper: ProgressHelper
 
@@ -106,10 +109,20 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
 
+        for (slide in trainingSlidesList){
+            currentTrainingTime += slide.spentTimeInSec!!
+        }
+
         val drawer = Thread(Runnable {
             drawPict()
         })
         drawer.start()
+
+        improve_mark_button.setOnClickListener {
+            val intent = Intent(this, RecomendationActivity::class.java)
+            intent.putExtra(getString(R.string.recommendation_key), recommendationString)
+            startActivity(intent)
+        }
 
         question.setOnClickListener {
             val dialog = BottomSheetDialog(this)
