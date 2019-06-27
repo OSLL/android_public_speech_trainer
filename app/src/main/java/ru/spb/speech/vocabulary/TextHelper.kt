@@ -37,8 +37,8 @@ class TextHelper(private val conjAndPrep: Array<String>) {
     }
 
     private fun getTop10Words(text: String) : List<Pair<String, Int>> {
-        val dictionary = java.util.HashMap<String, Int>()
-        val originals = java.util.HashMap<String, String>()
+        val dictionary = HashMap<String, Int>()
+        val originals = HashMap<String, String>()
 
         val iterator = BreakIterator.getWordInstance()
         iterator.setText(text)
