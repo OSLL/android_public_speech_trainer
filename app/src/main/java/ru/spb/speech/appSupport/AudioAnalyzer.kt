@@ -11,6 +11,7 @@ import android.os.Process
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import ru.spb.speech.*
+import ru.spb.speech.database.TrainingSlideData
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -60,6 +61,10 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
         RESUME,// TODO
         NEXT_SLIDE
     }
+
+    val trainingSlideLiveData = MutableLiveData<TrainingSlideData>()
+    val trainingLiveData = MutableLiveData<TrainingSlideData>()
+
 
     companion object {
         suspend fun getInstance(act: Activity, controller: MutableLiveData<AudioAnalyzerState>)
