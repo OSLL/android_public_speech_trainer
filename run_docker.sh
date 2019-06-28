@@ -1,1 +1,1 @@
-docker run -it --volume=$(pwd):/app android_build_image:v1 bash
+docker run -de --volume=$(pwd):/app:ro android_build_image:v1
