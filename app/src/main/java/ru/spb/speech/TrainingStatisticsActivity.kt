@@ -221,7 +221,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
+
 
 
         speed_statistics = trainingStatisticsData?.curWordCount

@@ -10,7 +10,7 @@ import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents.intended
-import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import android.support.test.espresso.intent.matcher.IntentMatchers.*
 import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
@@ -48,14 +48,26 @@ class StartPageActivityTest : BaseInstrumentedTest() {
     }
 
     @Test
-    fun test_from_start_page_to_preference(){
+    fun testFromStartPageToPreference(){
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(withText(activity_preference)).perform(click())
         intended(hasComponent(ComponentName(getTargetContext(), SettingsActivity::class.java)))
     }
 
     @Test
-    fun test_from_start_page_to_open_file_dialog(){
+    fun testFromStartPageToVideoInstruction(){
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
+        onView(withText(video_instruction)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testFromStartPageToFeedback(){
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
+        onView(withText(feedback)).check(matches((isDisplayed())))
+    }
+
+    @Test
+    fun testFromStartPageToOpenFileDialog(){
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
         intended(hasComponent(ComponentName(getTargetContext(), CreatePresentationActivity::class.java)))
