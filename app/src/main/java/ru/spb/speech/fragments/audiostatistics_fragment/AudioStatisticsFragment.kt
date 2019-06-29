@@ -34,8 +34,6 @@ class AudioStatisticsFragment : Fragment() {
 
     private val speechDb by lazy { SpeechDataBase.getInstance(activity!!)!! }
 
-    private val presentationDBHelper by lazy { PresentationDBHelper(activity!!) }
-
     private val slideDBHelper by lazy { TrainingSlideDBHelper(activity!!) }
 
     @SuppressLint("SetTextI18n")
@@ -50,10 +48,6 @@ class AudioStatisticsFragment : Fragment() {
                 .getAllSlidesForTraining(training)
                 ?.toSlideInfoList()
                 ?: return null
-
-        for (s in slideInfoList) {
-            Log.d(LOG, s.toString())
-        }
 
         with (slideInfoList.getAverage()) {
             v.apply {
