@@ -273,6 +273,7 @@
     <string name="no_thnx">Нет, спасибо</string>
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
+    <string name="audio_analysis">Анализ аудио</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
