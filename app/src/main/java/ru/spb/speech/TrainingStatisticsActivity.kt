@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
+import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -33,6 +34,7 @@ import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
+import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
@@ -114,6 +116,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             drawPict()
         })
         drawer.start()
+
+        question.setOnClickListener {
+            val dialog = BottomSheetDialog(this)
+            val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
+
+            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
+
+            dialog.setContentView(bottomSheet)
+            dialog.show()
+        }
 
         share1.setOnClickListener {
             try {
@@ -215,7 +227,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
+
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size

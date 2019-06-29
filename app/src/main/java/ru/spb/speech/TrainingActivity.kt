@@ -178,8 +178,8 @@ class TrainingActivity : AppCompatActivity() {
 
                     val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
                     val sec = time_left.text.toString().substring(
-                        time_left.text.indexOf(":") + 2,
-                        time_left.text.indexOf("s") - 1
+                            time_left.text.indexOf(":") + 2,
+                            time_left.text.indexOf("s") - 1
                     )
 
                     tsd.spentTimeInSec = timeOfSlide
@@ -336,7 +336,7 @@ class TrainingActivity : AppCompatActivity() {
 
         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arr,
-                1)
+                    1)
         }
 
         if (loadPerm != PackageManager.PERMISSION_GRANTED) {
@@ -581,9 +581,9 @@ class TrainingActivity : AppCompatActivity() {
 
         // Format the string
         return String.format(
-            Locale.getDefault(),
-            "%02d min: %02d sec",
-            minutes, seconds
+                Locale.getDefault(),
+                "%02d min: %02d sec",
+                minutes, seconds
         )
     }
 

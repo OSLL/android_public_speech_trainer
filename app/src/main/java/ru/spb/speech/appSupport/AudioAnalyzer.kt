@@ -548,5 +548,3 @@ fun List<SlideInfo>.getAverage(): SlideInfo {
             pauseAverageLength/ count,
             longPausesAmount / count)
 }
-
-

@@ -54,13 +54,13 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
                             .putBoolean(context.getString(R.string.useStatistics), true)
                             .apply()
 
-                    startTraining(item as PresentationStartpageItemRow)
+                    startTrainingDialog(item)
                 }
                 builder.setNegativeButton(context.getString(R.string.no_thnx)) { _, _ ->
-                    startTraining(item as PresentationStartpageItemRow)
+                    startTrainingDialog(item)
                 }
                 builder.create().show()
-            } else startTraining(item as PresentationStartpageItemRow)
+            } else startTrainingDialog(item)
         }
 
         adapter.setOnItemLongClickListener { item: Item<ViewHolder>, view ->
@@ -102,6 +102,17 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
             dialog.show()
             true
         }
+    }
+
+    private fun startTrainingDialog(item: Item<ViewHolder>) {
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage(context.getString(R.string.start_training))
+        builder.setPositiveButton(context.getString(R.string.yes)) { _, _ ->
+            startTraining(item as PresentationStartpageItemRow)
+        }
+        builder.setNegativeButton(context.getString(R.string.no)) { _, _ ->
+        }
+        builder.create().show()
     }
 
     private fun startTraining(row: PresentationStartpageItemRow) {
