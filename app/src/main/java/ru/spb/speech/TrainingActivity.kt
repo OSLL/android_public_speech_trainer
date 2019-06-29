@@ -22,14 +22,12 @@ import kotlinx.android.synthetic.main.activity_training.*
 import kotlinx.coroutines.*
 import ru.spb.speech.appSupport.AudioAnalyzer
 import ru.spb.speech.database.interfaces.PresentationDataDao
-import ru.spb.speech.database.PresentationData
-import ru.spb.speech.database.SpeechDataBase
-import ru.spb.speech.database.TrainingData
-import ru.spb.speech.database.TrainingSlideData
 import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
+import ru.spb.speech.appSupport.SlideInfo
+import ru.spb.speech.database.*
 import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -187,6 +185,9 @@ class TrainingActivity : AppCompatActivity() {
                     tsd.spentTimeInSec = timeOfSlide
 
                     tsd.knownWords = curText
+
+                    if (audioAnalyzer != null)
+                        tsd.updateAudioStatistics(audioAnalyzer!!.getLastSlideInfo())
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
@@ -381,6 +382,8 @@ class TrainingActivity : AppCompatActivity() {
                 val tsd = TrainingSlideData()
                 tsd.spentTimeInSec = timeOfSlide
                 tsd.knownWords = curText
+                if (audioAnalyzer != null)
+                    tsd.updateAudioStatistics(audioAnalyzer!!.getLastSlideInfo())
                 trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
                 val list = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)

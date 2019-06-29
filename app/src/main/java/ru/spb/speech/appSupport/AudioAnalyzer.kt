@@ -7,9 +7,11 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Environment
+import android.os.Parcelable
 import android.os.Process
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import kotlinx.android.parcel.Parcelize
 import ru.spb.speech.*
 import ru.spb.speech.database.TrainingSlideData
 import java.io.*
@@ -18,9 +20,6 @@ import java.nio.ByteOrder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
-
-data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
-                     val pauseAverageLength: Long, val longPausesAmount: Int)
 
 class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<AudioAnalyzerState>? = null) {
     private val silenceCoefficient = 1.0
@@ -524,6 +523,30 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
     private fun millisecondsToSeconds(timeInMillis: Long): Double {
         return timeInMillis / 1000.toDouble()
     }
+
+    fun getLastSlideInfo() = slides.last()
+}
+
+@Parcelize
+data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
+                     val pauseAverageLength: Long, val longPausesAmount: Int) : Parcelable
+
+fun List<SlideInfo>.getAverage(): SlideInfo {
+    var silencePercentage = 0.0
+    var pauseAverageLength: Long = 0
+    var longPausesAmount = 0
+    for (slide in this) {
+        silencePercentage += slide.silencePercentage
+        pauseAverageLength += slide.pauseAverageLength
+        longPausesAmount += slide.longPausesAmount
+    }
+
+    val count = this.count()
+
+    return SlideInfo(-1,
+            silencePercentage / count,
+            pauseAverageLength/ count,
+            longPausesAmount / count)
 }
 
 
