@@ -20,13 +20,10 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import kotlinx.coroutines.*
-import ru.spb.speech.appSupport.AudioAnalyzer
+import ru.spb.speech.appSupport.*
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
-import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.appSupport.ProgressHelper
-import ru.spb.speech.appSupport.SlideInfo
 import ru.spb.speech.database.*
 import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
@@ -401,6 +398,15 @@ class TrainingActivity : AppCompatActivity() {
             }
 
             allRecognizedText += curText
+
+            val trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
+
+            trainingData?.allRecognizedText = allRecognizedText
+            trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
+            trainingData?.exerciseTimeFactorMarkX = (trainingStatisticsData.xExerciseTimeFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.speechSpeedFactorMarkY = (trainingStatisticsData.ySpeechSpeedFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.timeOnSlidesFactorMarkZ = (trainingStatisticsData.zTimeOnSlidesFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.trainingGrade = trainingStatisticsData.trainingGrade.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)).replace(",", ".")
 
             trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
