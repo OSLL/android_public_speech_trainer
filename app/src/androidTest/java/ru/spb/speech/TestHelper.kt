@@ -54,7 +54,7 @@ class TestHelper(private val activity: Activity) {
     }
 
     fun removeDebugSlides(){
-        Espresso.onView(ViewMatchers.withText("making_presentation")).perform(ViewActions.scrollTo()).perform(ViewActions.longClick()) // Вызов диалогового окна удаления презентации
+        Espresso.onView(ViewMatchers.withText("making_presentation")).perform(ViewActions.longClick()) // Вызов диалогового окна удаления презентации
 
         // Нажатие на кнопку "удалить"
         Espresso.onView(ViewMatchers.withText(activity.getString(R.string.remove)))
@@ -117,7 +117,7 @@ class TestHelper(private val activity: Activity) {
     }
 
     fun startTrainingDialog(uiDevice : UiDevice) {
-        Espresso.onView(ViewMatchers.withText(R.string.making_presentation)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withText("making_presentation")).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withText(R.string.start_training)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         uiDevice.findObject(UiSelector().text(activity.getString(R.string.yes))).click()
     }
