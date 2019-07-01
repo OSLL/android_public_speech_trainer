@@ -1,5 +1,6 @@
 package ru.spb.speech
 
+import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions
@@ -25,10 +26,11 @@ class DebugSlidesTest : BaseInstrumentedTest() {
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
 
     lateinit var helper: TestHelper
-    private var mDevice: UiDevice? = null
+    lateinit var uiDevice: UiDevice
 
     @Before
     fun enableDebugMode() {
+        uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         helper = TestHelper(mIntentsTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
     }
@@ -45,9 +47,12 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         db?.deleteAll() // удаление всех элементов БД
         assertEquals(db?.getAll()?.size?.toFloat(), 0f) // проверка БД на пустоту
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
+
         onView(withText(R.string.making_presentation)).check(matches(isDisplayed()))
         onView(withText("26")).check(matches(isDisplayed()))
+
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
     }
 
     @Test
@@ -55,16 +60,20 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
-        helper.startTrainingDialog(mDevice!!)
-
-        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_word_counting).toLong())
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
-        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
+        Thread.sleep(2000)
+        helper.startTrainingDialog(uiDevice)
+        Thread.sleep(2000)
+        uiDevice.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        Thread.sleep(2000)
         onView(withId(android.R.id.button1)).perform(ViewActions.click())
 
-        onView(withId(R.id.earnOfTrain)).check(matches(withContentDescription(containsString("0.0"))))
 
-        mDevice!!.pressBack()
+        Thread.sleep(2000)
+        onView(withId(R.id.earnOfTrain)).check(matches(withText(containsString("0.0"))))
+        Thread.sleep(2000)
+
+        uiDevice.pressBack()
+        Thread.sleep(2000)
     }
 
 }
