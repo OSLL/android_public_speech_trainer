@@ -11,10 +11,6 @@ class RecomendationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recomendation)
 
-        val bundle = intent.extras
-        val message = bundle!!.getString("recommendation")
-        slidesTimeRecomendation.setText(message)
-
         backToStatistics.setOnClickListener {
             finish()
         }

@@ -29,7 +29,6 @@
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
     <string name="export_statistics">Экспорт статистики</string>
     <string name="improve_mark">Как улучшить оценку?</string>
-    <string name="recommendation_key">recommendation</string>
 
 
     <string name="performance_recomendations">Рекомендации к выступлению</string>

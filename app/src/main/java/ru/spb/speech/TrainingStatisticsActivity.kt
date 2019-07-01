@@ -120,7 +120,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         improve_mark_button.setOnClickListener {
             val intent = Intent(this, RecomendationActivity::class.java)
-            intent.putExtra(getString(R.string.recommendation_key), recommendationString)
             startActivity(intent)
         }
 
