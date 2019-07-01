@@ -71,11 +71,9 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         Thread.sleep(2000)
         uiDevice.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
         Thread.sleep(2000)
-
         onView(withId(android.R.id.button1)).perform(ViewActions.click())
 
 
-        onView(withId(R.id.export)).perform(ViewActions.scrollTo())
         Thread.sleep(2000)
         onView(withId(R.id.export)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         Thread.sleep(2000)
