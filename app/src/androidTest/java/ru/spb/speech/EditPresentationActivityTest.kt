@@ -1,13 +1,10 @@
 package ru.spb.speech
 
-import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
-import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.PickerActions
-import android.support.test.espresso.matcher.RootMatchers.isDialog
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
@@ -32,18 +29,12 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var activityTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
-
     lateinit var helper: TestHelper
 
     @Before
     fun enableDebugMode() {
         helper = TestHelper(activityTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
-
-        onView(withId(R.id.addBtn)).perform(click())
-        onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2035, 5, 12))
-        onView(withId(R.id.addPresentation)).perform(click())
-        sleep(2000)
     }
 
     @After
@@ -57,13 +48,17 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.datePicker)).check(matches(isDisplayed()))
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
-
+        onView(withId(R.id.addPresentation)).perform(click())
+        sleep(2000)
     }
 
     @Test
     fun setDateForPresentation() {
         // Изменение даты при добавлении
+        onView(withId(R.id.addBtn)).perform(click())
+        onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2035, 5, 12))
+        onView(withId(R.id.addPresentation)).perform(click())
+        sleep(2000)
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText("2035-5-12")).check(matches(isDisplayed()))
 
@@ -80,58 +75,56 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
     @Test
     fun setNameOfPresentation() {
         // Изменение названия презентации при добавлении
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.presentationName)).perform(replaceText(activityTestRule.activity.getString(R.string.first_debug_presentation_name)))
         onView(withId(R.id.addPresentation)).perform(click())
         sleep(2000)
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText(R.string.first_debug_presentation_name)).check(matches(isDisplayed()))
+
         // Изменение названия презентации при редактировании
         onView(withText(R.string.first_debug_presentation_name)).perform(longClick())
         onView(withText(R.string.edit)).perform(click())
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.presentationName)).perform(replaceText(activityTestRule.activity.getString(R.string.second_debug_presentation_name)))
         onView(withId(R.id.addPresentation)).perform(click())
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withText(R.string.second_debug_presentation_name)).check(matches(isDisplayed()))
+
+        onView(withText(R.string.second_debug_presentation_name)).perform(longClick())
+        onView(withText(R.string.edit)).perform(click())
+        onView(withId(R.id.presentationName)).perform(replaceText(activityTestRule.activity.getString(R.string.making_presentation)))
+        onView(withId(R.id.addPresentation)).perform(click())
+        sleep(2000)
     }
 
     @Test
     fun setDurationOfPresentation() {
         // Изменение длительности презентации при добавлении
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.numberPicker1)).perform(setNumber(activityTestRule.activity.resources.getInteger(R.integer.one_minute)))
         onView(withId(R.id.addPresentation)).perform(click())
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         sleep(2000)
         onView(withText(R.string.first_debug_time)).check(matches(isDisplayed()))
 
         // Изменение длительности презентации при редактировании
         onView(withText(R.string.first_debug_time)).perform(longClick())
         onView(withText(R.string.edit)).perform(click())
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(withId(R.id.numberPicker1)).perform(setNumber(activityTestRule.activity.resources.getInteger(R.integer.two_minutes)))
         onView(withId(R.id.addPresentation)).perform(click())
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         sleep(2000)
         onView(withText(R.string.second_debug_time)).check(matches(isDisplayed()))
     }
 
-    fun setNumber(number: Int): ViewAction {
+    private fun setNumber(number: Int): ViewAction {
         return object : ViewAction {
             override fun perform(uiController: UiController, view:View) {
-                val NumberPicker = view as NumberPicker
-                NumberPicker.value = number
-
+                val numberPicker = view as NumberPicker
+                numberPicker.value = number
             }
 
             override fun getDescription(): String {
                 return activityTestRule.activity.getString(R.string.set_number_into_NP)           }
 
             override fun getConstraints(): Matcher <View> {
-                return ViewMatchers.isAssignableFrom(NumberPicker::class.java)
+                return isAssignableFrom(NumberPicker::class.java)
             }
         }
     }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
+import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -32,6 +33,8 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
+import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
@@ -60,7 +63,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var currentTrainingTime: Long = 0
 
+    private var wordCount: Int = 0
     private val activityRequestCode = 101
+
+    private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
 
     private lateinit var progressHelper: ProgressHelper
 
@@ -75,7 +81,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         progressHelper = ProgressHelper(this, root_view_training_statistics, listOf(share1, returnTraining))
 
-        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        presentationDataDao = speechDataBase.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         val trainingId = intent.getIntExtra(getString(R.string.CURRENT_TRAINING_ID),-1)
         if (presId > 0 && trainingId > 0) {
@@ -87,7 +93,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             return
         }
 
-        printTimeOnEachSlideChart(trainingId)
+        with (trainingId) {
+            printTimeOnEachSlideChart(this)
+            printAudioAnalyzerStatistics(this)
+        }
 
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
@@ -107,6 +116,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             drawPict()
         })
         drawer.start()
+
+        question.setOnClickListener {
+            val dialog = BottomSheetDialog(this)
+            val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
+
+            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
+
+            dialog.setContentView(bottomSheet)
+            dialog.show()
+        }
 
         share1.setOnClickListener {
             try {
@@ -197,7 +216,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
-        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+        if (trainingStatisticsData?.curWordCount == 0){
+            earnOfTrain.text = "${getString(R.string.earnings_of_training)} 0.0 ${getString(R.string.maximum_mark_for_training)}"
+        }
+        else{
+            earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+        }
 
         x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
@@ -208,7 +232,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
+
 
 
         speed_statistics = trainingData!!.allRecognizedText.split(" ").size
@@ -276,8 +301,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                     nameC.drawText(presName, resources.getDimension(R.dimen.x_indent_multiplier_20), resources.getDimension(R.dimen.y_indent_multiplier_30), namePaint)
             }
 
-
-
             val lastTrainingBmp = Bitmap.createBitmap(nWidth, resources.getInteger(R.integer.block_height_with_last_workout), Bitmap.Config.ARGB_8888)
             val ltC = Canvas(lastTrainingBmp)
             ltC.drawPaint(whitePaint)
@@ -335,7 +358,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             canvas.drawBitmap(nameBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat(), paint)
             canvas.drawBitmap(lastTrainingBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat() + resources.getDimension(R.dimen.top_indent_multiplier_40), paint)
             canvas.drawBitmap(trainingStatisticsBmp, resources.getDimension(R.dimen.left_indent_multiplier_0), nHeight.toFloat() + resources.getDimension(R.dimen.top_indent_multiplier_200), paint)
-
         }
     }
 
@@ -494,6 +516,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 val word = text.substring(startIndex, endIndex)
                 val count = dictionary[word] ?: 0
                 dictionary[word] = count + 1
+                wordCount++
             }
         }
 
@@ -529,5 +552,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 .replace(R.id.time_on_each_slide_chart_box_activity_training_statistics, timeOnEachSlideChartFragment)
                 .commit()
     }
+
+    private fun printAudioAnalyzerStatistics(trainingId: Int)
+            = supportFragmentManager.beginTransaction()
+            .replace(R.id.audio_analyzer_statistics_container, AudioStatisticsFragment.instance(trainingId))
+            .commit()
 
 }

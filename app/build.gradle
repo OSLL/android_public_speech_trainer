@@ -33,6 +33,9 @@ android {
        abortOnError true
     }
 
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
