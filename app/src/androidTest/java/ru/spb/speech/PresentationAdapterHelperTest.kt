@@ -44,6 +44,7 @@ class PresentationAdapterHelperTest : BaseInstrumentedTest() {
         sleep(2000)
         uiDevice.findObject(UiSelector().text(activityTestRule.activity.getString(R.string.stop))).click()
         sleep(2000)
+
         onView(withId(android.R.id.button1)).perform(click())
         uiDevice.pressBack()
 
