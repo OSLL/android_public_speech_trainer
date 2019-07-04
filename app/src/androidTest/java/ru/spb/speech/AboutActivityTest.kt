@@ -17,6 +17,8 @@ import android.support.test.espresso.intent.matcher.IntentMatchers.hasData
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import org.hamcrest.Matchers.allOf
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import ru.spb.speech.R.string.*
@@ -25,6 +27,19 @@ class AboutActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mControllerTestRule = ActivityTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    private lateinit var helper: TestHelper
+
+    @Before
+    fun enableDebugMode() {
+        helper = TestHelper(mControllerTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
+    }
+
+    @After
+    fun disableDebugMode() {
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+    }
 
     @Test
     fun checkButtons() {

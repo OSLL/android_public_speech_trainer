@@ -20,16 +20,11 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import kotlinx.coroutines.*
-import ru.spb.speech.appSupport.AudioAnalyzer
+import ru.spb.speech.appSupport.*
 import ru.spb.speech.database.interfaces.PresentationDataDao
-import ru.spb.speech.database.PresentationData
-import ru.spb.speech.database.SpeechDataBase
-import ru.spb.speech.database.TrainingData
-import ru.spb.speech.database.TrainingSlideData
 import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
-import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.appSupport.ProgressHelper
+import ru.spb.speech.database.*
 import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -187,6 +182,9 @@ class TrainingActivity : AppCompatActivity() {
                     tsd.spentTimeInSec = timeOfSlide
 
                     tsd.knownWords = curText
+
+                    if (audioAnalyzer != null)
+                        tsd.updateAudioStatistics(audioAnalyzer!!.getLastSlideInfo())
 
                     trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
@@ -381,6 +379,8 @@ class TrainingActivity : AppCompatActivity() {
                 val tsd = TrainingSlideData()
                 tsd.spentTimeInSec = timeOfSlide
                 tsd.knownWords = curText
+                if (audioAnalyzer != null)
+                    tsd.updateAudioStatistics(audioAnalyzer!!.getLastSlideInfo())
                 trainingSlideDBHelper?.addTrainingSlideInDB(tsd,trainingData!!)
 
                 val list = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!)
@@ -408,6 +408,9 @@ class TrainingActivity : AppCompatActivity() {
             trainingData?.timeOnSlidesFactorMarkZ = (trainingStatisticsData.zTimeOnSlidesFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
             trainingData?.trainingGrade = trainingStatisticsData.trainingGrade.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)).replace(",", ".")
 
+            trainingData?.allRecognizedText = allRecognizedText
+            trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
+
             if (saveTrainingInDB) {
                 val trainingDBHelper = TrainingDBHelper(this)
                 trainingDBHelper.addTrainingInDB(trainingData!!, presentationData!!)
@@ -423,8 +426,6 @@ class TrainingActivity : AppCompatActivity() {
             }
         }
     }
-
-    fun Float.format(digits: Int) = java.lang.String.format("%.${digits}f", this)!!
 
     private val mConnection = object : ServiceConnection {
         @SuppressLint("LongLogTag")
