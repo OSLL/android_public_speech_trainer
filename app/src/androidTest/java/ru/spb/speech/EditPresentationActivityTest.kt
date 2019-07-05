@@ -64,11 +64,14 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
 
         // Изменение даты при редактировании
         onView(withText("2035-5-12")).perform(longClick())
+        sleep(2000)
         onView(withText(R.string.edit)).perform(click())
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        sleep(2000)
         onView(withId(R.id.datePicker)).perform(PickerActions.setDate(2036, 5, 12))
         onView(withId(R.id.addPresentation)).perform(click())
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        sleep(2000)
         onView(withText("2036-5-12")).check(matches(isDisplayed()))
     }
 
@@ -83,13 +86,18 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
 
         // Изменение названия презентации при редактировании
         onView(withText(R.string.first_debug_presentation_name)).perform(longClick())
+        sleep(2000)
         onView(withText(R.string.edit)).perform(click())
+        sleep(2000)
         onView(withId(R.id.presentationName)).perform(replaceText(activityTestRule.activity.getString(R.string.second_debug_presentation_name)))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(2000)
         onView(withText(R.string.second_debug_presentation_name)).check(matches(isDisplayed()))
 
         onView(withText(R.string.second_debug_presentation_name)).perform(longClick())
+        sleep(2000)
         onView(withText(R.string.edit)).perform(click())
+        sleep(2000)
         onView(withId(R.id.presentationName)).perform(replaceText(activityTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.addPresentation)).perform(click())
         sleep(2000)
@@ -106,7 +114,9 @@ class EditPresentationActivityTest : BaseInstrumentedTest() {
 
         // Изменение длительности презентации при редактировании
         onView(withText(R.string.first_debug_time)).perform(longClick())
+        sleep(2000)
         onView(withText(R.string.edit)).perform(click())
+        sleep(2000)
         onView(withId(R.id.numberPicker1)).perform(setNumber(activityTestRule.activity.resources.getInteger(R.integer.two_minutes)))
         onView(withId(R.id.addPresentation)).perform(click())
         sleep(2000)
