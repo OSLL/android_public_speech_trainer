@@ -83,5 +83,25 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         helper.changeExportStatisticsFlag()
     }
 
+    @Test
+    fun checkNoWordsTraining(){
+        onView(withId(R.id.addBtn)).perform(ViewActions.click())
+        onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
+        onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+        Thread.sleep(2000)
+        helper.startTrainingDialog(uiDevice)
+        Thread.sleep(2000)
+        uiDevice.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        Thread.sleep(2000)
+        onView(withId(android.R.id.button1)).perform(ViewActions.click())
+
+
+        Thread.sleep(2000)
+        onView(withId(R.id.earnOfTrain)).check(matches(withText(containsString("0.0"))))
+        Thread.sleep(2000)
+
+        uiDevice.pressBack()
+        Thread.sleep(2000)
+    }
 
 }

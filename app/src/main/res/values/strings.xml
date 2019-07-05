@@ -54,7 +54,15 @@
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочная презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
+    <string name="first_debug_presentation_name">making_first_presentation</string>
+    <string name="second_debug_presentation_name">making_second_presentation</string>
+    <string name="set_number_into_NP">Set the passed number into the NumberPicker</string>
+    <string name="first_debug_time">01 min: 00 sec</string>
+    <string name="second_debug_time">02 min: 00 sec</string>
+    <string name="edit">"Редактировать"</string>
+
     <string name="making_presentation">making_presentation</string>
+
     <string name="pdf_format">.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
@@ -268,7 +276,7 @@
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
-    <string name="dbName">apst.0.2</string>
+    <string name="dbName">apst.0.3</string>
     <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
     <string name="useStatistics">use_statistics</string>
     <string name="good">Хорошо</string>
@@ -277,6 +285,7 @@
     <string name="yes">ДА</string>
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
+    <string name="audio_analysis">Анализ аудио</string>
     <string name="closeRatingInformation">Ок</string>
     <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом трех критериев: </string>
     <string name="regulations_description">Проверка успешности попадания в условия временного ограничения.\n\n\t\tdx - модуль разницы между временем тренировки и ограничением на доклад.\n\t\tx0 - ограничение на доклад. </string>
@@ -287,6 +296,7 @@
     <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
     <string name="try_again">Попробуйте снова</string>
+    <string name="more_sign"><![CDATA[>]]></string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
