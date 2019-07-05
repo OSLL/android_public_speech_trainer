@@ -236,7 +236,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
 
 
-        speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+        speed_statistics = trainingStatisticsData?.curWordCount
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
     }
 
