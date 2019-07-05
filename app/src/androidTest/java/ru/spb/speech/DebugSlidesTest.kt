@@ -36,12 +36,10 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         helper = TestHelper(mIntentsTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
-        helper.changeExportStatisticsFlag()
     }
 
     @After
     fun disableDebugMode() {
-        helper.changeExportStatisticsFlag()
         helper.setTrainingPresentationMod(false) // выключение тестовой презентации
         helper.removeDebugSlides()
     }
@@ -63,6 +61,8 @@ class DebugSlidesTest : BaseInstrumentedTest() {
 
     @Test
     fun exportStasisticsFlagTest(){
+        helper.changeExportStatisticsFlag()
+        
         onView(withId(R.id.addBtn)).perform(ViewActions.click())
         onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.addPresentation)).perform(ViewActions.click())
@@ -79,6 +79,8 @@ class DebugSlidesTest : BaseInstrumentedTest() {
         Thread.sleep(2000)
         uiDevice.pressBack()
         Thread.sleep(2000)
+        
+        helper.changeExportStatisticsFlag()
     }
 
 
