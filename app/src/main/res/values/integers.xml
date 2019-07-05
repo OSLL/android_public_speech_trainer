@@ -24,6 +24,9 @@
 
     <integer name="max_possible_pres_name_length">48</integer>
 
+    <integer name="one_minute">1</integer>
+    <integer name="two_minutes">2</integer>
+
     <integer name="num_of_dec_in_the_training_score">1</integer>
 
     <integer name="screen_width">1080</integer>
@@ -38,4 +41,5 @@
     <integer name="workout_time_in_milliseconds_for_training">2000</integer>
     <integer name="def_sharedPref_value">-1</integer>
     <integer name="one_minute_report_setting">1</integer>
+
 </resources>
