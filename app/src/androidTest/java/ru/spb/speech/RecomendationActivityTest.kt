@@ -78,15 +78,15 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun textViewAndButtonWithTextCheck() {
-        onView(withId(R.id.recomendationLabel)).scrollto().check(matches(withText("Рекомендации к выступлению")))
-        onView(withId(R.id.slidesTimeLabel)).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesTimeRecomendation)).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
-        onView(withId(R.id.slidesFrequency)).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesFrequencyRecomendation)).check(matches(withText("Рекомендации по частоте слов - заглушка")))
-        onView(withId(R.id.scumWordsLabel)).check(matches(withText("Слова паразиты")))
-        onView(withId(R.id.scumWordsRecomendation)).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
-        onView(withId(R.id.backToStatistics)).check(matches(withText("Назад к статистике")))
-        onView(withId(R.id.toHomeScreen)).check(matches(withText("На главную")))
+        onView(withId(R.id.recomendationLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации к выступлению")))
+        onView(withId(R.id.slidesTimeLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
+        onView(withId(R.id.slidesTimeRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
+        onView(withId(R.id.slidesFrequency)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
+        onView(withId(R.id.slidesFrequencyRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по частоте слов - заглушка")))
+        onView(withId(R.id.scumWordsLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Слова паразиты")))
+        onView(withId(R.id.scumWordsRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
+        onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).check(matches(withText("Назад к статистике")))
+        onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).check(matches(withText("На главную")))
 
         Thread.sleep(2000)
         uiDevice.pressBack()
