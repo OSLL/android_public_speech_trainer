@@ -67,8 +67,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var wordCount: Int = 0
     private val activityRequestCode = 101
 
-    private var recommendationString: String = ""
-
     private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
 
 
