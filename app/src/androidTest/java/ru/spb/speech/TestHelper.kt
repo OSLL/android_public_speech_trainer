@@ -35,7 +35,9 @@ class TestHelper(private val activity: Activity) {
         spe.putBoolean(testPresentationMode, mode)
         spe.putBoolean(testPresentationAudio, mode)
         spe.apply()
-
+        Thread.sleep(2000)
+        Thread.sleep(2000)
+        Thread.sleep(2000)
         if (sp.getBoolean(activity.getString(R.string.first_run), true)) {
             Espresso.onView(ViewMatchers.withText(activity.getString(R.string.good)))
                     .perform(ViewActions.click())

@@ -16,6 +16,7 @@ import android.support.test.uiautomator.UiSelector
 import android.util.Log
 import ru.spb.speech.database.SpeechDataBase
 import junit.framework.Assert.assertEquals
+import org.hamcrest.CoreMatchers.containsString
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
