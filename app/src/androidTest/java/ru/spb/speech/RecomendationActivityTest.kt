@@ -78,7 +78,7 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun textViewAndButtonWithTextCheck() {
-        onView(withId(R.id.recomendationLabel)).check(matches(withText("Рекомендации к выступлению")))
+        onView(withId(R.id.recomendationLabel)).scrollto().check(matches(withText("Рекомендации к выступлению")))
         onView(withId(R.id.slidesTimeLabel)).check(matches(withText("Время слайдов")))
         onView(withId(R.id.slidesTimeRecomendation)).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
         onView(withId(R.id.slidesFrequency)).check(matches(withText("Время слайдов")))
