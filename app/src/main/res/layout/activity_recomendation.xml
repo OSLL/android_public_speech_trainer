@@ -31,9 +31,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:text="@string/performance_recomendations"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textSize="15sp" />
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/slidesTimeLabel"
@@ -43,9 +44,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:text="@string/slide_time"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textSize="15sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/slidesTimeRecomendation"
@@ -67,9 +69,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:text="@string/slides_frequency"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textSize="15sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/slidesFrequencyRecomendation"
@@ -91,9 +94,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:text="@string/scum_words_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textSize="15sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/scumWordsRecomendation"
