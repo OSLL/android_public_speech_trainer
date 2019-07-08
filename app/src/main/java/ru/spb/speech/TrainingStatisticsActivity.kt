@@ -33,6 +33,7 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
 import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.text.BreakIterator
@@ -71,6 +72,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var middleTimeError: Double = 30.8
 
     private var recommendationString: String = ""
+    private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
 
 
     private lateinit var progressHelper: ProgressHelper
@@ -86,7 +88,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         progressHelper = ProgressHelper(this, root_view_training_statistics, listOf(share1, returnTraining))
 
-        presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
+        presentationDataDao = speechDataBase.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         val trainingId = intent.getIntExtra(getString(R.string.CURRENT_TRAINING_ID),-1)
         if (presId > 0 && trainingId > 0) {
@@ -98,7 +100,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             return
         }
 
-        printTimeOnEachSlideChart(trainingId)
+        with (trainingId) {
+            printTimeOnEachSlideChart(this)
+            printAudioAnalyzerStatistics(this)
+        }
 
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
@@ -277,7 +282,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
-        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+        if (trainingStatisticsData?.curWordCount == 0){
+            earnOfTrain.text = "${getString(R.string.earnings_of_training)} 0.0 ${getString(R.string.maximum_mark_for_training)}"
+        }
+        else{
+            earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+        }
 
         x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
@@ -292,7 +302,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
 
 
-        speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+        speed_statistics = trainingStatisticsData?.curWordCount
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
     }
 
@@ -608,5 +618,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 .replace(R.id.time_on_each_slide_chart_box_activity_training_statistics, timeOnEachSlideChartFragment)
                 .commit()
     }
+
+    private fun printAudioAnalyzerStatistics(trainingId: Int)
+            = supportFragmentManager.beginTransaction()
+            .replace(R.id.audio_analyzer_statistics_container, AudioStatisticsFragment.instance(trainingId))
+            .commit()
 
 }

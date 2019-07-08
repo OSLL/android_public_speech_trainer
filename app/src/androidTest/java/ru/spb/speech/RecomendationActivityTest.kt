@@ -15,6 +15,7 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
+import android.util.Log
 import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
@@ -30,6 +31,8 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
     private var presName = ""
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
     val debSl = sharedPreferences.edit()
+    lateinit var helper: TestHelper
+    lateinit var uiDevice: UiDevice
 
 
     @Rule
@@ -60,6 +63,25 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
         Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
         onView(withId(android.R.id.button1)).perform(ViewActions.click())
         onView(withId(R.id.improve_mark_button)).perform(ViewActions.click())
+        uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        helper = TestHelper(mIntentsTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
+
+        onView(withId(R.id.addBtn)).perform(ViewActions.click())
+        Thread.sleep(2000)
+        onView(withId(R.id.presentationName)).perform(ViewActions.replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
+        Thread.sleep(2000)
+        onView(withId(R.id.addPresentation)).perform(ViewActions.click())
+
+        Thread.sleep(2000)
+        helper.startTrainingDialog(uiDevice)
+        Thread.sleep(2000)
+        uiDevice.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        Thread.sleep(2000)
+        onView(withId(android.R.id.button1)).perform(ViewActions.click())
+        Thread.sleep(2000)
+        onView(withId(R.id.improve_mark_button)).perform(ViewActions.click())
+        Thread.sleep(2000)
     }
 
     @After
@@ -74,6 +96,8 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
         onView(withText(presName)).perform(ViewActions.longClick())
         Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_the_delete_button).toLong())
         onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(ViewActions.click())
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+        helper.removeDebugSlides()
     }
 
 
@@ -90,16 +114,17 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun textViewAndButtonWithTextCheck() {
-        onView(withId(R.id.recomendationLabel)).check(matches(withText("Рекомендации к выступлению")))
-        onView(withId(R.id.slidesTimeLabel)).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesTimeRecomendation)).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
-        onView(withId(R.id.slidesFrequency)).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesFrequencyRecomendation)).check(matches(withText("Рекомендации по частоте слов - заглушка")))
-        onView(withId(R.id.scumWordsLabel)).check(matches(withText("Слова паразиты")))
-        onView(withId(R.id.scumWordsRecomendation)).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
-        onView(withId(R.id.backToStatistics)).check(matches(withText("Назад к статистике")))
-        onView(withId(R.id.toHomeScreen)).check(matches(withText("На главную")))
+        onView(withId(R.id.recomendationLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации к выступлению")))
+        onView(withId(R.id.slidesTimeLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
+        onView(withId(R.id.slidesTimeRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
+        onView(withId(R.id.slidesFrequency)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
+        onView(withId(R.id.slidesFrequencyRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по частоте слов - заглушка")))
+        onView(withId(R.id.scumWordsLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Слова паразиты")))
+        onView(withId(R.id.scumWordsRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
+        onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).check(matches(withText("Назад к статистике")))
+        onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).check(matches(withText("На главную")))
 
+        Thread.sleep(2000)
         mDevice!!.pressBack()
         mDevice!!.pressBack()
     }
