@@ -1,6 +1,5 @@
 package ru.spb.speech.fragments
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -13,10 +12,10 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import kotlinx.android.synthetic.main.time_on_each_slide_chart_fragment.*
 import android.content.Context
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import kotlinx.android.synthetic.main.time_on_each_slide_chart_fragment.view.*
 
 const val FRAGMENT_TIME_ON_EACH_SLIDE = ".FragmentTimeOnEachSlide"
 
@@ -28,12 +27,14 @@ class TimeOnEachSlideFragment: StatisticsFragment() {
 
     override val fragmentLayoutId = R.layout.time_on_each_slide_chart_fragment
 
-    override fun onStart() {
-        super.onStart()
-        val entries = ArrayList<BarEntry>()
+    override fun onViewInflated(view: View) {
+        super.onViewInflated(view)
 
-        for (slide in trainingSlideList?.withIndex() ?: return)
-            entries.add(BarEntry(slide.index.toFloat(), slide.value.spentTimeInSec!!.toFloat()))
+        with (view) {
+            val entries = ArrayList<BarEntry>()
+
+            for (slide in trainingSlideList?.withIndex() ?: return)
+                entries.add(BarEntry(slide.index.toFloat(), slide.value.spentTimeInSec!!.toFloat()))
 
             val labels = java.util.ArrayList<String>()
             val colors = ArrayList<Int>()
@@ -109,15 +110,6 @@ class TimeOnEachSlideFragment: StatisticsFragment() {
             //yAxis.setDrawLimitLinesBehindData(true)
 
             time_on_each_slide_chart.invalidate()
-
-//        printChart(entries)
+        }
     }
-
-
-    @SuppressLint("LongLogTag")
-    private fun printChart(entries: ArrayList<BarEntry>) {
-
-
-    }
-
 }
