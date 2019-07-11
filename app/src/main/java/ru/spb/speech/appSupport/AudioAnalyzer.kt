@@ -491,7 +491,7 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
         val parent = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             Environment.getExternalStorageDirectory()
         } else {
-            activity?.filesDir
+            activity.filesDir
         }
 
         val directory = File("${parent?.path}${File.separator}$RECORDING_FOLDER")
