@@ -21,7 +21,7 @@ import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivi
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.vocabulary.PrepositionsAndConjunctions
-import ru.spb.speech.fragments.TimeOnEachSlideChartFragment
+import ru.spb.speech.fragments.TimeOnEachSlideFragment
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
@@ -33,8 +33,9 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import ru.spb.speech.appSupport.showStatisticsFragment
+import ru.spb.speech.appSupport.showStatisticsFragments
 import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
-import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
@@ -93,10 +94,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             return
         }
 
-        with (trainingId) {
-            printTimeOnEachSlideChart(this)
-            printAudioAnalyzerStatistics(this)
-        }
+        showStatisticsFragments(
+                AudioStatisticsFragment() to R.id.audio_analyzer_statistics_container,
+                TimeOnEachSlideFragment() to R.id.time_on_each_slide_chart_box_activity_training_statistics,
+                trainingId = trainingId)
 
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
@@ -540,22 +541,4 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
         return list.size
     }
-
-    private fun printTimeOnEachSlideChart(trainingId: Int) {
-        val timeOnEachSlideChartFragment = TimeOnEachSlideChartFragment()
-        val bundle = Bundle()
-
-        bundle.putInt(getString(R.string.CURRENT_TRAINING_ID), trainingId)
-        timeOnEachSlideChartFragment.arguments = bundle
-
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.time_on_each_slide_chart_box_activity_training_statistics, timeOnEachSlideChartFragment)
-                .commit()
-    }
-
-    private fun printAudioAnalyzerStatistics(trainingId: Int)
-            = supportFragmentManager.beginTransaction()
-            .replace(R.id.audio_analyzer_statistics_container, AudioStatisticsFragment.instance(trainingId))
-            .commit()
-
 }

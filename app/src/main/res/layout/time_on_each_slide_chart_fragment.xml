@@ -2,12 +2,12 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/time_on_each_slide_chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="250dp">
 
     </com.github.mikephil.charting.charts.BarChart>
 
