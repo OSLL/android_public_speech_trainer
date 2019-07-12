@@ -197,8 +197,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             presentationSpeedData.add(BarEntry((i).toFloat(), speed))
         }
 
-        printSpeedLineChart(presentationSpeedData)
-
         val editedTextForTop10WordsChart = PrepositionsAndConjunctions(this)
                 .removeConjunctionsAndPrepositionsFromText(trainingData!!.allRecognizedText)
 
@@ -415,11 +413,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 " %02d:%02d",
                 minutes, seconds
         )
-
-    }
-
-    //Инициализация графика скорости чтения
-    private fun printSpeedLineChart(lineEntries: List<BarEntry>){
 
     }
 

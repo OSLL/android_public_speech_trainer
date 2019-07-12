@@ -260,8 +260,8 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
-    <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
-    <string name="slideDurationInSeconds_max1080">Длительность слайда\n(секунды)</string>
+    <string name="slideDurationInSeconds">Длительность паузы/слайда (секунды)</string>
+    <string name="slideDurationInSeconds_max1080">Длительность паузы/слайда\n(секунды)</string>
     <string name="presentationEditing">Редактирование презентации</string>
     <string name="isPresentationChangedFlag">isPresentationChanges</string>
     <string name="presentationPosition">presentationPosition</string>
