@@ -297,6 +297,9 @@
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
     <string name="try_again">Попробуйте снова</string>
     <string name="more_sign"><![CDATA[>]]></string>
+    <string name="audio_analyze_summary">Запись звука во время тренировок для дальнейшего анализа на паузы</string>
+    <string name="audio_analyze_title">Анализ аудио</string>
+    <string name="audio_analyze">audio_analyze</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

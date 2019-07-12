@@ -85,6 +85,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    private val defaultSP by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+
     private var audioAnalyzer: AudioAnalyzer? = null
     private val audioAnalyzerController = MutableLiveData<AudioAnalyzer.AudioAnalyzerState>()
             .apply { value = AudioAnalyzer.AudioAnalyzerState.START_RECORD }
@@ -94,8 +96,10 @@ class TrainingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
-        GlobalScope.launch {
-            audioAnalyzer = AudioAnalyzer.getInstance(this@TrainingActivity, audioAnalyzerController)
+        if (defaultSP.getBoolean(getString(R.string.audio_analyze), true)) {
+            GlobalScope.launch {
+                audioAnalyzer = AudioAnalyzer.getInstance(this@TrainingActivity, audioAnalyzerController)
+            }
         }
 
         progressHelper = ProgressHelper(this, training_activity_root_view, listOf())

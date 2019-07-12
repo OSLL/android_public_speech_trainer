@@ -11,6 +11,12 @@
         android:summary="@string/pref_description_statistics_collection"
         android:title="@string/pref_title_statistics_collection" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/audio_analyze"
+        android:summary="@string/audio_analyze_summary"
+        android:title="@string/audio_analyze_title" />
+
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
