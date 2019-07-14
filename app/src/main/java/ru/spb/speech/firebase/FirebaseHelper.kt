@@ -12,7 +12,7 @@ import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.R
-import ru.spb.speech.TrainingStatisticsData
+import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.firebase.model.FullTrainingStatistic
 import java.util.*
 import java.util.concurrent.TimeUnit
