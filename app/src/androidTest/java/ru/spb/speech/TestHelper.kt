@@ -35,7 +35,9 @@ class TestHelper(private val activity: Activity) {
         spe.putBoolean(testPresentationMode, mode)
         spe.putBoolean(testPresentationAudio, mode)
         spe.apply()
-
+        Thread.sleep(2000)
+        Thread.sleep(2000)
+        Thread.sleep(2000)
         if (sp.getBoolean(activity.getString(R.string.first_run), true)) {
             Espresso.onView(ViewMatchers.withText(activity.getString(R.string.good)))
                     .perform(ViewActions.click())
@@ -43,9 +45,18 @@ class TestHelper(private val activity: Activity) {
         }
     }
 
+    fun changeExportStatisticsFlag() {
+        val exportFlagCheck = "deb_statistics_export"
+        val sp = PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getTargetContext())
+        val spe = sp.edit()
+        if (sp.getBoolean(exportFlagCheck, false)){
+            spe.putBoolean(exportFlagCheck, true).apply()
+        }
+        else spe.putBoolean(exportFlagCheck, false)
+    }
+
     fun removeDebugSlides(){
-        Espresso.onView(ViewMatchers.withText("making_presentation")).
-                perform(ViewActions.longClick()) // Вызов диалогового окна удаления презентации
+        Espresso.onView(ViewMatchers.withText("making_presentation")).perform(ViewActions.longClick()) // Вызов диалогового окна удаления презентации
 
         // Нажатие на кнопку "удалить"
         Espresso.onView(ViewMatchers.withText(activity.getString(R.string.remove)))
@@ -108,7 +119,7 @@ class TestHelper(private val activity: Activity) {
     }
 
     fun startTrainingDialog(uiDevice : UiDevice) {
-        Espresso.onView(ViewMatchers.withText(R.string.making_presentation)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withText("making_presentation")).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withText(R.string.start_training)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         uiDevice.findObject(UiSelector().text(activity.getString(R.string.yes))).click()
     }

@@ -147,7 +147,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
-
+      
         export.setOnClickListener {
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()
@@ -213,6 +213,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+        val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
+        if (!isExportVisible) {
+            export.visibility = View.VISIBLE
+        }
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
@@ -238,7 +242,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}\n" +
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
                 getString(R.string.word_share_of_parasites) + " $countOfParasites " + getString(R.string.percent)
 
         speed_statistics = trainingStatisticsData?.curWordCount
