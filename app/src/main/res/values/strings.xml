@@ -23,7 +23,7 @@
     <string name="activity_preference">Настройки</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">Настройки</string>
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
@@ -37,12 +37,14 @@
     <string name="speech_speed_units">слов/мин</string>
     <string name="training_time">Время тренировки:</string>
     <string name="count_of_slides">Слайдов рассказано:</string>
+    <string name="word_share_of_parasites">Доля слов паразитов:</string>
+    <string name="percent">%</string>
     <string name="zero_sec">00 min: 00 sec</string>
     <string name="first_sec">00 min: 01 sec</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general">Основные</string>
 
     <string name="pref_title_enable_statistics">Включить анализ статистики</string>
     <string name="pref_description_enable_statistics">Отображение графиков после выступления
@@ -54,6 +56,15 @@
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочная презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
+    <string name="first_debug_presentation_name">making_first_presentation</string>
+    <string name="second_debug_presentation_name">making_second_presentation</string>
+    <string name="set_number_into_NP">Set the passed number into the NumberPicker</string>
+    <string name="first_debug_time">01 min: 00 sec</string>
+    <string name="second_debug_time">02 min: 00 sec</string>
+    <string name="edit">"Редактировать"</string>
+
+    <string name="making_presentation">making_presentation</string>
+
     <string name="pdf_format">.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
@@ -109,8 +120,8 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_header_deb_mode">Debug mode</string>
+    <string name="pref_header_notifications">Уведомления</string>
+    <string name="pref_header_deb_mode">Режим отладки</string>
     <string name="pref_title_new_message_notifications">Напоминание о тренировках</string>
     <string name="pref_title_ringtone">Рингтон</string>
     <string name="pref_ringtone_silent">Silent</string>
@@ -206,9 +217,9 @@
     <string name="num_of_words_spoken">Слов сказано: </string>
     <string name="training_duration">Длительность тренировки: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
-    <string name="exercise_time_factor"> >>> Попадание в регламент: </string>
-    <string name="speech_speed_factor"> >>> Темп речи: </string>
-    <string name="time_on_slides_factor"> >>> Время на слайдах: </string>
+    <string name="exercise_time_factor">Попадание в регламент: </string>
+    <string name="speech_speed_factor">Темп речи: </string>
+    <string name="time_on_slides_factor">Время на слайдах: </string>
 
     <string name="training_statistic_title">Статистика тренировок: </string>
     <string name="date_of_first_training">Дата первой тренировки: </string>
@@ -221,6 +232,7 @@
     <string name="total_words_count">Сказано слов всего: </string>
     <string name="average_earning_1">Средняя / минимальная</string>
     <string name="average_earning_2">/ максимальная оценка: </string>
+    <string name="scores">баллов</string>
 
     <string name="training_statistics_directory">training_statistics</string>
     <string name="error_creating_text_file">Ошибка в создании текстового файла</string>
@@ -266,13 +278,27 @@
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
-    <string name="dbName">apst.0.2</string>
+    <string name="dbName">apst.0.3</string>
     <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
     <string name="useStatistics">use_statistics</string>
     <string name="good">Хорошо</string>
     <string name="no_thnx">Нет, спасибо</string>
+    <string name="start_training">Начать тренировку?</string>
+    <string name="yes">ДА</string>
     <string name="firstSyncFlag">first_sync_flag</string>
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
+    <string name="audio_analysis">Анализ аудио</string>
+    <string name="closeRatingInformation">Ок</string>
+    <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом трех критериев: </string>
+    <string name="regulations_description">Проверка успешности попадания в условия временного ограничения.\n\n\t\tdx - модуль разницы между временем тренировки и ограничением на доклад.\n\t\tx0 - ограничение на доклад. </string>
+    <string name="pace_description">Скорость речи на каждом из слайдов.\n\n\t\tdy - дисперсия скорости речи на слайдах.</string>
+    <string name="time_description">Длительность тренировки по слайдам.\n\n\t\tdz - дисперсия времени на слайдах.</string>
+    <string name="final_assessment_value">Финальным значение оценки является среднее арифметическое перечисленных критериев: \n</string>
+    <string name="first_run">first run</string>
+    <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
+    <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
+    <string name="try_again">Попробуйте снова</string>
+    <string name="more_sign"><![CDATA[>]]></string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
@@ -637,4 +663,41 @@
         <item>свыше</item>
         <item>по</item>
     </string-array>
+
+    <string-array name="verbalGarbage">
+        <item>короче</item>
+        <item>однако</item>
+        <item>это</item>
+        <item>типа</item>
+        <item>как бы</item>
+        <item>это самое</item>
+        <item>как сказать</item>
+        <item>в общем-то</item>
+        <item>знаешь</item>
+        <item>ну</item>
+        <item>то есть</item>
+        <item>так сказать</item>
+        <item>понимаешь</item>
+        <item>собственно</item>
+        <item>в принципе</item>
+        <item>допустим</item>
+        <item>например</item>
+        <item>слушай</item>
+        <item>собственно говоря</item>
+        <item>кстати</item>
+        <item>вообще</item>
+        <item>кажется</item>
+        <item>вероятно</item>
+        <item>значит</item>
+        <item>на самом деле</item>
+        <item>просто</item>
+        <item>сложно сказать</item>
+        <item>конкретно</item>
+        <item>вот</item>
+        <item>ладно</item>
+        <item>блин</item>
+        <item>так</item>
+        <item>походу</item>
+    </string-array>
+
 </resources>

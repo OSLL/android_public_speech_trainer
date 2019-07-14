@@ -102,6 +102,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference("example_text"))
             bindPreferenceSummaryToValue(findPreference("example_list"))
             bindPreferenceSummaryToValue(findPreference(getString(R.string.speed_key)))
+            bindPreferenceSummaryToValue(findPreference("statistics_collection"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -111,6 +112,17 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
+        }
+
+        override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
+            val key = preference?.key
+            val switchStatisticsCollection = findPreference("statistics_collection") as SwitchPreference
+            if (key == "statistics_collection") {
+                activity.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE).edit()
+                        .putBoolean(getString(R.string.useStatistics), switchStatisticsCollection.isChecked)
+                        .apply()
+            }
+            return true
         }
     }
 
@@ -218,6 +230,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         private val sBindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->
             val stringValue = value.toString()
 
+            if (preference?.key == "statistics_collection") {
+                val statisticsCollectionStatus = preference.context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+                        .getBoolean(preference.context.getString(R.string.useStatistics), true)
+                val switch = preference as SwitchPreference
+                switch.isChecked = statisticsCollectionStatus
+                return@OnPreferenceChangeListener true
+            }
+
             if (preference is ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
@@ -284,10 +304,19 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
             // Trigger the listener immediately with the preference's
             // current value.
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.context)
-                            .getString(preference.key, ""))
+            if (preference.key == "statistics_collection") {
+                sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                        PreferenceManager
+                                .getDefaultSharedPreferences(preference.context)
+                                .getBoolean(preference.key, false))
+            }
+            else {
+                sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                        PreferenceManager
+                                .getDefaultSharedPreferences(preference.context)
+                                .getString(preference.key, ""))
+            }
+
         }
     }
 }

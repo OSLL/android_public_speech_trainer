@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
+import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -31,6 +32,9 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import ru.spb.speech.appSupport.TrainingStatisticsData
+import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
+import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -60,6 +64,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var wordCount: Int = 0
     private val activityRequestCode = 101
 
+    private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
+
     private lateinit var progressHelper: ProgressHelper
 
     var trainingStatisticsData: TrainingStatisticsData? = null
@@ -85,7 +91,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             return
         }
 
-        printTimeOnEachSlideChart(trainingId)
+        with (trainingId) {
+            printTimeOnEachSlideChart(this)
+            printAudioAnalyzerStatistics(this)
+        }
 
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
@@ -104,6 +113,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             drawPict()
         })
         drawer.start()
+
+        question.setOnClickListener {
+            val dialog = BottomSheetDialog(this)
+            val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
+
+            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
+
+            dialog.setContentView(bottomSheet)
+            dialog.show()
+        }
 
         share1.setOnClickListener {
             try {
@@ -124,7 +143,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
-
+      
         export.setOnClickListener {
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()
@@ -187,25 +206,39 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+        val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
+        if (!isExportVisible) {
+            export.visibility = View.VISIBLE
+        }
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
 
-        earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+        if (trainingStatisticsData?.curWordCount == 0){
+            earnOfTrain.text = "${getString(R.string.earnings_of_training)} 0.0 ${getString(R.string.maximum_mark_for_training)}"
+        }
+        else{
+            earnOfTrain.text = "${getString(R.string.earnings_of_training)} ${trainingStatisticsData?.trainingGrade?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} ${getString(R.string.maximum_mark_for_training)}"
+        }
 
         x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
+
+        var countOfParasites = ((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)
+        if(trainingStatisticsData!!.countOfParasites == 0L){
+            countOfParasites = "0.0"
+        }
 
         textView.text = getString(R.string.average_speed) +
                 " %.2f ${getString(R.string.speech_speed_units)}\n".format(averageSpeed) +
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}"
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
+                getString(R.string.word_share_of_parasites) + " $countOfParasites " + getString(R.string.percent)
 
-
-        speed_statistics = trainingData!!.allRecognizedText.split(" ").size
+        speed_statistics = trainingStatisticsData?.curWordCount
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
     }
 
@@ -314,12 +347,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             tsC.drawText(getString(R.string.average_time) + getStringPresentationTimeLimit(trainingStatisticsData?.averageTime), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_186), tsP)
             tsC.drawText(getString(R.string.total_words_count) + " " + trainingStatisticsData?.allWords, resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_209), tsP)
 
-            tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
+            var countOfParasites = ((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)
+            if(trainingStatisticsData!!.countOfParasites == 0L){
+                countOfParasites = "0.0"
+            }
+
+            tsC.drawText(getString(R.string.word_share_of_parasites) + " $countOfParasites " + getString(R.string.percent), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_232), tsP)
+            tsC.drawText(getString(R.string.average_earning_1), resources.getDimension(R.dimen.x_indent_multiplier_30), resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
             tsC.drawText(getString(R.string.average_earning_2) + " " +
                     trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)) + " / " +
                     trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)) + " / " +
-                    trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)), resources.getDimension(R.dimen.x_indent_multiplier_90),
-                    resources.getDimension(R.dimen.y_indent_multiplier_255), tsP)
+                    trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)), resources.getDimension(R.dimen.x_indent_multiplier_60),
+                    resources.getDimension(R.dimen.y_indent_multiplier_278), tsP)
 
             val canvas = Canvas(finishBmp)
             val paint = Paint()
@@ -348,7 +387,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 "${getString(R.string.min_training_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.minTrainTime)}\n" +
                 "${getString(R.string.average_time)} ${getStringPresentationTimeLimit(trainingStatisticsData?.averageTime)}\n" +
                 "${getString(R.string.total_words_count)} ${trainingStatisticsData?.allWords}\n" +
-                "${getString(R.string.average_earning_1)}\n\t ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))}"
+                "${getString(R.string.average_earning_1)}\n ${getString(R.string.average_earning_2)} ${trainingStatisticsData?.averageEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.minEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))} / ${trainingStatisticsData?.maxEarn?.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score))}"
 
     }
 
@@ -482,5 +521,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 .replace(R.id.time_on_each_slide_chart_box_activity_training_statistics, timeOnEachSlideChartFragment)
                 .commit()
     }
+
+    private fun printAudioAnalyzerStatistics(trainingId: Int)
+            = supportFragmentManager.beginTransaction()
+            .replace(R.id.audio_analyzer_statistics_container, AudioStatisticsFragment.instance(trainingId))
+            .commit()
 
 }

@@ -4,14 +4,19 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.media.AudioManager
 import android.os.*
 import android.preference.PreferenceManager
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.support.test.InstrumentationRegistry
 import android.util.Log
 import java.lang.ref.WeakReference
+import android.content.SharedPreferences
+
+
 
 public class SpeechRecognitionService: Service() {
     protected lateinit var mAudioManager: AudioManager
@@ -49,7 +54,6 @@ public class SpeechRecognitionService: Service() {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         mSpeechRecognizerIntent!!.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 this.packageName)
-
 
         mSpeechRecognizer!!.startListening(mSpeechRecognizerIntent)
     }
