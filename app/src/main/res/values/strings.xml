@@ -37,6 +37,8 @@
     <string name="speech_speed_units">слов/мин</string>
     <string name="training_time">Время тренировки:</string>
     <string name="count_of_slides">Слайдов рассказано:</string>
+    <string name="word_share_of_parasites">Доля слов паразитов:</string>
+    <string name="percent">%</string>
     <string name="zero_sec">00 min: 00 sec</string>
     <string name="first_sec">00 min: 01 sec</string>
     <!-- Strings related to Settings -->
@@ -661,4 +663,41 @@
         <item>свыше</item>
         <item>по</item>
     </string-array>
+
+    <string-array name="verbalGarbage">
+        <item>короче</item>
+        <item>однако</item>
+        <item>это</item>
+        <item>типа</item>
+        <item>как бы</item>
+        <item>это самое</item>
+        <item>как сказать</item>
+        <item>в общем-то</item>
+        <item>знаешь</item>
+        <item>ну</item>
+        <item>то есть</item>
+        <item>так сказать</item>
+        <item>понимаешь</item>
+        <item>собственно</item>
+        <item>в принципе</item>
+        <item>допустим</item>
+        <item>например</item>
+        <item>слушай</item>
+        <item>собственно говоря</item>
+        <item>кстати</item>
+        <item>вообще</item>
+        <item>кажется</item>
+        <item>вероятно</item>
+        <item>значит</item>
+        <item>на самом деле</item>
+        <item>просто</item>
+        <item>сложно сказать</item>
+        <item>конкретно</item>
+        <item>вот</item>
+        <item>ладно</item>
+        <item>блин</item>
+        <item>так</item>
+        <item>походу</item>
+    </string-array>
+
 </resources>
