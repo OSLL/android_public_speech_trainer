@@ -37,6 +37,7 @@ import ru.spb.speech.appSupport.showStatisticsFragments
 import ru.spb.speech.fragments.statistic_fragments.AudioStatisticsFragment
 import ru.spb.speech.fragments.statistic_fragments.SpeedStatisticsFragment
 import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
+import ru.spb.speech.appSupport.TrainingStatisticsData
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
