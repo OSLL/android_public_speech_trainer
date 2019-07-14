@@ -148,10 +148,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             finish()
         }
       
-       if (!isExportVisible) {
-            export.visibility = View.VISIBLE
-        }
-
         export.setOnClickListener {
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()
@@ -218,6 +214,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
         val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
+        if (!isExportVisible) {
+            export.visibility = View.VISIBLE
+        }
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
