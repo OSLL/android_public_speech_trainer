@@ -23,7 +23,7 @@
     <string name="activity_preference">Настройки</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">Настройки</string>
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
@@ -49,12 +49,14 @@
     <string name="speech_speed_units">слов/мин</string>
     <string name="training_time">Время тренировки:</string>
     <string name="count_of_slides">Слайдов рассказано:</string>
+    <string name="word_share_of_parasites">Доля слов паразитов:</string>
+    <string name="percent">%</string>
     <string name="zero_sec">00 min: 00 sec</string>
     <string name="first_sec">00 min: 01 sec</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general">Основные</string>
 
     <string name="pref_title_enable_statistics">Включить анализ статистики</string>
     <string name="pref_description_enable_statistics">Отображение графиков после выступления
@@ -130,8 +132,8 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_header_deb_mode">Debug mode</string>
+    <string name="pref_header_notifications">Уведомления</string>
+    <string name="pref_header_deb_mode">Режим отладки</string>
     <string name="pref_title_new_message_notifications">Напоминание о тренировках</string>
     <string name="pref_title_ringtone">Рингтон</string>
     <string name="pref_ringtone_silent">Silent</string>
@@ -673,4 +675,41 @@
         <item>свыше</item>
         <item>по</item>
     </string-array>
+
+    <string-array name="verbalGarbage">
+        <item>короче</item>
+        <item>однако</item>
+        <item>это</item>
+        <item>типа</item>
+        <item>как бы</item>
+        <item>это самое</item>
+        <item>как сказать</item>
+        <item>в общем-то</item>
+        <item>знаешь</item>
+        <item>ну</item>
+        <item>то есть</item>
+        <item>так сказать</item>
+        <item>понимаешь</item>
+        <item>собственно</item>
+        <item>в принципе</item>
+        <item>допустим</item>
+        <item>например</item>
+        <item>слушай</item>
+        <item>собственно говоря</item>
+        <item>кстати</item>
+        <item>вообще</item>
+        <item>кажется</item>
+        <item>вероятно</item>
+        <item>значит</item>
+        <item>на самом деле</item>
+        <item>просто</item>
+        <item>сложно сказать</item>
+        <item>конкретно</item>
+        <item>вот</item>
+        <item>ладно</item>
+        <item>блин</item>
+        <item>так</item>
+        <item>походу</item>
+    </string-array>
+
 </resources>

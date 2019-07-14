@@ -11,7 +11,7 @@
     <integer name="transfer_to_interest">100</integer>
     <integer name="zero">0</integer>
     <integer name="block_height_with_last_workout">160</integer>
-    <integer name="block_height_with_training_statistics">308</integer>
+    <integer name="block_height_with_training_statistics">331</integer>
     <integer name="height_of_block_with_name">40</integer>
     <integer name="length_of_the_presentation_title_32">32</integer>
     <integer name="length_of_the_presentation_title_37">37</integer>
@@ -40,6 +40,7 @@
     <integer name="time_in_milliseconds_to_display_presentation">2000</integer>
     <integer name="required_time_in_milliseconds_allotted_for_training">23000</integer>
     <integer name="workout_time_in_milliseconds_for_word_counting">8000</integer>
+    <integer name="workout_time_in_milliseconds_for_check_display_parasites">3000</integer>
     <integer name="workout_time_in_milliseconds_for_training">2000</integer>
     <integer name="def_sharedPref_value">-1</integer>
 
