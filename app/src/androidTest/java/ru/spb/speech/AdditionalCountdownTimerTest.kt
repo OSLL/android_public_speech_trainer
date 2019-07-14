@@ -52,6 +52,8 @@ class AdditionalCountdownTimerTest {
         onView(withId(R.id.presentationName)).perform(replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.numberPicker1)).perform(setNumber(mIntentsTestRule.activity.resources.getInteger(R.integer.one_minute_report_setting)))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_presentation).toLong())
+
         helper.startTrainingDialog(mDevice)
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.training_time_in_milliseconds_to_trigger_an_additional_timer).toLong())

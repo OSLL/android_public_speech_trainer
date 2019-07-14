@@ -1,4 +1,4 @@
-package ru.spb.speech
+package ru.spb.speech.appSupport
 
 import android.content.Context
 import android.text.format.DateUtils
@@ -9,12 +9,16 @@ import ru.spb.speech.database.TrainingSlideData
 import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import kotlin.math.sqrt
+import ru.spb.speech.ACTIVITY_TRAINING_STATISTIC_NAME
+import ru.spb.speech.APST_TAG
+import ru.spb.speech.R
+
 
 class TrainingStatisticsData (myContext: Context, presentationData: PresentationData?, trainingData: TrainingData?) {
 
     private val context = myContext
     private val presData = presentationData
-    private val trainData = trainingData
+    val trainData = trainingData
 
     private var trainingSlideDBHelper: TrainingSlideDBHelper? = TrainingSlideDBHelper(context)
     private var trainingDBHelper = TrainingDBHelper(context)
@@ -100,6 +104,10 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 -1f
             }
         }
+
+    //Количество слов-паразитов
+    private val countingParasitesHelper = CountingNumberOfWordsParasites()
+    val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
 
     //--------------------Статистика тренировок:---------------------//
 
@@ -252,7 +260,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     }
 
     data class TimeOfTraining(val maxTime: Long, val minTime: Long, val averageExtraTime: Long, val averageTime: Long)
-    private fun calcMinAndMaxTime(): TimeOfTraining{
+    private fun calcMinAndMaxTime(): TimeOfTraining {
         if (trainingList != null && presData != null && trainingCount != null){
             var maxTime = 0L
             var minTime = 0L
@@ -357,5 +365,22 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
 
         dzTimeDispersionOnSlides /= timeList.size
         return context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
+    }
+
+}
+
+class CountingNumberOfWordsParasites {
+
+    fun counting(allRecognizedText: String, arrayWhereFind: Array<String>): Long{
+        var finalCount = 0L
+        val recText = allRecognizedText.toLowerCase()
+        for (word in arrayWhereFind) {
+            finalCount += countWords(recText, word)
+        }
+        return finalCount
+    }
+
+    private fun countWords(searchString: String, stringWeAreLookingFor: String): Long {
+        return ((searchString.length - searchString.replace(stringWeAreLookingFor, "").length) / stringWeAreLookingFor.length).toLong()
     }
 }
