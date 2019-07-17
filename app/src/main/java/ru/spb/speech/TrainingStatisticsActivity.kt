@@ -15,12 +15,11 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
-import ru.spb.speech.vocabulary.PrepositionsAndConjunctions
+import ru.spb.speech.vocabulary.TextHelper
 import ru.spb.speech.fragments.TimeOnEachSlideChartFragment
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
@@ -37,7 +36,6 @@ import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
 import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
-import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -51,10 +49,9 @@ const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
 
-    private var presentationDataDao: PresentationDataDao? = null
+    private lateinit var presentationDataDao: PresentationDataDao
     private var presentationData: PresentationData? = null
-    private var trainingSlideDBHelper: TrainingSlideDBHelper? = null
-    private var trainingDBHelper: TrainingDBHelper? = null
+    private lateinit var trainingSlideDBHelper: TrainingSlideDBHelper
 
     private var trainingData: TrainingData? = null
 
@@ -84,11 +81,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         progressHelper = ProgressHelper(this, root_view_training_statistics, listOf(share1, returnTraining))
 
-        presentationDataDao = speechDataBase.PresentationDataDao()
+        presentationDataDao = SpeechDataBase.getInstance(this)!!.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         val trainingId = intent.getIntExtra(getString(R.string.CURRENT_TRAINING_ID),-1)
         if (presId > 0 && trainingId > 0) {
-            presentationData = presentationDataDao?.getPresentationWithId(presId)
+            presentationData = presentationDataDao.getPresentationWithId(presId)
             trainingData = SpeechDataBase.getInstance(this)?.TrainingDataDao()?.getTrainingWithId(trainingId)
         }
         else {
@@ -104,11 +101,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
         trainingSlideDBHelper = TrainingSlideDBHelper(this)
-        trainingDBHelper = TrainingDBHelper(this)
 
         pdfReader = PdfToBitmap(presentationData!!, this)
 
-        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
+        val trainingSlidesList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!) ?: return
 
         for (slide in trainingSlidesList)
             currentTrainingTime += slide.spentTimeInSec!!
@@ -158,7 +154,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
-
+      
         export.setOnClickListener {
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()
@@ -194,13 +190,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             }
         }
 
-        val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSpeedData = HashMap<Int, Float>()
         val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
 
         val presentationSpeedData = mutableListOf<BarEntry>()
-        for (i in 0..(trainingSlideList!!.size-1)) {
-            val slide = trainingSlideList[i]
+        for ((i, slide) in trainingSlideList!!.withIndex()) {
             var speed = 0f
             if (slide.knownWords != "") speed = slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * resources.getDimension(R.dimen.number_of_seconds_in_a_minute_float)
             trainingSpeedData[i] = speed
@@ -209,10 +203,9 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         printSpeedLineChart(presentationSpeedData)
 
-        val editedTextForTop10WordsChart = PrepositionsAndConjunctions(this)
-                .removeConjunctionsAndPrepositionsFromText(trainingData!!.allRecognizedText)
+        val presentationTop10Words = TextHelper(this.resources.getStringArray(R.array.prepositionsAndConjunctions))
+                .getTop10WordsRmConjStemm(trainingData!!.allRecognizedText)
 
-        val presentationTop10Words = getTop10Words(editedTextForTop10WordsChart)
         val entries = ArrayList<PieEntry>()
         for (pair in presentationTop10Words){
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
@@ -224,6 +217,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+        val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
+        if (!isExportVisible) {
+            export.visibility = View.VISIBLE
+        }
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
@@ -249,7 +246,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}\n" +
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
                 getString(R.string.word_share_of_parasites) + " $countOfParasites " + getString(R.string.percent)
 
         speed_statistics = trainingStatisticsData?.curWordCount
@@ -522,45 +519,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         pie_chart.legend.position = Legend.LegendPosition.RIGHT_OF_CHART_CENTER
 
         pie_chart.invalidate()
-    }
-
-    private fun getTop10Words(text: String) : List<Pair<String, Int>> {
-        val dictionary = HashMap<String, Int>()
-
-        val iterator = BreakIterator.getWordInstance()
-        iterator.setText(text)
-
-        var endIndex = iterator.first()
-        while (BreakIterator.DONE != endIndex) {
-            val startIndex = endIndex
-            endIndex = iterator.next()
-            if (endIndex != BreakIterator.DONE && Character.isLetterOrDigit(text[startIndex])) {
-                val word = text.substring(startIndex, endIndex)
-                val count = dictionary[word] ?: 0
-                dictionary[word] = count + 1
-                wordCount++
-            }
-        }
-
-        val result = ArrayList<Pair<String, Int>>()
-        dictionary.onEach {
-            val position = getPosition(result, it.value)
-            if (position < 10)
-                result.add(position, it.toPair())
-            if (result.size > 10)
-                result.removeAt(10)
-        }
-        return result
-    }
-
-    private fun getPosition(list : List<Pair<String, Int>>, value : Int) : Int {
-        if (list.isEmpty())
-            return 0
-        for (i in list.indices) {
-            if (value > list[i].second)
-                return i
-        }
-        return list.size
     }
 
     private fun printTimeOnEachSlideChart(trainingId: Int) {

@@ -71,16 +71,12 @@
         <service
             android:name=".SpeechRecognitionService"
             android:enabled="true" />
-        <activity
-            android:name=".VoiceAnalysisActivity"
-            android:screenOrientation="portrait"/>
-
-        <receiver android:name=".notifications.AlarmReceiver" />
+        <receiver android:name=".notifications.AlarmReceiver"/>
         <receiver android:name=".notifications.AlarmBootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.REBOOT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.intent.action.REBOOT"/>
             </intent-filter>
         </receiver>
     </application>
