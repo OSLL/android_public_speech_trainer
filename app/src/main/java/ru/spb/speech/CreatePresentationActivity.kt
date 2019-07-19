@@ -1,7 +1,6 @@
 package ru.spb.speech
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
@@ -32,16 +31,6 @@ class CreatePresentationActivity : AppCompatActivity() {
         val isChecked = sharedPreferences.getBoolean(getString(R.string.deb_pres), false)
         super.onCreate(savedInstanceState)
         changeFileFlag = intent.getBooleanExtra(getString(R.string.CHANGE_FILE_FLAG), false)
-
-        val isFirstRun = intent.getBooleanExtra("first_run", false)
-        if(isFirstRun){
-            val intent = Intent(this, EditPresentationActivity::class.java)
-            intent.putExtra(getString(R.string.CURRENT_PRESENTATION_ID), checkForPresentationInDB("hello_presentation.pdf"))
-            intent.putExtra("first_run", true)
-            startActivity(intent)
-            finish()
-            return
-        }
 
         if (!isChecked || changeFileFlag) {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
