@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_start_page.*
 import ru.spb.speech.appSupport.PresentationAdapterHelper
 import ru.spb.speech.appSupport.UpdateAdapterListener
 import ru.spb.speech.views.PresentationStartpageItemRow
+import java.io.File
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
@@ -132,7 +133,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
 
             R.id.audio_folder -> {
-                val selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/public_speech_trainer/recordings")
+                val selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString() + File.separator + RECORDING_FOLDER)
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.setDataAndType(selectedUri, "*/*")
                 startActivity(Intent.createChooser(intent, "Open folder"))
