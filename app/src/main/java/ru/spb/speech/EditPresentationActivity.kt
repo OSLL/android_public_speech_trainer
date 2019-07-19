@@ -1,6 +1,7 @@
 package ru.spb.speech
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -143,6 +144,9 @@ class EditPresentationActivity : AppCompatActivity() {
                     }
                     finish()
                 }
+            }
+            if(intent.getBooleanExtra("first_run", false)){
+                addPresentation.performClick()
             }
         } catch (e: Exception) {
             finish()

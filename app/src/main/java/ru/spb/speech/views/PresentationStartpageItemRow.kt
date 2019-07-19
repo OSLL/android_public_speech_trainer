@@ -111,6 +111,10 @@ class PresentationStartpageItemRow(private var presentation: PresentationData, p
         val currentDate = dateParser.parse(dateParser.format(Date()))
         val presDate = dateParser.parse(date)
 
+        if (date == ctx.getString(R.string.app_creation_date)){
+            return date
+        }
+
         return if (currentDate.before(presDate) || currentDate == presDate) {
             date
         }
