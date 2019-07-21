@@ -47,6 +47,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(context)
 
         adapter.setOnItemClickListener { item: Item<ViewHolder>, _ ->
+
             if (!sharedPreferences.getBoolean(context.getString(R.string.useStatistics), false)) {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage(context.getString(R.string.attention))
