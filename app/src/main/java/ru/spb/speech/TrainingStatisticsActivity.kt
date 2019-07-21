@@ -14,13 +14,11 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
-import ru.spb.speech.vocabulary.PrepositionsAndConjunctions
-import ru.spb.speech.fragments.statistic_fragments.TimeOnEachSlideFragment
+import ru.spb.speech.vocabulary.TextHelper
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
@@ -32,8 +30,8 @@ import kotlinx.android.synthetic.main.activity_training_statistics.*
 import ru.spb.speech.appSupport.showStatisticsFragments
 import ru.spb.speech.fragments.statistic_fragments.AudioStatisticsFragment
 import ru.spb.speech.fragments.statistic_fragments.SpeedStatisticsFragment
-import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import ru.spb.speech.appSupport.TrainingStatisticsData
+import ru.spb.speech.fragments.statistic_fragments.TimeOnEachSlideFragment
 import java.io.*
 import java.text.BreakIterator
 import java.util.*
@@ -48,10 +46,9 @@ const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
 
-    private var presentationDataDao: PresentationDataDao? = null
+    private lateinit var presentationDataDao: PresentationDataDao
     private var presentationData: PresentationData? = null
-    private var trainingSlideDBHelper: TrainingSlideDBHelper? = null
-    private var trainingDBHelper: TrainingDBHelper? = null
+    private lateinit var trainingSlideDBHelper: TrainingSlideDBHelper
 
     private var trainingData: TrainingData? = null
 
@@ -80,11 +77,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         progressHelper = ProgressHelper(this, root_view_training_statistics, listOf(share1, returnTraining))
 
-        presentationDataDao = speechDataBase.PresentationDataDao()
+        presentationDataDao = SpeechDataBase.getInstance(this)!!.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
         val trainingId = intent.getIntExtra(getString(R.string.CURRENT_TRAINING_ID),-1)
         if (presId > 0 && trainingId > 0) {
-            presentationData = presentationDataDao?.getPresentationWithId(presId)
+            presentationData = presentationDataDao.getPresentationWithId(presId)
             trainingData = SpeechDataBase.getInstance(this)?.TrainingDataDao()?.getTrainingWithId(trainingId)
         }
         else {
@@ -101,11 +98,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         if (intent.getIntExtra(getString(R.string.launchedFromHistoryActivityFlag),-1) == launchedFromHistoryActivityFlag) returnTraining.visibility = View.GONE
 
         trainingSlideDBHelper = TrainingSlideDBHelper(this)
-        trainingDBHelper = TrainingDBHelper(this)
 
         pdfReader = PdfToBitmap(presentationData!!, this)
 
-        val trainingSlidesList = trainingSlideDBHelper?.getAllSlidesForTraining(trainingData!!) ?: return
+        val trainingSlidesList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!) ?: return
 
         for (slide in trainingSlidesList)
             currentTrainingTime += slide.spentTimeInSec!!
@@ -146,7 +142,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
-
+      
         export.setOnClickListener {
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()
@@ -182,23 +178,20 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             }
         }
 
-        val trainingSlideDBHelper = TrainingSlideDBHelper(this)
         val trainingSpeedData = HashMap<Int, Float>()
         val trainingSlideList = trainingSlideDBHelper.getAllSlidesForTraining(trainingData!!)
 
         val presentationSpeedData = mutableListOf<BarEntry>()
-        for (i in 0..(trainingSlideList!!.size-1)) {
-            val slide = trainingSlideList[i]
+        for ((i, slide) in trainingSlideList!!.withIndex()) {
             var speed = 0f
             if (slide.knownWords != "") speed = slide.knownWords!!.split(" ").size.toFloat() / slide.spentTimeInSec!!.toFloat() * resources.getDimension(R.dimen.number_of_seconds_in_a_minute_float)
             trainingSpeedData[i] = speed
             presentationSpeedData.add(BarEntry((i).toFloat(), speed))
         }
 
-        val editedTextForTop10WordsChart = PrepositionsAndConjunctions(this)
-                .removeConjunctionsAndPrepositionsFromText(trainingData!!.allRecognizedText)
+        val presentationTop10Words = TextHelper(this.resources.getStringArray(R.array.prepositionsAndConjunctions))
+                .getTop10WordsRmConjStemm(trainingData!!.allRecognizedText)
 
-        val presentationTop10Words = getTop10Words(editedTextForTop10WordsChart)
         val entries = ArrayList<PieEntry>()
         for (pair in presentationTop10Words){
             entries.add(PieEntry(pair.second.toFloat(), pair.first))
@@ -210,6 +203,10 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val optimalSpeed = sharedPreferences.getString(getString(R.string.speed_key), "120")
+        val isExportVisible = sharedPreferences.getBoolean("deb_statistics_export", false)
+        if (!isExportVisible) {
+            export.visibility = View.VISIBLE
+        }
 
         val bestSlide = getBestSlide(trainingSpeedData, optimalSpeed.toInt())
         val worstSlide = getWorstSlide(trainingSpeedData, optimalSpeed.toInt())
@@ -235,7 +232,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
                 getString(R.string.best_slide) + " $bestSlide\n" +
                 getString(R.string.worst_slide) + " $worstSlide\n" +
                 getString(R.string.training_time) + " ${getStringPresentationTimeLimit(trainingStatisticsData?.currentTrainingTime)}\n" +
-                getString(R.string.count_of_slides) + " ${trainingSlidesList.size}\n" +
+                getString(R.string.count_of_slides) + "${trainingSlidesList.size}/${presentationData?.pageCount!!}"
                 getString(R.string.word_share_of_parasites) + " $countOfParasites " + getString(R.string.percent)
 
         speed_statistics = trainingStatisticsData?.curWordCount

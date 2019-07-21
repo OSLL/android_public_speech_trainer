@@ -113,11 +113,6 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                 startActivity(intent)
                 return true
             }
-            R.id.action_voice_analysis -> {
-                val intent = Intent(this, VoiceAnalysisActivity::class.java)
-                startActivity(intent)
-                return true
-            }
             R.id.action_video_instruction -> {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=gZQDMmsUKsg"))
                 startActivity(intent)
