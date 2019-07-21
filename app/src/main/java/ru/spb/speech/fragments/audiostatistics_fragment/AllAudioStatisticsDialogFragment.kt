@@ -63,11 +63,11 @@ class SlideInfoItem(private val slideInfo: SlideInfo,
             tv_slide_number.text = "${getString(R.string.slide)}: ${slideInfo.slideNumber}"
 
             tv_sum_pause_len.text = "${getString(R.string.silence_percentage_on_slide)}: ${
-            (slideInfo.silencePercentage * 10).toDefaultStringFormat()} ${
+            (slideInfo.silencePercentage).toDefaultStringFormat()} ${
             getString(R.string.seconds)}"
 
             tv_average_pause_len.text = "${getString(R.string.average_pause_length)}: ${
-            (slideInfo.pauseAverageLength.toDouble() / 1000).toDefaultStringFormat()} ${
+            (slideInfo.pauseAverageLength.toDouble() / 10000).toDefaultStringFormat()} ${
             getString(R.string.seconds)}"
 
             tv_count_pause.text = "${getString(R.string.long_pauses_amount)}: ${

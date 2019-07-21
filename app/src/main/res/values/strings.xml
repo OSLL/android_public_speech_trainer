@@ -299,6 +299,7 @@
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
     <string name="try_again">Попробуйте снова</string>
     <string name="more_sign"><![CDATA[>]]></string>
+    <string name="percent_of_training">% от тренировки</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

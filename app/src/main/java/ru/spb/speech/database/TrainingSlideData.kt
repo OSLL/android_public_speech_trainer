@@ -35,3 +35,9 @@ fun List<TrainingSlideData>.toSlideInfoList(): List<SlideInfo> {
 
     return list
 }
+
+fun List<TrainingSlideData>.getTrainingLenInSec(): Long {
+    var len = 0L
+    this.forEach { len += it.spentTimeInSec ?: 0L }
+    return len
+}

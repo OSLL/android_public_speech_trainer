@@ -3,17 +3,16 @@ package ru.spb.speech.fragments.audiostatistics_fragment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_audiostatistics.view.*
 import kotlinx.android.synthetic.main.item_slide_info.view.*
 import ru.spb.speech.R
-import ru.spb.speech.appSupport.getAverage
+import ru.spb.speech.appSupport.toAllStatisticsInfo
 import ru.spb.speech.appSupport.toDefaultStringFormat
 import ru.spb.speech.database.SpeechDataBase
-import ru.spb.speech.database.helpers.PresentationDBHelper
+import ru.spb.speech.database.getTrainingLenInSec
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.database.toSlideInfoList
 
@@ -44,21 +43,24 @@ class AudioStatisticsFragment : Fragment() {
                 .TrainingDataDao()
                 .getTrainingWithId(trainingId)
 
-        val slideInfoList = slideDBHelper
+        val tsd = slideDBHelper
                 .getAllSlidesForTraining(training)
-                ?.toSlideInfoList()
                 ?: return null
 
-        with (slideInfoList.getAverage()) {
+        val trainingLenInSec = tsd.getTrainingLenInSec()
+        val slideInfoList = tsd.toSlideInfoList()
+
+        with (slideInfoList.toAllStatisticsInfo()) {
             v.apply {
                 tv_slide_number.visibility = View.GONE
 
                 tv_sum_pause_len.text = "${getString(R.string.silence_percentage_on_slide)}: ${
-                (this@with.silencePercentage * 10).toDefaultStringFormat()} ${
-                getString(R.string.seconds)}"
+                (this@with.silencePercentage).toDefaultStringFormat()} ${
+                getString(R.string.seconds)}\n${(this@with.silencePercentage/trainingLenInSec * 100)
+                        .toDefaultStringFormat()}${getString(R.string.percent_of_training)}"
 
                 tv_average_pause_len.text = "${getString(R.string.average_pause_length)}: ${
-                (this@with.pauseAverageLength.toDouble() / 1000).toDefaultStringFormat()} ${
+                (this@with.pauseAverageLength.toDouble() / 10000).toDefaultStringFormat()} ${
                 getString(R.string.seconds)}"
 
                 tv_count_pause.text = "${getString(R.string.long_pauses_amount)}: ${
