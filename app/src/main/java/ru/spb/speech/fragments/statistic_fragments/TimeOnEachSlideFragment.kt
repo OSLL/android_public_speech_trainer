@@ -1,4 +1,4 @@
-package ru.spb.speech.fragments
+package ru.spb.speech.fragments.statistic_fragments
 
 import android.graphics.Color
 import android.support.v4.content.ContextCompat
@@ -14,6 +14,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.LargeValueFormatter
 import kotlinx.android.synthetic.main.time_on_each_slide_chart_fragment.view.*
+import ru.spb.speech.fragments.StatisticsFragment
 
 const val FRAGMENT_TIME_ON_EACH_SLIDE = ".FragmentTimeOnEachSlide"
 
@@ -79,7 +80,7 @@ class TimeOnEachSlideFragment : StatisticsFragment() {
 //            }
 
             barDataSet.colors = colors
-            pauseBarDataSet.color = ContextCompat.getColor(context!!, android.R.color.black)
+            pauseBarDataSet.color = ContextCompat.getColor(context!!, R.color.black_15_alpha)
 
             val data = BarData(pauseBarDataSet, barDataSet)
             data.setValueFormatter(LargeValueFormatter())

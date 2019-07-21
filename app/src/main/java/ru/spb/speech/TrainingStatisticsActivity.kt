@@ -9,7 +9,6 @@ import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.design.widget.BottomSheetDialog
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
@@ -21,17 +20,14 @@ import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivi
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.vocabulary.PrepositionsAndConjunctions
-import ru.spb.speech.fragments.TimeOnEachSlideFragment
+import ru.spb.speech.fragments.statistic_fragments.TimeOnEachSlideFragment
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.database.TrainingData
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.LimitLine
-import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import ru.spb.speech.appSupport.showStatisticsFragments
 import ru.spb.speech.fragments.statistic_fragments.AudioStatisticsFragment
