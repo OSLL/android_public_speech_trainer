@@ -24,7 +24,7 @@
     <string name="activity_preference">Настройки</string>
     <string name="first_presentation">Презентация 1</string>
     <string name="second_presentation">Презентация 2</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">Настройки</string>
     <string name="select_a_file">Выберите файл</string>
     <string name="back_to_main">На главную</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
@@ -57,7 +57,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general">Основные</string>
 
     <string name="pref_title_enable_statistics">Включить анализ статистики</string>
     <string name="pref_description_enable_statistics">Отображение графиков после выступления
@@ -69,7 +69,15 @@
     <string name="pref_title_enable_deb_speech_audio">Включить тестовую звуковую дорожку</string>
     <string name="deb_pres">Отладочная презентация</string>
     <string name="deb_pres_name">making_presentation.pdf</string>
+    <string name="first_debug_presentation_name">making_first_presentation</string>
+    <string name="second_debug_presentation_name">making_second_presentation</string>
+    <string name="set_number_into_NP">Set the passed number into the NumberPicker</string>
+    <string name="first_debug_time">01 min: 00 sec</string>
+    <string name="second_debug_time">02 min: 00 sec</string>
+    <string name="edit">"Редактировать"</string>
+
     <string name="making_presentation">making_presentation</string>
+
     <string name="pdf_format">.pdf</string>
 
     <string name="pref_title_display_name">Имя пользователя</string>
@@ -125,8 +133,8 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_header_deb_mode">Debug mode</string>
+    <string name="pref_header_notifications">Уведомления</string>
+    <string name="pref_header_deb_mode">Режим отладки</string>
     <string name="pref_title_new_message_notifications">Напоминание о тренировках</string>
     <string name="pref_title_ringtone">Рингтон</string>
     <string name="pref_ringtone_silent">Silent</string>

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.startActivity
@@ -46,6 +47,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
         sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(context)
 
         adapter.setOnItemClickListener { item: Item<ViewHolder>, _ ->
+
             if (!sharedPreferences.getBoolean(context.getString(R.string.useStatistics), false)) {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage(context.getString(R.string.attention))

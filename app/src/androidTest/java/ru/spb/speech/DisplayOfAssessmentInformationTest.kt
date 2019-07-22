@@ -54,6 +54,8 @@ class DisplayOfAssessmentInformationTest : BaseInstrumentedTest(){
         onView(withId(R.id.addBtn)).perform(click())
         onView(withId(R.id.presentationName)).perform(replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_presentation).toLong())
+
         helper.startTrainingDialog(mDevice)
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_load_the_workout_page).toLong())
