@@ -299,6 +299,9 @@
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
     <string name="try_again">Попробуйте снова</string>
     <string name="more_sign"><![CDATA[>]]></string>
+    <string name="app_creation_date">2018-8-02</string>
+    <string name="hello_presentation_name">hello_presentation</string>
+    <string name="hello_presentation_file">hello_presentation.pdf</string>
 
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>

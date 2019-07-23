@@ -3,6 +3,7 @@ package ru.spb.speech.database.helpers
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.R
 import ru.spb.speech.database.interfaces.PresentationDataDao
