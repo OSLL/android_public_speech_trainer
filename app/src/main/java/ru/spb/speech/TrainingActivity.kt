@@ -24,6 +24,9 @@ import ru.spb.speech.appSupport.*
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.helpers.TrainingDBHelper
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
+import ru.spb.speech.appSupport.PdfToBitmap
+import ru.spb.speech.appSupport.ProgressHelper
+import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.database.*
 import ru.spb.speech.firebase.FirebaseHelper
 import java.util.*
@@ -403,6 +406,7 @@ class TrainingActivity : AppCompatActivity() {
 
             trainingData?.allRecognizedText = allRecognizedText
             trainingData?.timeStampInSec = System.currentTimeMillis() / 1000
+            trainingData?.shareOfParasiticWords = "${((trainingStatisticsData.countOfParasites.toFloat() / trainingStatisticsData.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)} " + getString(R.string.percent)
             trainingData?.exerciseTimeFactorMarkX = (trainingStatisticsData.xExerciseTimeFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
             trainingData?.speechSpeedFactorMarkY = (trainingStatisticsData.ySpeechSpeedFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
             trainingData?.timeOnSlidesFactorMarkZ = (trainingStatisticsData.zTimeOnSlidesFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")

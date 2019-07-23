@@ -22,6 +22,7 @@ import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
+import ru.spb.speech.appSupport.AddHelloPresentation
 import ru.spb.speech.appSupport.PresentationAdapterHelper
 import ru.spb.speech.appSupport.UpdateAdapterListener
 import ru.spb.speech.views.PresentationStartpageItemRow
@@ -59,6 +60,9 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         }
 
         if (sharedPref.getBoolean(getString(R.string.first_run), true)) {
+
+            AddHelloPresentation(this).addPres()
+
             val builder = AlertDialog.Builder(this)
             builder.setMessage(getString(R.string.attention))
             builder.setPositiveButton(getString(R.string.good)) { _, _ ->
@@ -87,6 +91,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
     override fun onStart() {
         super.onStart()
+
         supportActionBar?.title = getString(R.string.activity_start_page_name)
 
         progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
@@ -98,7 +103,6 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         presentationAdapterHelper.setUpdateAdapterListener(this)
         presentationAdapterHelper.fillAdapter()
         currentPresentationsCount = presentationDataDao.getAll().size
-
 
     }
 
@@ -112,11 +116,6 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         when (id) {
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-            R.id.action_voice_analysis -> {
-                val intent = Intent(this, VoiceAnalysisActivity::class.java)
                 startActivity(intent)
                 return true
             }
