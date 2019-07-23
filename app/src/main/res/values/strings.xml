@@ -262,8 +262,8 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
-    <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
-    <string name="slideDurationInSeconds_max1080">Длительность слайда\n(секунды)</string>
+    <string name="slideDurationInSeconds">Длительность пауз/слайда (секунды)</string>
+    <string name="slideDurationInSeconds_max1080">Длительность паузы/слайда\n(секунды)</string>
     <string name="presentationEditing">Редактирование презентации</string>
     <string name="isPresentationChangedFlag">isPresentationChanges</string>
     <string name="presentationPosition">presentationPosition</string>
@@ -278,7 +278,7 @@
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
-    <string name="dbName">apst.0.3</string>
+    <string name="dbName">apst.0.4</string>
     <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
     <string name="useStatistics">use_statistics</string>
     <string name="good">Хорошо</string>
