@@ -121,6 +121,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
             dialog.setContentView(bottomSheet)
             dialog.show()
+
         }
 
         share1.setOnClickListener {
