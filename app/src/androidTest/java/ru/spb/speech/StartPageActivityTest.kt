@@ -1,9 +1,11 @@
 package ru.spb.speech
 
 import android.content.ComponentName
+import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.InstrumentationRegistry.getTargetContext
+import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import android.support.test.espresso.action.ViewActions
@@ -12,10 +14,13 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents.intended
 import android.support.test.espresso.intent.matcher.IntentMatchers.*
 import android.support.test.espresso.intent.rule.IntentsTestRule
+import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import ru.spb.speech.R.string.*
 import android.support.test.uiautomator.UiDevice
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +31,19 @@ class StartPageActivityTest : BaseInstrumentedTest() {
     @Rule
     @JvmField
     var mIntentsTestRule = IntentsTestRule<StartPageActivity>(StartPageActivity::class.java)
+
+    lateinit var helper: TestHelper
+
+    @Before
+    fun enableDebugMode() {
+        helper = TestHelper(mIntentsTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
+    }
+
+    @After
+    fun disableDebugMode() {
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+    }
 
     @Test
     fun buttonsExist() {

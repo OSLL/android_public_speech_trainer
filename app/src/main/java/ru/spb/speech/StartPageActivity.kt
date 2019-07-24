@@ -9,21 +9,21 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
-import ru.spb.speech.appSupport.PresentationAdapterHelper
-import ru.spb.speech.appSupport.UpdateAdapterListener
+import ru.spb.speech.appSupport.*
 import ru.spb.speech.views.PresentationStartpageItemRow
+import java.io.File
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
@@ -57,6 +57,9 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         }
 
         if (sharedPref.getBoolean(getString(R.string.first_run), true)) {
+
+            AddHelloPresentation(this).addPres()
+
             val builder = AlertDialog.Builder(this)
             builder.setMessage(getString(R.string.attention))
             builder.setPositiveButton(getString(R.string.good)) { _, _ ->
@@ -85,6 +88,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
     override fun onStart() {
         super.onStart()
+
         supportActionBar?.title = getString(R.string.activity_start_page_name)
 
         progressHelper = ProgressHelper(this, start_page_root, listOf(recyclerview_startpage, addBtn))
@@ -96,7 +100,6 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         presentationAdapterHelper.setUpdateAdapterListener(this)
         presentationAdapterHelper.fillAdapter()
         currentPresentationsCount = presentationDataDao.getAll().size
-
 
     }
 
@@ -113,11 +116,6 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                 startActivity(intent)
                 return true
             }
-            R.id.action_voice_analysis -> {
-                val intent = Intent(this, VoiceAnalysisActivity::class.java)
-                startActivity(intent)
-                return true
-            }
             R.id.action_video_instruction -> {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=gZQDMmsUKsg"))
                 startActivity(intent)
@@ -129,6 +127,13 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                 return true
             }
             R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
+
+            R.id.audio_folder -> {
+                val selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString() + File.separator + RECORDING_FOLDER)
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setDataAndType(selectedUri, "*/*")
+                startActivity(Intent.createChooser(intent, "Open folder"))
+            }
         }
         return super.onOptionsItemSelected(item)
     }

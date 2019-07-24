@@ -1,8 +1,6 @@
 package ru.spb.speech
 
-import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
-import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.rule.ActivityTestRule
@@ -10,7 +8,6 @@ import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
 import android.widget.NumberPicker
-import org.hamcrest.CoreMatchers
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,34 +25,21 @@ import org.junit.After
 
 @RunWith(AndroidJUnit4::class)
 class AdditionalCountdownTimerTest {
-    private var mDevice: UiDevice? = null
-    private var presName = ""
+    lateinit var helper: TestHelper
+    lateinit var mDevice: UiDevice
 
     @Before
     fun before() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        assertThat(mDevice, CoreMatchers.notNullValue())
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-        val debSl = sharedPreferences.edit()
-        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-
-        debSl.putBoolean(onMode, true)
-        debSl.apply()
+        helper = TestHelper(mIntentsTestRule.activity)
+        helper.setTrainingPresentationMod(true) // включение тестовой презентации
     }
 
     @After
     fun after() {
-        mDevice!!.pressBack()
-
-        onView(withText(presName)).perform(longClick())
-        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(click())
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-        val debSl = sharedPreferences.edit()
-        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        debSl.putBoolean(onMode, false)
-        debSl.apply()
+        mDevice.pressBack()
+        helper.setTrainingPresentationMod(false) // выключение тестовой презентации
+        helper.removeDebugSlides()
     }
 
     @Rule
@@ -64,22 +48,21 @@ class AdditionalCountdownTimerTest {
 
     @Test
     fun additionalCountdownTimerTest(){
-
         onView(withId(R.id.addBtn)).perform(click())
-        presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring (mIntentsTestRule.activity.resources.getInteger(R.integer.zero), mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(mIntentsTestRule.activity.getString(R.string.pdf_format)))
-        onView(withId(R.id.presentationName)).perform(clearText(), typeText(presName), closeSoftKeyboard())
+        onView(withId(R.id.presentationName)).perform(replaceText(mIntentsTestRule.activity.getString(R.string.making_presentation)))
         onView(withId(R.id.numberPicker1)).perform(setNumber(mIntentsTestRule.activity.resources.getInteger(R.integer.one_minute_report_setting)))
         onView(withId(R.id.addPresentation)).perform(click())
+        sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_presentation).toLong())
 
-        mDevice!!.findObject(UiSelector().text(presName)).click()
+        helper.startTrainingDialog(mDevice)
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.training_time_in_milliseconds_to_trigger_an_additional_timer).toLong())
 
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
+        mDevice.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
 
         sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
 
-        mDevice!!.pressBack()
+        mDevice.pressBack()
 
         onView(withId(R.id.time_left)).check(matches(hasTextColor(android.R.color.holo_red_light)))
     }
