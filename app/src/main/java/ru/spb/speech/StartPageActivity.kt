@@ -16,15 +16,12 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
-import ru.spb.speech.appSupport.AddHelloPresentation
-import ru.spb.speech.appSupport.PresentationAdapterHelper
-import ru.spb.speech.appSupport.UpdateAdapterListener
+import ru.spb.speech.appSupport.*
 import ru.spb.speech.views.PresentationStartpageItemRow
 import java.io.File
 
