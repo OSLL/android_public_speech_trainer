@@ -16,8 +16,4 @@
         android:id="@+id/about"
         android:orderInCategory="5"
         android:title="@string/about" />
-    <item
-        android:id="@+id/audio_folder"
-        android:orderInCategory="5"
-        android:title="@string/training_path" />
 </menu>
