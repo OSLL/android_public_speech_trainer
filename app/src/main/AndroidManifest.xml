@@ -29,12 +29,15 @@
             android:name=".StartPageActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".RecommendationActivity"
+            android:label="">
         </activity>
         <activity
             android:name=".TrainingActivity"
@@ -62,11 +65,9 @@
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"/>
         <activity
-            android:configChanges="orientation|screenSize"
-            android:label="@string/about"
             android:name=".AboutActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
-
         <service
             android:name=".SpeechRecognitionService"
             android:enabled="true" />

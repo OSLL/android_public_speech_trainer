@@ -64,6 +64,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
 
+
     private lateinit var progressHelper: ProgressHelper
 
     var trainingStatisticsData: TrainingStatisticsData? = null
@@ -108,10 +109,19 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         trainingStatisticsData = TrainingStatisticsData(this, presentationData, trainingData)
 
+        for (slide in trainingSlidesList){
+            currentTrainingTime += slide.spentTimeInSec!!
+        }
+
         val drawer = Thread(Runnable {
             drawPict()
         })
         drawer.start()
+
+        improve_mark_button.setOnClickListener {
+            val intent = Intent(this, RecommendationActivity::class.java)
+            startActivity(intent)
+        }
 
         question.setOnClickListener {
             val dialog = BottomSheetDialog(this)

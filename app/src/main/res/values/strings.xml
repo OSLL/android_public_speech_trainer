@@ -28,6 +28,18 @@
     <string name="back_to_main">На главную</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
     <string name="export_statistics">Экспорт статистики</string>
+    <string name="improve_mark">Как улучшить оценку?</string>
+
+
+    <string name="performance_recommendations">Рекомендации к выступлению</string>
+    <string name="slide_time">Время слайдов</string>
+    <string name="slides_time_recomendation">Рекомендации по времени слайдов - заглушка"</string>
+    <string name="slides_frequency">Частота слайдов</string>
+    <string name="slides_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
+    <string name="scum_words_label">Слова паразиты</string>
+    <string name="scum_words_recomendation">Рекомендации по словам-паразитам - заглушка</string>
+    <string name="back_to_statistics">Назад к статистике</string>
+    <string name="to_home_screen">На главную</string>
 
     <string name="the_next">Следующий</string>
 
