@@ -37,6 +37,7 @@ import java.text.BreakIterator
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 var url = ""
 var speed_statistics: Int? = null
@@ -62,6 +63,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var wordCount: Int = 0
     private val activityRequestCode = 101
 
+    private var averageTimePerSlide: Double = 0.0
+    private var perfectAverageTimePerSlide: Double = 58.8
+    private var middleTimeError: Double = 30.8
+
+    private var recommendationString: String = ""
     private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
 
 
@@ -113,6 +119,48 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             currentTrainingTime += slide.spentTimeInSec!!
         }
 
+        var indexOfSlide: Int = 0
+        val slidesWithUpError = arrayListOf<Int>()
+        val slidesWithLowError = arrayListOf<Int>()
+
+        for (slide in trainingSlidesList){
+            currentTrainingTime += slide.spentTimeInSec!!
+        }
+
+        averageTimePerSlide = currentTrainingTime.toDouble()/trainingSlidesList.size
+        var numbersOfSlidesWithError = ""
+
+        if (abs(averageTimePerSlide - perfectAverageTimePerSlide) > middleTimeError){
+            if (averageTimePerSlide > perfectAverageTimePerSlide){
+                recommendationString += getString(R.string.recommendation_speed_with_error, "понизить")
+            }
+            else{
+                recommendationString += getString(R.string.recommendation_speed_with_error, "повысить")
+            }
+        }
+        else {
+            for (slide in trainingSlidesList) {
+                currentTrainingTime += slide.spentTimeInSec!!
+                indexOfSlide++
+                if (abs((slide.spentTimeInSec!! - averageTimePerSlide)) > middleTimeError)
+                    if (slide.spentTimeInSec!! - averageTimePerSlide > 0){
+                        slidesWithUpError.add(indexOfSlide)
+                    }
+                    else slidesWithLowError.add(indexOfSlide)
+            }
+
+            if (slidesWithUpError.isNotEmpty()) {
+
+                recommendationString = getString(R.string.recommendation_speed_without_error, slidesWithUpError.joinToString(separator = ", ", postfix = " "))
+                recommendationString += getString(R.string.recommendation_speed_decrease_info)
+            }
+
+            if (slidesWithLowError.isNotEmpty()) {
+                recommendationString += getString(R.string.recommendation_speed_without_error, slidesWithLowError.joinToString(separator = ", ", postfix = " "))
+                recommendationString += getString(R.string.recommendation_speed_increase_info)
+            }
+        }
+
         val drawer = Thread(Runnable {
             drawPict()
         })
@@ -120,6 +168,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         improve_mark_button.setOnClickListener {
             val intent = Intent(this, RecommendationActivity::class.java)
+            intent.putExtra(getString(R.string.recommendation_key), recommendationString)
+
             startActivity(intent)
         }
 

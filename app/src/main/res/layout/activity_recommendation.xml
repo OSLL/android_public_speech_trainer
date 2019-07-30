@@ -27,7 +27,6 @@
             android:text="@string/performance_recommendations"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textSize="20sp" />
-
         <TextView
             android:id="@+id/slidesTimeLabel"
             android:layout_width="match_parent"
@@ -50,9 +49,8 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:text="@string/slides_time_recomendation"
+            android:text="@string/slides_time_recommendation"
             android:textSize="15sp" />
-
         <TextView
             android:id="@+id/slidesFrequency"
             android:layout_width="match_parent"
@@ -77,7 +75,6 @@
             android:layout_weight="1"
             android:text="@string/slides_frequency_recommendation"
             android:textSize="15sp" />
-
         <TextView
             android:id="@+id/scumWordsLabel"
             android:layout_width="match_parent"
@@ -100,7 +97,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:text="@string/scum_words_recomendation"
+            android:text="@string/scum_words_recommendation"
             android:textSize="15sp" />
 
         <Button

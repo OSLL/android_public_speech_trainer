@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="ru.spb.speech">
+xmlns:tools="http://schemas.android.com/tools"
+package="ru.spb.speech">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission
-        android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission
-        android:name="android.permission.MEDIA_CONTENT_CONTROL"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission
+    android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
+    tools:ignore="ProtectedPermissions" />
+<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+<uses-permission
+    android:name="android.permission.MEDIA_CONTENT_CONTROL"
+    tools:ignore="ProtectedPermissions" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -37,7 +37,7 @@
         </activity>
         <activity
             android:name=".RecommendationActivity"
-            android:label="">
+            android:label="@string/recommendation_activity_label">
         </activity>
         <activity
             android:name=".TrainingActivity"
@@ -66,6 +66,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".AboutActivity"
+            android:label="@string/about"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
         <service
@@ -80,5 +81,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>
