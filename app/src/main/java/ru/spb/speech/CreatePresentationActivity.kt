@@ -90,7 +90,7 @@ class CreatePresentationActivity : AppCompatActivity() {
                 newPresentation = PresentationData()
                 newPresentation.stringUri = stringUri
 
-                if (stringUri == getString(R.string.deb_pres_name))
+                if (stringUri == getString(R.string.deb_pres_name) || stringUri == "hello_presentation.pdf")
                     newPresentation.debugFlag = 1
                 else
                     contentResolver.takePersistableUriPermission(Uri.parse(stringUri), Intent.FLAG_GRANT_READ_URI_PERMISSION)

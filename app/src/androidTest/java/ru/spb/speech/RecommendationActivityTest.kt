@@ -6,7 +6,6 @@ import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.intent.Intents.intended
 import android.support.test.espresso.intent.matcher.IntentMatchers
 import android.support.test.espresso.intent.rule.IntentsTestRule
@@ -64,28 +63,30 @@ class RecommendationActivityTest : BaseInstrumentedTest() {
     @Test
     fun intentIsDisplayedCheck(){
         onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
+        Thread.sleep(2000)
         intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), TrainingStatisticsActivity::class.java)))
 
         onView(withId(R.id.improve_mark_button)).perform(ViewActions.click())
+        Thread.sleep(2000)
 
         onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
-        Intents.intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), StartPageActivity::class.java)))
+        Thread.sleep(2000)
+        intended(IntentMatchers.hasComponent(ComponentName(getTargetContext(), StartPageActivity::class.java)))
     }
 
     @Test
     fun textViewAndButtonWithTextCheck() {
-        onView(withId(R.id.recommendationLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации к выступлению")))
-        onView(withId(R.id.slidesTimeLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesTimeRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
-        onView(withId(R.id.slidesFrequency)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesFrequencyRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по частоте слов - заглушка")))
-        onView(withId(R.id.scumWordsLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Слова паразиты")))
-        onView(withId(R.id.scumWordsRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
-        onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).check(matches(withText("Назад к статистике")))
-        onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).check(matches(withText("На главную")))
-
+        onView(withId(R.id.recommendationLabel)).check(matches(withText(mIntentsTestRule.activity.getString(R.string.performance_recommendations))))
+        onView(withId(R.id.slidesTimeLabel)).check(matches(withText(mIntentsTestRule.activity.getString(R.string.slide_time))))
+//        onView(withId(R.id.slidesTimeRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
+        onView(withId(R.id.slidesFrequency)).perform(ViewActions.scrollTo()).check(matches(withText(mIntentsTestRule.activity.getString(R.string.slides_frequency))))
+//        onView(withId(R.id.slidesFrequencyRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по частоте слов - заглушка")))
+        onView(withId(R.id.scumWordsLabel)).perform(ViewActions.scrollTo()).check(matches(withText(mIntentsTestRule.activity.getString(R.string.scum_words_label))))
+//        onView(withId(R.id.scumWordsRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
+        onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).check(matches(withText(mIntentsTestRule.activity.getString(R.string.back_to_statistics))))
+        onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).check(matches(withText(mIntentsTestRule.activity.getString(R.string.to_home_screen))))
         Thread.sleep(2000)
-        uiDevice.pressBack()
-        uiDevice.pressBack()
+        onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).perform(ViewActions.click())
+        Thread.sleep(2000)
     }
 }
