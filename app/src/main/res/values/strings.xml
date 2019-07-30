@@ -32,8 +32,8 @@
     <string name="recommendation_key">recommendation</string>
     <string name="recommendation_speed_with_error">Скорость демонстрации слайдов вашей презентации существенно отличается от рекомендуемой. Попробуйте %1$s время отображения слайдов.</string>
     <string name="recommendation_speed_without_error">Cкорость демонстрации слайдов %1$s</string>
-    <string name="recommendation_speed_increase_info">существенно превышает среднее значение. Рекомендуется увеличить время отображение указанных слайдов.</string>
-    <string name="recommendation_speed_decrease_info">существенно ниже среднего значения. Рекомендуется уменьшить время отображение указанных слайдов.</string>
+    <string name="recommendation_speed_increase_info">существенно выше рекомендуемого значения. Рекомендуется увеличить время отображения указанных слайдов.</string>
+    <string name="recommendation_speed_decrease_info">существенно ниже рекомендуемого значение. Рекомендуется уменьшить время отображения указанных слайдов.</string>
 
 
     <string name="performance_recommendations">Рекомендации к выступлению</string>

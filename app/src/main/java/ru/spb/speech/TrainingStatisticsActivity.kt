@@ -63,8 +63,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private var wordCount: Int = 0
     private val activityRequestCode = 101
 
-    private var middleSlideTime: Double = 0.0
-    private var constantMiddleTime: Double = 58.8
+    private var averageTimePerSlide: Double = 0.0
+    private var perfectAverageTimePerSlide: Double = 58.8
     private var middleTimeError: Double = 30.8
 
     private var recommendationString: String = ""
@@ -120,19 +120,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         var indexOfSlide: Int = 0
-        var slidesWithUpError = arrayListOf<Int>()
-        var slidesWithLowError = arrayListOf<Int>()
+        val slidesWithUpError = arrayListOf<Int>()
+        val slidesWithLowError = arrayListOf<Int>()
 
         for (slide in trainingSlidesList){
             currentTrainingTime += slide.spentTimeInSec!!
         }
 
-
-        middleSlideTime = currentTrainingTime.toDouble()/trainingSlidesList.size
+        averageTimePerSlide = currentTrainingTime.toDouble()/trainingSlidesList.size
         var numbersOfSlidesWithError = ""
 
-        if (abs(middleSlideTime - constantMiddleTime) > middleTimeError){
-            if (middleSlideTime > constantMiddleTime){
+        if (abs(averageTimePerSlide - perfectAverageTimePerSlide) > middleTimeError){
+            if (averageTimePerSlide > perfectAverageTimePerSlide){
                 recommendationString += getString(R.string.recommendation_speed_with_error, "понизить")
             }
             else{
@@ -143,28 +142,22 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             for (slide in trainingSlidesList) {
                 currentTrainingTime += slide.spentTimeInSec!!
                 indexOfSlide++
-                if (abs((slide.spentTimeInSec!! - middleSlideTime)) > middleTimeError)
-                    if (slide.spentTimeInSec!! - middleSlideTime > 0){
+                if (abs((slide.spentTimeInSec!! - averageTimePerSlide)) > middleTimeError)
+                    if (slide.spentTimeInSec!! - averageTimePerSlide > 0){
                         slidesWithUpError.add(indexOfSlide)
                     }
                     else slidesWithLowError.add(indexOfSlide)
             }
 
-            if (!slidesWithUpError.isEmpty()) {
-                for (i in slidesWithUpError) {
-                    numbersOfSlidesWithError = numbersOfSlidesWithError + i + " "
-                }
-                recommendationString = getString(R.string.recommendation_speed_without_error, numbersOfSlidesWithError)
-                recommendationString += getString(R.string.recommendation_speed_increase_info)
-                numbersOfSlidesWithError = ""
+            if (slidesWithUpError.isNotEmpty()) {
+
+                recommendationString = getString(R.string.recommendation_speed_without_error, slidesWithUpError.joinToString(separator = ", ", postfix = " "))
+                recommendationString += getString(R.string.recommendation_speed_decrease_info)
             }
 
-            if (!slidesWithLowError.isEmpty()) {
-                for (i in slidesWithLowError) {
-                    numbersOfSlidesWithError =  numbersOfSlidesWithError + i + " "
-                }
-                recommendationString += getString(R.string.recommendation_speed_without_error, numbersOfSlidesWithError)
-                recommendationString += getString(R.string.recommendation_speed_decrease_info)
+            if (slidesWithLowError.isNotEmpty()) {
+                recommendationString += getString(R.string.recommendation_speed_without_error, slidesWithLowError.joinToString(separator = ", ", postfix = " "))
+                recommendationString += getString(R.string.recommendation_speed_increase_info)
             }
         }
 

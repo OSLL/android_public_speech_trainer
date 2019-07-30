@@ -1,7 +1,6 @@
 package ru.spb.speech
 
 import android.content.ComponentName
-import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
@@ -14,7 +13,6 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
-import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -25,10 +23,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RecommendationActivityTest : BaseInstrumentedTest() {
 
-    private var mDevice: UiDevice? = null
-    private var presName = ""
-    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getTargetContext())
-    val debSl = sharedPreferences.edit()
     lateinit var helper: TestHelper
     lateinit var uiDevice: UiDevice
 
@@ -38,28 +32,6 @@ class RecommendationActivityTest : BaseInstrumentedTest() {
 
     @Before
     fun before() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        assertThat(mDevice, CoreMatchers.notNullValue())
-
-        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val onAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
-
-        debSl.putBoolean(onMode, true)
-        debSl.putBoolean(onAudio, true)
-        debSl.putBoolean(mIntentsTestRule.activity.getString(R.string.useStatistics), true)
-
-        debSl.apply()
-
-        onView(withId(R.id.addBtn)).perform(ViewActions.click())
-        presName = mIntentsTestRule.activity.getString(R.string.deb_pres_name).substring(mIntentsTestRule.activity.resources.getInteger(R.integer.zero), mIntentsTestRule.activity.getString(R.string.deb_pres_name).indexOf(mIntentsTestRule.activity.getString(R.string.pdf_format)))
-        onView(withId(R.id.presentationName)).perform(ViewActions.clearText(), ViewActions.typeText(presName), ViewActions.closeSoftKeyboard())
-        onView(withId(R.id.addPresentation)).perform(ViewActions.click())
-        mDevice!!.findObject(UiSelector().text(presName)).click()
-        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.workout_time_in_milliseconds_for_training).toLong())
-        mDevice!!.findObject(UiSelector().text(mIntentsTestRule.activity.getString(R.string.stop))).click()
-        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_until_you_can_switch_to_workout_statistics).toLong())
-        onView(withId(android.R.id.button1)).perform(ViewActions.click())
-        onView(withId(R.id.improve_mark_button)).perform(ViewActions.click())
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         helper = TestHelper(mIntentsTestRule.activity)
         helper.setTrainingPresentationMod(true) // включение тестовой презентации
@@ -83,16 +55,6 @@ class RecommendationActivityTest : BaseInstrumentedTest() {
 
     @After
     fun after(){
-        val onMode = mIntentsTestRule.activity.getString(R.string.deb_pres)
-        val onAudio = mIntentsTestRule.activity.getString(R.string.deb_speech_audio_key)
-
-        debSl.putBoolean(onMode, false)
-        debSl.putBoolean(onAudio, false)
-        debSl.apply()
-
-        onView(withText(presName)).perform(ViewActions.longClick())
-        Thread.sleep(mIntentsTestRule.activity.resources.getInteger(R.integer.time_in_milliseconds_to_display_the_delete_button).toLong())
-        onView(withText(mIntentsTestRule.activity.getString(R.string.remove))).perform(ViewActions.click())
         helper.setTrainingPresentationMod(false) // выключение тестовой презентации
         helper.removeDebugSlides()
     }

@@ -81,6 +81,4 @@ package="ru.spb.speech">
             </intent-filter>
         </receiver>
     </application>
->>>>>>> 3f548dbfc7af406ddda37d8344db8201d83d3321
-
 </manifest>
