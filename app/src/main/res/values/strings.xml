@@ -28,6 +28,23 @@
     <string name="back_to_main">На главную</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом</string>
     <string name="export_statistics">Экспорт статистики</string>
+    <string name="improve_mark">Как улучшить оценку?</string>
+    <string name="recommendation_key">recommendation</string>
+    <string name="recommendation_speed_with_error">Скорость демонстрации слайдов вашей презентации существенно отличается от рекомендуемой. Попробуйте %1$s время отображения слайдов.</string>
+    <string name="recommendation_speed_without_error">Cкорость демонстрации слайдов %1$s</string>
+    <string name="recommendation_speed_increase_info">существенно выше рекомендуемого значения. Рекомендуется увеличить время отображения указанных слайдов.</string>
+    <string name="recommendation_speed_decrease_info">существенно ниже рекомендуемого значение. Рекомендуется уменьшить время отображения указанных слайдов.</string>
+
+
+    <string name="performance_recommendations">Рекомендации к выступлению</string>
+    <string name="slide_time">Время слайдов</string>
+    <string name="slides_time_recommendation">Рекомендации по времени слайдов - заглушка"</string>
+    <string name="slides_frequency">Частота слайдов</string>
+    <string name="slides_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
+    <string name="scum_words_label">Слова паразиты</string>
+    <string name="scum_words_recommendation">Рекомендации по словам-паразитам - заглушка</string>
+    <string name="back_to_statistics">Назад к статистике</string>
+    <string name="to_home_screen">На главную</string>
 
     <string name="the_next">Следующий</string>
 
@@ -262,8 +279,8 @@
     <string name="training_not_end">Тренировка не окончена !</string>
 
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
-    <string name="slideDurationInSeconds">Длительность слайда (секунды)</string>
-    <string name="slideDurationInSeconds_max1080">Длительность слайда\n(секунды)</string>
+    <string name="slideDurationInSeconds">Длительность пауз/слайда (секунды)</string>
+    <string name="slideDurationInSeconds_max1080">Длительность паузы/слайда\n(секунды)</string>
     <string name="presentationEditing">Редактирование презентации</string>
     <string name="isPresentationChangedFlag">isPresentationChanges</string>
     <string name="presentationPosition">presentationPosition</string>
@@ -278,7 +295,7 @@
     <string name="about_text">Приложение позволяет совершенствовать ораторские навыки при подготовке к публичным выступлениям с использованием мультимедиа презентаций в формате PDF, следить за прогрессом и делится достижениями в социальных сетях.</string>
     <string name="average_time_chart">Среднее время</string>
     <string name="tempImageName">tempImage.pdf</string>
-    <string name="dbName">apst.0.3</string>
+    <string name="dbName">apst.0.4</string>
     <string name="attention">Уведомляем: наше приложение собирает статистику тренировок в научных целях.</string>
     <string name="useStatistics">use_statistics</string>
     <string name="good">Хорошо</string>
@@ -301,6 +318,11 @@
     <string name="more_sign"><![CDATA[>]]></string>
     <string name="percent_of_training">% от тренировки</string>
 
+    <string name="training_path">Записи тренировок</string>
+    <string name="app_creation_date">2018-8-02</string>
+    <string name="hello_presentation_name">hello_presentation</string>
+    <string name="hello_presentation_file">hello_presentation.pdf</string>
+    <string name="recommendation_activity_label">Рекомендации к выступлению</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>

@@ -1,4 +1,4 @@
-package ru.spb.speech.fragments.audiostatistics_fragment
+package ru.spb.speech.fragments.statistic_fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
