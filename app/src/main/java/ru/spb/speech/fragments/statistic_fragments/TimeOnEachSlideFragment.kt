@@ -25,10 +25,10 @@ const val UPPER_RANGE_LIMIT = 1.1f
 class TimeOnEachSlideFragment : StatisticsFragment() {
 
     companion object {
-        private const val BAR_WIDTH = 0.4f
-        private const val GROUP_SPACE = 0.2f
-        private const val BAR_SPACE = 0.0f
-        private const val START_SHIFT = -(BAR_WIDTH + GROUP_SPACE / 2)
+//        private const val BAR_WIDTH = 0.4f
+//        private const val GROUP_SPACE = 0.2f
+//        private const val BAR_SPACE = 0.0f
+//        private const val START_SHIFT = -(BAR_WIDTH + GROUP_SPACE / 2)
     }
 
     override val fragmentLayoutId = R.layout.time_on_each_slide_chart_fragment
@@ -38,64 +38,50 @@ class TimeOnEachSlideFragment : StatisticsFragment() {
 
         with(view) {
             val entries = ArrayList<BarEntry>()
-            val pauseEntries = ArrayList<BarEntry>()
+
+            val yVals: ArrayList<BarEntry> = ArrayList()
+
+            val labels = ArrayList<String>()
 
             for (slide in trainingSlideList?.withIndex() ?: return) {
                 entries.add(BarEntry(slide.index.toFloat(), slide.value.spentTimeInSec!!.toFloat()))
-                pauseEntries.add(BarEntry(slide.index.toFloat(), slide.value.silencePercentage!!.toFloat()))
+
+                labels.add("${slide.index + 1}")
+                val pause = slide.value.silencePercentage!!.toFloat()
+                val allSlide = slide.value.spentTimeInSec!!.toFloat()
+
+                yVals.add(BarEntry(slide.index.toFloat(), floatArrayOf(pause, allSlide - pause)))
             }
 
-            val labels = ArrayList<String>()
-            val colors = ArrayList<Int>()
 
-            var averageTimeOnEachSlide = 0
+            var averageTimeOnEachSlide = 0f
+
             for (entry in entries) {
                 averageTimeOnEachSlide += entry.y.toInt()
             }
             averageTimeOnEachSlide /= entries.size
+
             Log.d(FRAGMENT_TIME_ON_EACH_SLIDE, "averageTime = $averageTimeOnEachSlide")
 
-            for (entry in entries) {
-                labels.add((entry.x + 1).toInt().toString())
+            val staeckedDataset = BarDataSet(yVals, "")
+            staeckedDataset.setColors(ContextCompat.getColor(context!!, R.color.fasterThanAverageRange), ContextCompat.getColor(context!!, R.color.inTheAverageRange))
 
-                colors.add(
-                        when (entry.y) {
-                            in averageTimeOnEachSlide * LOWER_RANGE_LIMIT..averageTimeOnEachSlide * UPPER_RANGE_LIMIT -> ContextCompat.getColor(context!!, R.color.inTheAverageRange)
-                            in Float.MIN_VALUE..averageTimeOnEachSlide * LOWER_RANGE_LIMIT -> ContextCompat.getColor(context!!, R.color.slowerThanAverageRange)
-                            else -> ContextCompat.getColor(context!!, R.color.fasterThanAverageRange)
-                        }
-                )
-            }
 
-//            val displayMetrics = DisplayMetrics()
-//            (context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).getDefaultDisplay().getMetrics(displayMetrics)
-//            val width = displayMetrics.widthPixels
+            val stackedData = BarData(staeckedDataset)
 
-//            var barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds))
-            val barDataSet = BarDataSet(entries, "")
-            val pauseBarDataSet = BarDataSet(pauseEntries, "")
+            stackedData.setValueFormatter(LargeValueFormatter())
+            stackedData.setValueTextSize(0f)
 
-//            if(width < resources.getInteger(R.integer.screen_width)){
-//                barDataSet = BarDataSet(entries, getString(R.string.slideDurationInSeconds_max1080))
-//            }
-
-            barDataSet.colors = colors
-            pauseBarDataSet.color = ContextCompat.getColor(context!!, R.color.black_15_alpha)
-
-            val data = BarData(pauseBarDataSet, barDataSet)
-            data.setValueFormatter(LargeValueFormatter())
-            data.setValueTextSize(0f)
-
-            time_on_each_slide_chart.data = data
-            time_on_each_slide_chart.data.barWidth = BAR_WIDTH
-            time_on_each_slide_chart.groupBars(START_SHIFT, GROUP_SPACE, BAR_SPACE)
+            time_on_each_slide_chart.data = stackedData
+            time_on_each_slide_chart.setDrawValueAboveBar(false)
 
             time_on_each_slide_chart.setFitBars(true)
             time_on_each_slide_chart.animateXY(1000, 1000)
 
-            time_on_each_slide_chart.legend.textSize = 20f
-            time_on_each_slide_chart.legend.position = Legend.LegendPosition.ABOVE_CHART_LEFT
-            time_on_each_slide_chart.legend.formSize = 0f
+//            time_on_each_slide_chart.legend.textSize = 0f
+//            time_on_each_slide_chart.legend.position = Legend.LegendPosition.ABOVE_CHART_LEFT
+//            time_on_each_slide_chart.legend.formSize = 0f
+            time_on_each_slide_chart.legend.isEnabled = false
             time_on_each_slide_chart.legend.xEntrySpace = 0f
             time_on_each_slide_chart.description.text = getString(R.string.slide_number)
             time_on_each_slide_chart.description.textSize = 15f
@@ -117,13 +103,13 @@ class TimeOnEachSlideFragment : StatisticsFragment() {
 
             val yAxis = time_on_each_slide_chart.axisLeft
 
-            val averageTimeLine = LimitLine(averageTimeOnEachSlide.toFloat(), getString(R.string.average_time_chart))
+            val averageTimeLine = LimitLine(averageTimeOnEachSlide, getString(R.string.average_time_chart))
             averageTimeLine.lineColor = Color.GREEN
             averageTimeLine.lineWidth = 2f
             averageTimeLine.textSize = 10f
 
             yAxis.addLimitLine(averageTimeLine)
-            yAxis.setDrawLimitLinesBehindData(true)
+            yAxis.setDrawLimitLinesBehindData(false)
 
             time_on_each_slide_chart.invalidate()
         }
