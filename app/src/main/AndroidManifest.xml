@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RecomendationActivity"
+            android:name=".RecommendationActivity"
             android:label="">
         </activity>
         <activity

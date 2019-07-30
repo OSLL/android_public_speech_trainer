@@ -1,7 +1,6 @@
 package ru.spb.speech
 
 import android.content.ComponentName
-import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
@@ -15,8 +14,6 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiSelector
-import android.util.Log
-import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -25,11 +22,10 @@ import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class RecomendationActivityTest : BaseInstrumentedTest() {
+class RecommendationActivityTest : BaseInstrumentedTest() {
 
     lateinit var helper: TestHelper
     lateinit var uiDevice: UiDevice
-
 
     @Rule
     @JvmField
@@ -78,13 +74,13 @@ class RecomendationActivityTest : BaseInstrumentedTest() {
 
     @Test
     fun textViewAndButtonWithTextCheck() {
-        onView(withId(R.id.recomendationLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации к выступлению")))
+        onView(withId(R.id.recommendationLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации к выступлению")))
         onView(withId(R.id.slidesTimeLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesTimeRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
+        onView(withId(R.id.slidesTimeRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по времени слайдов - заглушка")))
         onView(withId(R.id.slidesFrequency)).perform(ViewActions.scrollTo()).check(matches(withText("Время слайдов")))
-        onView(withId(R.id.slidesFrequencyRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по частоте слов - заглушка")))
+        onView(withId(R.id.slidesFrequencyRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по частоте слов - заглушка")))
         onView(withId(R.id.scumWordsLabel)).perform(ViewActions.scrollTo()).check(matches(withText("Слова паразиты")))
-        onView(withId(R.id.scumWordsRecomendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
+        onView(withId(R.id.scumWordsRecommendation)).perform(ViewActions.scrollTo()).check(matches(withText("Рекомендации по словам-паразитам - заглушка")))
         onView(withId(R.id.backToStatistics)).perform(ViewActions.scrollTo()).check(matches(withText("Назад к статистике")))
         onView(withId(R.id.toHomeScreen)).perform(ViewActions.scrollTo()).check(matches(withText("На главную")))
 

@@ -34,12 +34,10 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
 import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.fragments.audiostatistics_fragment.AudioStatisticsFragment
-import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.math.abs
 
 var url = ""
 var speed_statistics: Int? = null
@@ -121,7 +119,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         drawer.start()
 
         improve_mark_button.setOnClickListener {
-            val intent = Intent(this, RecomendationActivity::class.java)
+            val intent = Intent(this, RecommendationActivity::class.java)
             startActivity(intent)
         }
 
