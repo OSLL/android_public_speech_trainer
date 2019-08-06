@@ -203,7 +203,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
-      
+
         export.setOnClickListener {
             val trainingsFile: File?
             val sdState = android.os.Environment.getExternalStorageState()

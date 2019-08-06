@@ -370,7 +370,7 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
 data class SlideInfo(val slideNumber: Int, val silencePercentage: Double,
                      val pauseAverageLength: Long, val longPausesAmount: Int) : Parcelable
 
-fun List<SlideInfo>.getAverage(): SlideInfo {
+fun List<SlideInfo>.toAllStatisticsInfo(): SlideInfo {
     var silencePercentage = 0.0
     var pauseAverageLength: Long = 0
     var longPausesAmount = 0
@@ -383,9 +383,9 @@ fun List<SlideInfo>.getAverage(): SlideInfo {
     val count = this.count()
 
     return SlideInfo(-1,
-            silencePercentage / count,
+            silencePercentage,
             pauseAverageLength/ count,
-            longPausesAmount / count)
+            longPausesAmount)
 }
 
 fun formatTime(timeInMillis: Long): String {
