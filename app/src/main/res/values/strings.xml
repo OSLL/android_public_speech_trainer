@@ -321,6 +321,7 @@
     <string name="hello_presentation_name">hello_presentation</string>
     <string name="hello_presentation_file">hello_presentation.pdf</string>
     <string name="recommendation_activity_label">Рекомендации к выступлению</string>
+    <string name="pause_time_title">Доля пауз:</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>
