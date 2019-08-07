@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -16,8 +17,6 @@ import android.view.View
 import android.widget.Toast
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
-import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.vocabulary.TextHelper
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
@@ -27,10 +26,9 @@ import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
-import ru.spb.speech.appSupport.showStatisticsFragments
+import kotlinx.android.synthetic.main.evaluation_information_sheet.view.*
 import ru.spb.speech.fragments.statistic_fragments.AudioStatisticsFragment
 import ru.spb.speech.fragments.statistic_fragments.SpeedStatisticsFragment
-import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.fragments.statistic_fragments.TimeOnEachSlideFragment
 import java.io.*
 import java.text.BreakIterator
@@ -38,6 +36,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.math.abs
+import android.support.annotation.NonNull
+import kotlinx.android.synthetic.main.evaluation_information_sheet.*
+import kotlinx.android.synthetic.main.evaluation_information_sheet.view.bottomSheetContainer
+import kotlinx.android.synthetic.main.evaluation_information_sheet_coordinator.*
+import ru.spb.speech.appSupport.*
+
 
 var url = ""
 var speed_statistics: Int? = null
@@ -174,14 +178,12 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         question.setOnClickListener {
-            val dialog = BottomSheetDialog(this)
-            val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
-
-            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
-
-            dialog.setContentView(bottomSheet)
-            dialog.show()
-
+            val fragment = MyBottomSheetFragment().newInstance()
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.root_view_training_statistics, fragment)
+                    .commit()
+            root_view_training_statistics.setBackgroundColor(resources.getColor(R.color.bottomSheetShadow))
         }
 
         share1.setOnClickListener {
