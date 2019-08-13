@@ -27,6 +27,9 @@ import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import kotlinx.android.synthetic.main.activity_training_statistics.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.spb.speech.appSupport.showStatisticsFragments
 import ru.spb.speech.fragments.statistic_fragments.AudioStatisticsFragment
 import ru.spb.speech.fragments.statistic_fragments.SpeedStatisticsFragment
@@ -43,6 +46,9 @@ var url = ""
 var speed_statistics: Int? = null
 
 const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
+
+private const val REFERENCE_WORD_FREQUENCY = 72.9
+private const val FREQUENCY_MARGINAL_DEVIATION = 28.6
 
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
@@ -166,9 +172,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         })
         drawer.start()
 
+        var frequencyRecommendationMessage = ""
+
+        GlobalScope.launch(Dispatchers.IO) {
+            frequencyRecommendationMessage = sendFrequencyWordRecommendation()
+        }
+
         improve_mark_button.setOnClickListener {
             val intent = Intent(this, RecommendationActivity::class.java)
             intent.putExtra(getString(R.string.recommendation_key), recommendationString)
+            intent.putExtra(getString(R.string.frequency_recommendation_key), frequencyRecommendationMessage)
 
             startActivity(intent)
         }
@@ -298,6 +311,58 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         speed_statistics = trainingStatisticsData?.curWordCount
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
+    }
+
+    private fun sendFrequencyWordRecommendation(): String{
+        val arrayOfFrequency = trainingStatisticsData!!.wordFrequencyPerSlide
+        var averageFrequency = 0f
+        for (freq in arrayOfFrequency) {
+            averageFrequency += freq
+        }
+        averageFrequency /= trainingStatisticsData!!.slides
+        if(averageFrequency < REFERENCE_WORD_FREQUENCY - FREQUENCY_MARGINAL_DEVIATION) {
+            return getString(R.string.increase_the_pace_of_speech_recommendation)
+        } else if (averageFrequency > REFERENCE_WORD_FREQUENCY + FREQUENCY_MARGINAL_DEVIATION) {
+            return getString(R.string.lower_the_pace_of_speech_recommendation)
+        } else {
+            val aboveAverage = mutableListOf<Int>()
+            val belowAverage = mutableListOf<Int>()
+            for (freq in 0 until arrayOfFrequency.count()){
+                if(freq < REFERENCE_WORD_FREQUENCY - FREQUENCY_MARGINAL_DEVIATION){
+                    belowAverage.add(freq+1)
+                }
+                if(freq > REFERENCE_WORD_FREQUENCY + FREQUENCY_MARGINAL_DEVIATION) {
+                    aboveAverage.add(freq+1)
+                }
+            }
+            if (aboveAverage.count() == 0 && belowAverage.count() == 0) {
+                return getString(R.string.no_frequency_recommendation)
+            } else {
+                var frequencyRecommendationMessage = "${getString(R.string.frequency_title)} "
+                if(aboveAverage.count() != 0) {
+                    for (freq in 0 until aboveAverage.count()) {
+                        frequencyRecommendationMessage += "${aboveAverage[freq]}"
+                        if (freq < aboveAverage.count()-1){
+                            frequencyRecommendationMessage += ", "
+                        }
+                    }
+                    frequencyRecommendationMessage += " ${getString(R.string.increase_frequency_title)}"
+                }
+                if(belowAverage.count() != 0) {
+                    if(aboveAverage.count() != 0){
+                        frequencyRecommendationMessage += "${getString(R.string.frequency_title_two)} "
+                    }
+                    for (freq in 0 until belowAverage.count()) {
+                        frequencyRecommendationMessage += "${belowAverage[freq]}"
+                        if (freq < belowAverage.count()-1){
+                            frequencyRecommendationMessage += ", "
+                        }
+                    }
+                    frequencyRecommendationMessage += " ${getString(R.string.lover_frequency_title)}"
+                }
+                return frequencyRecommendationMessage
+            }
+        }
     }
 
     fun Float.format(digits: Int) = java.lang.String.format("%.${digits}f", this)!!

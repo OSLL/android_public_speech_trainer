@@ -323,6 +323,16 @@
     <string name="hello_presentation_name">hello_presentation</string>
     <string name="hello_presentation_file">hello_presentation.pdf</string>
     <string name="recommendation_activity_label">Рекомендации к выступлению</string>
+    <string name="word_frequency">Частота слов</string>
+    <string name="word_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
+    <string name="increase_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте повысить темп речи.</string>
+    <string name="lower_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте понизить темп речи.</string>
+    <string name="no_frequency_recommendation">delete_frequency_recommendation</string>
+    <string name="frequency_title">Частота слов на слайдах</string>
+    <string name="increase_frequency_title">существенно превышает среднее значение. Рекомендуется снизить темп речи на указанных слайдах.</string>
+    <string name="frequency_title_two">При этом, частота слов на слайдах</string>
+    <string name="lover_frequency_title">существенно ниже среднего значение. Рекомендуется повысить темп речи на указанных слайдах.</string>
+    <string name="frequency_recommendation_key">frequencyRecommendation</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>
