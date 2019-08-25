@@ -235,6 +235,7 @@
     <string name="scores">баллов</string>
 
     <string name="training_statistics_directory">training_statistics</string>
+    <string name="training_files_directory">training_files</string>
     <string name="error_creating_text_file">Ошибка в создании текстового файла</string>
     <string name="successful_export_statistics">Статистика успешно сохранена в дирректорию</string>
     <string name="error_export_statistics">Ошибка при экспорте статистики</string>

@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.provider.DocumentFile
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -22,8 +23,10 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
 import ru.spb.speech.appSupport.*
+import ru.spb.speech.measurementAutomation.RunningTraining
 import ru.spb.speech.views.PresentationStartpageItemRow
 import java.io.File
+import java.lang.RuntimeException
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
@@ -31,12 +34,16 @@ const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 const val SHARED_PREFERENCES_FILE_NAME = "ru.spb.speech.prefs"
 
 class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
+    companion object {
+        private const val testPresentationFolderFlag = true
+        private const val OPEN_FOLDER_REQ_CODE = 133
+    }
 
     private lateinit var adapter: GroupAdapter<ViewHolder>
     private lateinit var presentationDataDao: PresentationDataDao
     private lateinit var progressHelper: ProgressHelper
     private lateinit var presentationAdapterHelper: PresentationAdapterHelper
-    private  var currentPresentationsCount = 0
+    private var currentPresentationsCount = 0
 
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +52,10 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
         if (!checkPermissions())
             checkPermissions()
+
+        if (testPresentationFolderFlag) {
+            openFolderWithTestPres()
+        }
 
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
 
@@ -80,7 +91,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                     .apply()
         }
 
-        addBtn.setOnClickListener{
+        addBtn.setOnClickListener {
             val intent = Intent(this, CreatePresentationActivity::class.java)
             startActivity(intent)
         }
@@ -104,7 +115,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu,menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -170,15 +181,45 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         }
     }
 
+    private fun openFolderWithTestPres() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                .addCategory(Intent.CATEGORY_DEFAULT)
+        startActivityForResult(intent, OPEN_FOLDER_REQ_CODE)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == resources.getInteger(R.integer.editPresentationResultCode)) {
-            val flag = data?.getBooleanExtra(getString(R.string.isPresentationChangedFlag), true) ?: return
-            if (!flag) return
+        super.onActivityResult(requestCode, resultCode, data)
 
-            val position = data.getIntExtra(getString(R.string.presentationPosition), -1)
-            if (position < 0)return
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                resources.getInteger(R.integer.editPresentationResultCode) -> {
+                    val flag = data?.getBooleanExtra(getString(R.string.isPresentationChangedFlag), true)
+                            ?: return
+                    if (!flag) return
 
-            presentationAdapterHelper.notifyItemChanged(position)
+                    val position = data.getIntExtra(getString(R.string.presentationPosition), -1)
+                    if (position < 0) return
+
+                    presentationAdapterHelper.notifyItemChanged(position)
+                }
+
+                OPEN_FOLDER_REQ_CODE -> {
+                    val selectedFile = data?.data
+//                    val file = File(Environment.getExternalStorageDirectory(), selectedFile?.path?.substring(selectedFile.path?.indexOf(":")!!+1))
+//                    val uri = Uri.fromFile(file)
+//                    contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+
+                    Log.d(RunningTraining.LOG, data?.data?.toString())
+//                    contentResolver.takePersistableUriPermission(data?.data!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                    for (c in File(data?.data?.path!!).listFiles()) {
+//                        contentResolver.takePersistableUriPermission(Uri.fromFile(c), Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                    }
+
+                    RunningTraining(this).startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!),
+                            arrayOf(10, 20))
+                }
+            }
         }
     }
 
