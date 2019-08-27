@@ -1,32 +1,29 @@
 package ru.spb.speech.measurementAutomation
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
+import android.preference.PreferenceManager
 import android.support.v4.provider.DocumentFile
 import android.util.Log
-import android.widget.Toast
-import ru.spb.speech.ACTIVITY_CREATE_PRESENTATION_NAME
-import ru.spb.speech.APST_TAG
 import ru.spb.speech.R
+import ru.spb.speech.TrainingActivity
 import ru.spb.speech.appSupport.PdfToBitmap
 import ru.spb.speech.database.PresentationData
 import ru.spb.speech.database.SpeechDataBase
 import ru.spb.speech.database.helpers.PresentationDBHelper
 import ru.spb.speech.database.interfaces.PresentationDataDao
-import java.io.ByteArrayOutputStream
-import java.io.File
 
 class RunningTraining {
 
     companion object {
-       const val LOG = "shit_log"
+       const val LOG = "test_folder_log"
     }
-    private val context: Context
+    private val context: Activity
     private val presentationDataDao: PresentationDataDao
+    private var presentationList: List<PresentationData>? = null
+    private val timeList = arrayListOf<Int>()
 
-    constructor(context: Context) {
+    constructor(context: Activity) {
         this.context = context
         presentationDataDao = SpeechDataBase.getInstance(context)?.PresentationDataDao()!!
         presentationDataDao.deleteTestFolderPres()
@@ -34,14 +31,13 @@ class RunningTraining {
 
     }
 
-    fun startTrainings(directoryFile: DocumentFile, timeClickList: Array<Int>){
+    fun startTrainings(directoryFile: DocumentFile){
         findPdfPresentations(directoryFile)
     }
 
     private fun findPdfPresentations(file: DocumentFile) {
 
         val files = file.listFiles()
-        val timesList = mutableListOf<Long>()
 
         for(singleFile in files){
             Log.d(LOG, "file: $singleFile")
@@ -49,13 +45,51 @@ class RunningTraining {
                 addPres(singleFile.name, singleFile.uri.toString())
             } else if (singleFile.name.endsWith(".txt")) {
                 try {
+                    val stream = context.contentResolver.openInputStream(singleFile.uri)
 
+                    val data = String(stream.readBytes())
+                    timeList.addAll(data
+                            .replace("\n", "")
+                            .replace(" ", "")
+                            .split(",")
+                            .map { it.toInt() })
+
+                    Log.d(LOG, data)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     presentationDataDao.deleteTestFolderPres()
+                    return
                 }
             }
         }
+        presentationList = presentationDataDao.getAllTestFolderPres()
+        if (presentationList!!.isEmpty()) { return }
+        setTestAudioMode(true)
+        startActivityWithReqCode(presentationList!!.first().id!!, 0)
+    }
+
+    private fun startActivityWithReqCode(presId: Int, requestCode: Int) {
+        context.startActivityForResult(TrainingActivity.testFolderIntent(context, timeList).apply {
+            putExtra(context.getString(R.string.CURRENT_PRESENTATION_ID), presId)
+        }, requestCode)
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode >= (presentationList?.size?:0)-1) {
+                setTestAudioMode(false)
+                presentationDataDao.deleteTestFolderPres()
+            }
+            else
+                startActivityWithReqCode(presentationList!![requestCode+1].id!!, requestCode+1)
+        }
+    }
+
+    private fun setTestAudioMode(b: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(context.getString(R.string.deb_speech_audio_key), b)
+                .apply()
     }
 
     private var presentationData: PresentationData? = null

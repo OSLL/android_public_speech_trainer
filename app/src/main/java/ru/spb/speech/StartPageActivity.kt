@@ -38,6 +38,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         private const val testPresentationFolderFlag = true
         private const val OPEN_FOLDER_REQ_CODE = 133
     }
+    private var testFolderRunner: RunningTraining? = null
 
     private lateinit var adapter: GroupAdapter<ViewHolder>
     private lateinit var presentationDataDao: PresentationDataDao
@@ -49,12 +50,12 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_page)
-
         if (!checkPermissions())
             checkPermissions()
 
         if (testPresentationFolderFlag) {
             openFolderWithTestPres()
+            testFolderRunner = RunningTraining(this)
         }
 
         val sharedPref = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
@@ -189,6 +190,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        testFolderRunner?.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
@@ -205,19 +207,8 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
                 OPEN_FOLDER_REQ_CODE -> {
                     val selectedFile = data?.data
-//                    val file = File(Environment.getExternalStorageDirectory(), selectedFile?.path?.substring(selectedFile.path?.indexOf(":")!!+1))
-//                    val uri = Uri.fromFile(file)
-//                    contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-
                     Log.d(RunningTraining.LOG, data?.data?.toString())
-//                    contentResolver.takePersistableUriPermission(data?.data!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//                    for (c in File(data?.data?.path!!).listFiles()) {
-//                        contentResolver.takePersistableUriPermission(Uri.fromFile(c), Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//                    }
-
-                    RunningTraining(this).startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!),
-                            arrayOf(10, 20))
+                    testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!))
                 }
             }
         }

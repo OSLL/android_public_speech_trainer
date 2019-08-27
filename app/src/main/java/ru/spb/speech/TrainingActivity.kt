@@ -2,6 +2,7 @@ package ru.spb.speech
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Service
 import android.arch.lifecycle.MutableLiveData
 import android.content.*
@@ -29,6 +30,7 @@ import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.database.*
 import ru.spb.speech.firebase.FirebaseHelper
+import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.fixedRateTimer
@@ -92,14 +94,29 @@ class TrainingActivity : AppCompatActivity() {
     private val audioAnalyzerController = MutableLiveData<AudioAnalyzer.AudioAnalyzerState>()
             .apply { value = AudioAnalyzer.AudioAnalyzerState.START_RECORD }
 
+    companion object {
+        private const val TEST_FOLDER_INST_FLAG = "test_folder_inst_flag"
+        private const val TEST_TIME_ARRAY_EXTRA = "test_time_array_extra"
+        val testFolderIntent = {
+            ctx: Context, timeList: ArrayList<Int> -> Intent(ctx, TrainingActivity::class.java)
+                .apply {
+                    putExtra(TEST_FOLDER_INST_FLAG, true)
+                    putIntegerArrayListExtra(TEST_TIME_ARRAY_EXTRA, timeList)
+                }
+        }
+    }
+
+    private var isTestFolderInst = false
+
     @SuppressLint("LongLogTag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
-
         GlobalScope.launch {
             audioAnalyzer = AudioAnalyzer.getInstance(this@TrainingActivity, audioAnalyzerController)
         }
+
+        isTestFolderInst = intent.getBooleanExtra(TEST_FOLDER_INST_FLAG, false)
 
         progressHelper = ProgressHelper(this, training_activity_root_view, listOf())
 
@@ -111,6 +128,17 @@ class TrainingActivity : AppCompatActivity() {
         else {
             Log.d(APST_TAG + ACTIVITY_TRAINING_NAME, "training_act: wrong ID")
             return
+        }
+
+        if (isTestFolderInst) {
+            val timeList = intent.getIntegerArrayListExtra(TEST_TIME_ARRAY_EXTRA)
+            TestFilesHandlerClicker(presentationData?:throw IllegalArgumentException(), timeList)
+                    .controllerActions.observe(this, android.arch.lifecycle.Observer {
+                when (it) {
+                    AudioAnalyzer.AudioAnalyzerState.NEXT_SLIDE -> next.performClick()
+                    AudioAnalyzer.AudioAnalyzerState.FINISH -> finish.performClick()
+                }
+            })
         }
 
         trainingData = TrainingData()
@@ -241,6 +269,12 @@ class TrainingActivity : AppCompatActivity() {
                     stopRecognizingService(true, saveTrainingInDB = true)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+                    if (isTestFolderInst) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                        return@postDelayed
+                    }
+
                     val builder = AlertDialog.Builder(this@TrainingActivity)
                     builder.setMessage(R.string.training_completed)
                     builder.setPositiveButton(R.string.training_statistics) { _, _ ->
@@ -251,7 +285,6 @@ class TrainingActivity : AppCompatActivity() {
                         stat.putExtra(getString(R.string.count_of_slides),nIndex)
 
                         unMuteSound()
-
                         startActivity(stat)
                         finish()
                     }
