@@ -27,5 +27,6 @@ RUN apt-get update \
  && apt-get -y install gradle \
  && gradle -v
 
+ADD . /app
 WORKDIR /app
 ENTRYPOINT "scripts/docker_entrypoint.sh" && /bin/bash
