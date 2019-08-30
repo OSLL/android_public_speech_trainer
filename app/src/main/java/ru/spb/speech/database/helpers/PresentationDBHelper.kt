@@ -61,6 +61,18 @@ class PresentationDBHelper {
         stream.close()
     }
 
+    fun saveDefaultPresentationImageOnMainThread(presentationId: Int) {
+        val presentation = presentationDataDao.getPresentationWithId(presentationId) ?: return
+        pdfToBitmap.addPresentation(presentation.stringUri, presentation.debugFlag)
+        val bm = pdfToBitmap.getBitmapForSlide(0) ?: return
+        val stream = ByteArrayOutputStream()
+        getResizedBitmap(bm, defaultPictureSize).compress(Bitmap.CompressFormat.PNG, defaultPictureQuality, stream)
+        presentation.imageBLOB = stream.toByteArray()
+        Log.d("vsdvsdv", "2: $presentation")
+        presentationDataDao.updatePresentation(presentation)
+        stream.close()
+    }
+
     fun getPresentationImage(presentationId: Int): Bitmap? {
         return try {
             val presentation = presentationDataDao.getPresentationWithId(presentationId)

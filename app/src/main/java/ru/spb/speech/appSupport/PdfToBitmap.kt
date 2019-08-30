@@ -13,6 +13,7 @@ import android.widget.Toast
 import ru.spb.speech.APST_TAG
 import ru.spb.speech.R
 import ru.spb.speech.database.PresentationData
+import ru.spb.speech.measurementAutomation.RunningTraining
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -35,6 +36,7 @@ class PdfToBitmap {
         this.debugIntMode = presentation.debugFlag
         this.ctx = ctx
 
+        Log.d(RunningTraining.LOG, "pdf reader: pres: $presentation")
         initRenderer()
     }
 
@@ -72,8 +74,8 @@ class PdfToBitmap {
 
     private fun initRenderer() {
         val uri = Uri.parse(this.presentationStringUri)
-
         val temp = File(ctx.cacheDir, ctx.getString(R.string.tempImageName))
+        Log.d(RunningTraining.LOG, "initRenderer, uri: $uri")
         val outPutStream = FileOutputStream(temp)
         val isChecked = this.debugIntMode == 1
         val inputStream: InputStream
@@ -83,6 +85,7 @@ class PdfToBitmap {
                 cr.openInputStream(uri)
             } catch (e: Exception) {
                 Log.d(APST_TAG + PdfToBitmap::class.toString(), e.toString())
+                throw e
             } as InputStream
         } else {
             ctx.assets.open(this.presentationStringUri)
