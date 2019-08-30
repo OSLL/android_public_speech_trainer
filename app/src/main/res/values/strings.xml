@@ -237,6 +237,7 @@
     <string name="exercise_time_factor">Попадание в регламент: </string>
     <string name="speech_speed_factor">Темп речи: </string>
     <string name="time_on_slides_factor">Время на слайдах: </string>
+    <string name="share_of_pause">Доля пауз</string>
 
     <string name="training_statistic_title">Статистика тренировок: </string>
     <string name="date_of_first_training">Дата первой тренировки: </string>
@@ -307,10 +308,11 @@
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
     <string name="audio_analysis">Анализ аудио</string>
     <string name="closeRatingInformation">Ок</string>
-    <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом трех критериев: </string>
+    <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом четырёх критериев: </string>
     <string name="regulations_description">Проверка успешности попадания в условия временного ограничения.\n\n\t\tdx - модуль разницы между временем тренировки и ограничением на доклад.\n\t\tx0 - ограничение на доклад. </string>
     <string name="pace_description">Скорость речи на каждом из слайдов.\n\n\t\tdy - дисперсия скорости речи на слайдах.</string>
     <string name="time_description">Длительность тренировки по слайдам.\n\n\t\tdz - дисперсия времени на слайдах.</string>
+    <string name="pause_description">Доля пауз по слайдам. Учитывается при вычислении оценки, если длительность пауз больше половины тернировки.\n\n\t\tdp - доля пауз в процентах</string>
     <string name="final_assessment_value">Финальным значение оценки является среднее арифметическое перечисленных критериев: \n</string>
     <string name="first_run">first run</string>
     <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
