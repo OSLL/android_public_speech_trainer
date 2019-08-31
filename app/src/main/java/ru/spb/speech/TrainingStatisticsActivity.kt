@@ -47,8 +47,7 @@ var speed_statistics: Int? = null
 
 const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
 
-private const val REFERENCE_WORD_FREQUENCY = 72.9
-private const val FREQUENCY_MARGINAL_DEVIATION = 28.6
+private const val FREQUENCY_MARGINAL_DEVIATION = 30.0
 
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
@@ -70,8 +69,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private val activityRequestCode = 101
 
     private var averageTimePerSlide: Double = 0.0
-    private var perfectAverageTimePerSlide: Double = 58.8
-    private var middleTimeError: Double = 30.8
+    private var middleTimeError: Double = 30.0
 
     private var recommendationString: String = ""
     private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
@@ -136,36 +134,29 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         averageTimePerSlide = currentTrainingTime.toDouble()/trainingSlidesList.size
         var numbersOfSlidesWithError = ""
 
-        if (abs(averageTimePerSlide - perfectAverageTimePerSlide) > middleTimeError){
-            if (averageTimePerSlide > perfectAverageTimePerSlide){
-                recommendationString += getString(R.string.recommendation_speed_with_error, "понизить")
-            }
-            else{
-                recommendationString += getString(R.string.recommendation_speed_with_error, "повысить")
-            }
+
+
+        for (slide in trainingSlidesList) {
+            currentTrainingTime += slide.spentTimeInSec!!
+            indexOfSlide++
+            if (abs((slide.spentTimeInSec!! - averageTimePerSlide)) > middleTimeError)
+                if (slide.spentTimeInSec!! - averageTimePerSlide > 0){
+                    slidesWithUpError.add(indexOfSlide)
+                }
+                else slidesWithLowError.add(indexOfSlide)
         }
-        else {
-            for (slide in trainingSlidesList) {
-                currentTrainingTime += slide.spentTimeInSec!!
-                indexOfSlide++
-                if (abs((slide.spentTimeInSec!! - averageTimePerSlide)) > middleTimeError)
-                    if (slide.spentTimeInSec!! - averageTimePerSlide > 0){
-                        slidesWithUpError.add(indexOfSlide)
-                    }
-                    else slidesWithLowError.add(indexOfSlide)
-            }
 
-            if (slidesWithUpError.isNotEmpty()) {
+        if (slidesWithUpError.isNotEmpty()) {
 
-                recommendationString = getString(R.string.recommendation_speed_without_error, slidesWithUpError.joinToString(separator = ", ", postfix = " "))
-                recommendationString += getString(R.string.recommendation_speed_decrease_info)
-            }
-
-            if (slidesWithLowError.isNotEmpty()) {
-                recommendationString += getString(R.string.recommendation_speed_without_error, slidesWithLowError.joinToString(separator = ", ", postfix = " "))
-                recommendationString += getString(R.string.recommendation_speed_increase_info)
-            }
+            recommendationString = getString(R.string.recommendation_speed_without_error, slidesWithUpError.joinToString(separator = ", ", postfix = " "))
+            recommendationString += getString(R.string.recommendation_speed_decrease_info)
         }
+
+        if (slidesWithLowError.isNotEmpty()) {
+            recommendationString += getString(R.string.recommendation_speed_without_error, slidesWithLowError.joinToString(separator = ", ", postfix = " "))
+            recommendationString += getString(R.string.recommendation_speed_increase_info)
+        }
+
 
         val drawer = Thread(Runnable {
             drawPict()
@@ -320,48 +311,43 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             averageFrequency += freq
         }
         averageFrequency /= trainingStatisticsData!!.slides
-        if(averageFrequency < REFERENCE_WORD_FREQUENCY - FREQUENCY_MARGINAL_DEVIATION) {
-            return getString(R.string.increase_the_pace_of_speech_recommendation)
-        } else if (averageFrequency > REFERENCE_WORD_FREQUENCY + FREQUENCY_MARGINAL_DEVIATION) {
-            return getString(R.string.lower_the_pace_of_speech_recommendation)
+        val aboveAverage = mutableListOf<Int>()
+        val belowAverage = mutableListOf<Int>()
+
+        for (freq in 0 until arrayOfFrequency.count()){
+            if(freq < averageFrequency - FREQUENCY_MARGINAL_DEVIATION){
+                belowAverage.add(freq+1)
+            }
+            if(freq > averageFrequency + FREQUENCY_MARGINAL_DEVIATION) {
+                aboveAverage.add(freq+1)
+            }
+        }
+        if (aboveAverage.count() == 0 && belowAverage.count() == 0) {
+            return getString(R.string.no_frequency_recommendation)
         } else {
-            val aboveAverage = mutableListOf<Int>()
-            val belowAverage = mutableListOf<Int>()
-            for (freq in 0 until arrayOfFrequency.count()){
-                if(freq < REFERENCE_WORD_FREQUENCY - FREQUENCY_MARGINAL_DEVIATION){
-                    belowAverage.add(freq+1)
+            var frequencyRecommendationMessage = "${getString(R.string.frequency_title)} "
+            if(aboveAverage.count() != 0) {
+                for (freq in 0 until aboveAverage.count()) {
+                    frequencyRecommendationMessage += "${aboveAverage[freq]}"
+                    if (freq < aboveAverage.count()-1){
+                        frequencyRecommendationMessage += ", "
+                    }
                 }
-                if(freq > REFERENCE_WORD_FREQUENCY + FREQUENCY_MARGINAL_DEVIATION) {
-                    aboveAverage.add(freq+1)
-                }
+                frequencyRecommendationMessage += " ${getString(R.string.increase_frequency_title)}"
             }
-            if (aboveAverage.count() == 0 && belowAverage.count() == 0) {
-                return getString(R.string.no_frequency_recommendation)
-            } else {
-                var frequencyRecommendationMessage = "${getString(R.string.frequency_title)} "
-                if(aboveAverage.count() != 0) {
-                    for (freq in 0 until aboveAverage.count()) {
-                        frequencyRecommendationMessage += "${aboveAverage[freq]}"
-                        if (freq < aboveAverage.count()-1){
-                            frequencyRecommendationMessage += ", "
-                        }
-                    }
-                    frequencyRecommendationMessage += " ${getString(R.string.increase_frequency_title)}"
+            if(belowAverage.count() != 0) {
+                if(aboveAverage.count() != 0){
+                    frequencyRecommendationMessage += "${getString(R.string.frequency_title_two)} "
                 }
-                if(belowAverage.count() != 0) {
-                    if(aboveAverage.count() != 0){
-                        frequencyRecommendationMessage += "${getString(R.string.frequency_title_two)} "
+                for (freq in 0 until belowAverage.count()) {
+                    frequencyRecommendationMessage += "${belowAverage[freq]}"
+                    if (freq < belowAverage.count()-1){
+                        frequencyRecommendationMessage += ", "
                     }
-                    for (freq in 0 until belowAverage.count()) {
-                        frequencyRecommendationMessage += "${belowAverage[freq]}"
-                        if (freq < belowAverage.count()-1){
-                            frequencyRecommendationMessage += ", "
-                        }
-                    }
-                    frequencyRecommendationMessage += " ${getString(R.string.lover_frequency_title)}"
                 }
-                return frequencyRecommendationMessage
+                frequencyRecommendationMessage += " ${getString(R.string.lover_frequency_title)}"
             }
+            return frequencyRecommendationMessage
         }
     }
 

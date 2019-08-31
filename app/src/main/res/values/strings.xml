@@ -30,7 +30,6 @@
     <string name="export_statistics">Экспорт статистики</string>
     <string name="improve_mark">Как улучшить оценку?</string>
     <string name="recommendation_key">recommendation</string>
-    <string name="recommendation_speed_with_error">Скорость демонстрации слайдов вашей презентации существенно отличается от рекомендуемой. Попробуйте %1$s время отображения слайдов.</string>
     <string name="recommendation_speed_without_error">Cкорость демонстрации слайдов %1$s</string>
     <string name="recommendation_speed_increase_info">существенно выше рекомендуемого значения. Рекомендуется увеличить время отображения указанных слайдов.</string>
     <string name="recommendation_speed_decrease_info">существенно ниже рекомендуемого значение. Рекомендуется уменьшить время отображения указанных слайдов.</string>
@@ -328,8 +327,6 @@
     <string name="recommendation_activity_label">Рекомендации к выступлению</string>
     <string name="word_frequency">Частота слов</string>
     <string name="word_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
-    <string name="increase_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте повысить темп речи.</string>
-    <string name="lower_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте понизить темп речи.</string>
     <string name="no_frequency_recommendation">delete_frequency_recommendation</string>
     <string name="frequency_title">Частота слов на слайдах</string>
     <string name="increase_frequency_title">существенно превышает среднее значение. Рекомендуется снизить темп речи на указанных слайдах.</string>
