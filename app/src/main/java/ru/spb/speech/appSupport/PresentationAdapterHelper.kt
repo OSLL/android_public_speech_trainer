@@ -30,6 +30,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.spb.speech.database.helpers.PresentationDBHelper
+import ru.spb.speech.measurementAutomation.RunningTraining
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -117,6 +118,7 @@ class PresentationAdapterHelper(private val rw: RecyclerView, private val adapte
     fun fillAdapter() {
         for (p in presentationDataDao.getAll()) {
             if (p.isUnfinished()) {
+                Log.d(RunningTraining.LOG, "rm p: $p")
                 presentationDataDao.deletePresentationWithId(p.id!!)
                 continue
             }

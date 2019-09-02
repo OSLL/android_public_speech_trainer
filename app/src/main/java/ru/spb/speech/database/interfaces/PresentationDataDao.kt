@@ -38,4 +38,10 @@ interface PresentationDataDao {
 
     @Query("DELETE FROM presentationdata WHERE debugPresentationFlag = 1")
     fun deleteTestPresentations()
+
+    @Query("DELETE FROM presentationdata WHERE debugPresentationFlag = 2")
+    fun deleteTestFolderPres()
+
+    @Query("SELECT * FROM presentationdata WHERE debugPresentationFlag = 2")
+    fun getAllTestFolderPres(): List<PresentationData>
 }

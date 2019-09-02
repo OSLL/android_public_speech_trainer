@@ -52,6 +52,30 @@
             android:text="@string/slides_time_recommendation"
             android:textSize="15sp" />
         <TextView
+            android:id="@+id/wordFrequencyLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:text="@string/word_frequency"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/wordFrequencyRecommendation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:text="@string/word_frequency_recommendation"
+            android:textSize="15sp" />
+        <TextView
             android:id="@+id/slidesFrequency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
