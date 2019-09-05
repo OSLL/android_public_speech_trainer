@@ -35,7 +35,7 @@ const val SHARED_PREFERENCES_FILE_NAME = "ru.spb.speech.prefs"
 
 class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     companion object {
-        private const val testPresentationFolderFlag = true
+        private const val testPresentationFolderFlag = false
         private const val OPEN_FOLDER_REQ_CODE = 133
     }
     private var testFolderRunner: RunningTraining? = null
@@ -69,6 +69,8 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         }
 
         if (sharedPref.getBoolean(getString(R.string.first_run), true)) {
+            val toAct = Intent(this, WizardIntroActivity::class.java)
+            startActivity(toAct)
 
             AddHelloPresentation(this).addPres()
 
@@ -208,7 +210,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                 OPEN_FOLDER_REQ_CODE -> {
                     val selectedFile = data?.data
                     Log.d(RunningTraining.LOG, data?.data?.toString())
-                    testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!))
+                    testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!)!!)
                 }
             }
         }

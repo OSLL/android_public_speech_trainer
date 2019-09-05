@@ -46,4 +46,7 @@
     <dimen name="top_indent_multiplier_40">40px</dimen>
     <dimen name="top_indent_multiplier_200">200px</dimen>
 
+    <dimen name="activity_margin_half">8dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+
 </resources>
