@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.provider.DocumentFile
@@ -35,7 +36,6 @@ const val SHARED_PREFERENCES_FILE_NAME = "ru.spb.speech.prefs"
 
 class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     companion object {
-        private const val testPresentationFolderFlag = false
         private const val OPEN_FOLDER_REQ_CODE = 133
     }
     private var testFolderRunner: RunningTraining? = null
@@ -46,6 +46,8 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     private lateinit var presentationAdapterHelper: PresentationAdapterHelper
     private var currentPresentationsCount = 0
 
+    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +55,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         if (!checkPermissions())
             checkPermissions()
 
-        if (testPresentationFolderFlag) {
+        if (preferences.getBoolean(getString(R.string.deb_test_folder_inst), false)) {
             openFolderWithTestPres()
             testFolderRunner = RunningTraining(this)
         }
