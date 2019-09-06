@@ -36,18 +36,13 @@ class AudioStatisticsFragment : StatisticsFragment() {
 
                 tv_sum_pause_len.text = "${getString(R.string.silence_percentage_on_slide)}: ${
                 (this@with.silencePercentage).toDefaultStringFormat()} ${
-                getString(R.string.seconds)}\n${(this@with.silencePercentage/trainingLenInSec * 100)
-                        .toDefaultStringFormat()}${getString(R.string.percent_of_training)}"
+                getString(R.string.seconds)} (${(this@with.silencePercentage/trainingLenInSec * 100)
+                        .toDefaultStringFormat()}${getString(R.string.percent_of_training)})"
                 tv_average_pause_len.text = "${getString(R.string.average_pause_length)}: ${
                 (this@with.pauseAverageLength.toDouble() / 10000).toDefaultStringFormat()} ${
                 getString(R.string.seconds)}"
                 tv_count_pause.text = "${getString(R.string.long_pauses_amount)}: ${
                 this@with.longPausesAmount}"
-            }
-        }
-        with (view) {
-            btn_show_all_info.setOnClickListener {
-                AllAudioStatisticsDialogFragment.instance(slideInfoList).show(childFragmentManager, "")
             }
         }
     }

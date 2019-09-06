@@ -36,16 +36,6 @@
             android:layout_height="wrap_content"
             layout="@layout/item_slide_info"/>
 
-        <TextView
-            android:alpha="0.5"
-            android:textColor="@android:color/black"
-            android:layout_marginEnd="20dp"
-            android:layout_gravity="center|end"
-            android:textSize="25dp"
-            android:text="@string/more_sign"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
     </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>
