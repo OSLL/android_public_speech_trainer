@@ -359,7 +359,11 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
 
         dySpeechVelDispersion /= speedList.size
 
-        return context.resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
+        if (speedList.size != 0) {
+            return context.resources.getDimension(R.dimen.unit_float) / (sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
+        }
+        else return 0F
+
     }
 
     private fun calculateZ(slideInTraining: MutableList<TrainingSlideData>?) : Float{
