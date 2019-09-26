@@ -36,6 +36,8 @@ const val SHARED_PREFERENCES_FILE_NAME = "ru.spb.speech.prefs"
 
 class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     companion object {
+        private const val testPresentationFolderFlag = false
+
         private const val OPEN_FOLDER_REQ_CODE = 133
     }
     private var testFolderRunner: RunningTraining? = null

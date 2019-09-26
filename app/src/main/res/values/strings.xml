@@ -326,6 +326,7 @@
     <string name="hello_presentation_name">hello_presentation</string>
     <string name="hello_presentation_file">hello_presentation.pdf</string>
     <string name="recommendation_activity_label">Рекомендации к выступлению</string>
+    <string name="pause_time_title">Доля пауз:</string>
     <string name="word_frequency">Частота слов</string>
     <string name="word_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
     <string name="increase_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте повысить темп речи.</string>
