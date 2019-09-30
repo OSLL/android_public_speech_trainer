@@ -339,6 +339,8 @@
     <string name="frequency_recommendation_key">frequencyRecommendation</string>
     <string name="test_folder_mode">Режим тестовой папки</string>
     <string name="deb_test_folder_inst">deb_test_folder_instance</string>
+    <string name="parasites_word_recommendation">В тексте презентации замечен набор слов-паразитов. Несмотря на то, что некоторые из этих слов могут служить в качестве логических связок, их чрезмерное присутствие в выступлении не рекомендуется.\nСписок слов-паразитов:</string>
+    <string name="parasites_recommendation_key">parasites_recommendation_key</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>

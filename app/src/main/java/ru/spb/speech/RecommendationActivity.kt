@@ -24,6 +24,14 @@ class RecommendationActivity : AppCompatActivity() {
             wordFrequencyRecommendation.text = frequencyRecommendation
         }
 
+        val parasitesRecommendation = bundle.getString(getString(R.string.parasites_recommendation_key))
+        if (parasitesRecommendation == "") {
+            scumWordsLabel.visibility = View.GONE
+            scumWordsRecommendation.visibility = View.GONE
+        } else {
+            scumWordsRecommendation.text = parasitesRecommendation
+        }
+
         backToStatistics.setOnClickListener {
             finish()
         }

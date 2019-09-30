@@ -179,6 +179,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             val intent = Intent(this, RecommendationActivity::class.java)
             intent.putExtra(getString(R.string.recommendation_key), recommendationString)
             intent.putExtra(getString(R.string.frequency_recommendation_key), frequencyRecommendationMessage)
+            intent.putExtra(getString(R.string.parasites_recommendation_key), sendParasitesWordRecommendation())
 
             startActivity(intent)
         }
@@ -307,6 +308,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         speed_statistics = trainingStatisticsData?.curWordCount
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
+    }
+
+    private fun sendParasitesWordRecommendation(): String {
+        return if (!trainingStatisticsData?.listOfParasites.isNullOrEmpty()){
+            var recommendationString = getString(R.string.parasites_word_recommendation)
+            for (word in trainingStatisticsData?.listOfParasites!!) {
+                recommendationString += "\n$word"
+            }
+            recommendationString
+        } else {
+            ""
+        }
     }
 
     private fun sendFrequencyWordRecommendation(): String{
