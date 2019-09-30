@@ -4,7 +4,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import ru.spb.speech.DBTables.MIGRATION_1_2
+import ru.spb.speech.DBTables.MIGRATION_2_3
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.interfaces.TrainingDataDao
 import ru.spb.speech.database.interfaces.TrainingSlideDataDao
@@ -27,7 +27,7 @@ abstract class SpeechDataBase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             SpeechDataBase::class.java, context.getString(R.string.dbName))
                             .addMigrations(
-                                    MIGRATION_1_2
+                                    MIGRATION_2_3
                             )
                             .allowMainThreadQueries()
                             .build()
