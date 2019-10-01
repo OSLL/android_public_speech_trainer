@@ -122,6 +122,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //Количество слов-паразитов
     private val countingParasitesHelper = CountingNumberOfWordsParasites()
     val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
+    val listOfParasites = countingParasitesHelper.listOfParasiticWords(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
     //Частота слов по слайдам в виде массива:
     val wordFrequencyPerSlide: Array<Float>
         get(){
@@ -433,6 +434,16 @@ class CountingNumberOfWordsParasites {
             finalCount += countWords(recText, word)
         }
         return finalCount
+    }
+
+    fun listOfParasiticWords(allRecognizedText: String, arrayWhereFind: Array<String>) : ArrayList<String> {
+        var parasiticWordsList = ArrayList<String>()
+        val recText = allRecognizedText.toLowerCase()
+        for (word in arrayWhereFind) {
+            if (word in recText)
+                parasiticWordsList.add(word)
+        }
+        return parasiticWordsList
     }
 
     private fun countWords(searchString: String, stringWeAreLookingFor: String): Long {
