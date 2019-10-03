@@ -300,8 +300,10 @@
     <string name="lover_frequency_title">существенно ниже среднего значение. Рекомендуется повысить темп речи на указанных слайдах.</string>
     <string name="frequency_recommendation_key">frequencyRecommendation</string>
     <string name="wizard_intro_message_1">Добро пожаловать в Тренажер публичных выступлений</string>
-    <string name="wizard_intro_message_2">Учитесь! Исследуйте! Совершенствуйте свою речь!</string>
-    <string name="wizard_intro_message_3">Если Вы здесь впервые, настоятельно рекомендуем пройти тестовую тренировку</string>
+    <string name="wizard_intro_message_2">Для того, чтобы начать пользоваться приложением, добавьте собственную презентацию в формате pdа</string>
+    <string name="wizard_intro_message_3">Затем, для начала тренировки, выберите добавленную презентацию из списка</string>
+    <string name="wizard_intro_message_4">Учитесь! Исследуйте! Совершенствуйте свою речь!</string>
+    <string name="wizard_intro_message_5">Если Вы здесь впервые, настоятельно рекомендуем пройти тестовую тренировку</string>
     <string name="skip_wizard_intro_title">Пропустить</string>
     <string name="test_training_title">Тестовая\nтренировка</string>
     <string name="finish_wizard_intro">Закончить</string>

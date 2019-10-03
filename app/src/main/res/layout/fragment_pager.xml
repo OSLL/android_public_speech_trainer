@@ -12,13 +12,14 @@
 
         <ImageView
             android:id="@+id/section_img"
-            android:layout_width="192dp"
-            android:layout_height="192dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:alpha="0.50"
             android:background="@drawable/training"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:layout_marginBottom="50dp"/>
 
 
     </FrameLayout>

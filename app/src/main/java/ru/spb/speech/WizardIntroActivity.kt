@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -18,7 +19,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import kotlinx.android.synthetic.main.about_fragment.view.*
 import kotlinx.android.synthetic.main.activity_wizard_intro.*
+import kotlinx.android.synthetic.main.fragment_pager.*
 import kotlinx.android.synthetic.main.fragment_pager.view.*
 
 
@@ -48,7 +51,7 @@ class WizardIntroActivity : AppCompatActivity() {
                     tintMyDrawable(ContextCompat.getDrawable(this, R.drawable.ic_chevron_right_24dp), Color.WHITE)
             )
 
-        indicators = arrayOf(intro_indicator_0, intro_indicator_1, intro_indicator_2)
+        indicators = arrayOf(intro_indicator_0, intro_indicator_1, intro_indicator_2, intro_indicator_3, intro_indicator_4)
 
         container.adapter = mSectionsPagerAdapter
 
@@ -56,17 +59,19 @@ class WizardIntroActivity : AppCompatActivity() {
         updateIndicators(page)
 
         val color1 = ContextCompat.getColor(this, R.color.green)
-        val color2 = ContextCompat.getColor(this, R.color.orange)
-        val color3 = ContextCompat.getColor(this, R.color.purple)
+        val color2 = ContextCompat.getColor(this, R.color.blue)
+        val color3 = ContextCompat.getColor(this, R.color.red)
+        val color4 = ContextCompat.getColor(this, R.color.orange)
+        val color5 = ContextCompat.getColor(this, R.color.purple)
 
-        val colorList = intArrayOf(color1, color2, color3)
+        val colorList = intArrayOf(color1, color2, color3, color4, color5)
 
         val evaluator = ArgbEvaluator()
 
         container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
-                val colorUpdate = evaluator.evaluate(positionOffset, colorList[position], colorList[if (position == 2) position else position + 1]) as Int
+                val colorUpdate = evaluator.evaluate(positionOffset, colorList[position], colorList[if (position == 4) position else position + 1]) as Int
                 container.setBackgroundColor(colorUpdate)
 
             }
@@ -81,12 +86,15 @@ class WizardIntroActivity : AppCompatActivity() {
                     0 -> container.setBackgroundColor(color1)
                     1 -> container.setBackgroundColor(color2)
                     2 -> container.setBackgroundColor(color3)
+                    3 -> container.setBackgroundColor(color4)
+                    4 -> container.setBackgroundColor(color5)
                 }
 
 
-                intro_btn_next.visibility = if (position == 2) View.GONE else View.VISIBLE
-                intro_btn_finish.visibility = if (position == 2) View.VISIBLE else View.GONE
-                intro_btn_skip.visibility = if (position == 2) View.GONE else View.VISIBLE
+                intro_btn_next.visibility = if (position == 4) View.GONE else View.VISIBLE
+                intro_btn_finish.visibility = if (position == 4) View.VISIBLE else View.GONE
+                intro_btn_skip.visibility = if (position == 4) View.GONE else View.VISIBLE
+                //section_img.alpha = if (position == 1 || position == 2) 1f else 0.5f
 
 
             }
@@ -125,15 +133,22 @@ class WizardIntroActivity : AppCompatActivity() {
 
         private lateinit var img: ImageView
 
-        private var bgs = intArrayOf(R.drawable.training, R.drawable.research, R.drawable.chemistry)
+        private var bgs = intArrayOf(R.drawable.training, R.drawable.first_page_screen1, R.drawable.first_page_screen2, R.drawable.research, R.drawable.chemistry)
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val messages = arrayOf(getString(R.string.wizard_intro_message_1),
                     getString(R.string.wizard_intro_message_2),
-                    getString(R.string.wizard_intro_message_3))
+                    getString(R.string.wizard_intro_message_3),
+                    getString(R.string.wizard_intro_message_4),
+                    getString(R.string.wizard_intro_message_5))
             val rootView = inflater.inflate(R.layout.fragment_pager, container, false)
             img = rootView.findViewById(R.id.section_img)
+            if (arguments!!.getInt(ARG_SECTION_NUMBER) == 2 || arguments!!.getInt(ARG_SECTION_NUMBER) == 3) {
+                img.alpha = 1f
+            } else {
+                img.alpha = 0.5f
+            }
             img.setBackgroundResource(bgs[arguments!!.getInt(ARG_SECTION_NUMBER) - 1])
             rootView.section_label.text = messages[arguments!!.getInt(ARG_SECTION_NUMBER) - 1]
 
@@ -158,11 +173,10 @@ class WizardIntroActivity : AppCompatActivity() {
 
         override fun getItem(position: Int): Fragment {
             return PlaceholderFragment.newInstance(position + 1)
-
         }
 
         override fun getCount(): Int {
-            return 3
+            return 5
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
@@ -170,6 +184,8 @@ class WizardIntroActivity : AppCompatActivity() {
                 0 -> return "SECTION 1"
                 1 -> return "SECTION 2"
                 2 -> return "SECTION 3"
+                3 -> return "SECTION 4"
+                4 -> return "SECTION 5"
             }
             return null
         }
