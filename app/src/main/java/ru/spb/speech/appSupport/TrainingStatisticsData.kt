@@ -12,6 +12,7 @@ import kotlin.math.sqrt
 import ru.spb.speech.ACTIVITY_TRAINING_STATISTIC_NAME
 import ru.spb.speech.APST_TAG
 import ru.spb.speech.R
+import kotlin.math.abs
 import kotlin.math.pow
 
 class TrainingStatisticsData (myContext: Context, presentationData: PresentationData?, trainingData: TrainingData?) {
@@ -148,6 +149,71 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
 
     //--------------------Статистика тренировок:---------------------//
 
+    //Средняя частота слов по слайдам:
+    val averageWordFrequency = calculatingWordFrequency().averageWordFrequency
+    val averageFrequencyWordDeviation = calculatingWordFrequency().averageFrequencyWordDeviation
+
+    data class WordFrequency(val averageWordFrequency: Double, val averageFrequencyWordDeviation: Double)
+    private fun calculatingWordFrequency(): WordFrequency {
+        if(trainingList != null) {
+            var answerAverageWordFrequency = 0.0
+            for (training in trainingList) {
+                var currentAverageWordFrequency = 0.0
+                val slides = trainingSlideDBHelper?.getAllSlidesForTraining(training)
+                if (slides != null) {
+                    for (page in slides) {
+                        val tempWords = page.knownWords?.split(" ")
+                        var curWordCount = 0
+                        if (tempWords != null) {
+                            for (word in tempWords) {
+                                if(word != ""){
+                                    curWordCount += 1
+                                }
+                            }
+                        }
+                        currentAverageWordFrequency += (curWordCount.toFloat() / page.spentTimeInSec!!)*context.resources.getInteger(R.integer.seconds_in_a_minute)
+                    }
+                    currentAverageWordFrequency /= slides.count()
+                }
+                answerAverageWordFrequency += currentAverageWordFrequency
+            }
+            answerAverageWordFrequency /= trainingList.count()
+
+            var averageFrequencyWordDeviation = 0.0
+            for (training in trainingList) {
+                val slides = trainingSlideDBHelper?.getAllSlidesForTraining(training)
+                averageFrequencyWordDeviation += abs(calculateCurrentAverageWordFrequency(slides) - answerAverageWordFrequency)
+            }
+            averageFrequencyWordDeviation /= trainingList.count()
+
+            return WordFrequency(answerAverageWordFrequency, averageFrequencyWordDeviation)
+        } else {
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
+            return WordFrequency(-1.0, -1.0)
+        }
+    }
+
+    private fun calculateCurrentAverageWordFrequency(slides: MutableList<TrainingSlideData>?): Double{
+        var currentAverageWordFrequency = 0.0
+        if (slides != null) {
+            for (page in slides) {
+                val tempWords = page.knownWords?.split(" ")
+                var curWordCount = 0
+                if (tempWords != null) {
+                    for (word in tempWords) {
+                        if (word != "") {
+                            curWordCount += 1
+                        }
+                    }
+                }
+                currentAverageWordFrequency += (curWordCount.toFloat() / page.spentTimeInSec!!) * context.resources.getInteger(R.integer.seconds_in_a_minute)
+            }
+            currentAverageWordFrequency /= slides.count()
+        }
+        return currentAverageWordFrequency
+    }
+
+
     //Дата первой тренировки:
     val dateOfFirstTraining: String
         get() {
@@ -211,6 +277,8 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     val minTrainTime = getMaxAndMinAndAverageAndExtraTime(context.resources.getString(R.string.min_training_time))
     //Среднее время тренировки:
     val averageTime = getMaxAndMinAndAverageAndExtraTime(context.resources.getString(R.string.average_time))
+    // Среднее время отклонение от стреднего времени нахождения на слайдах:
+    var timePerSlideError = calcMinAndMaxTime().timePerSlideError
 
     //Сказано слов всего:
     val allWords: Int
@@ -296,7 +364,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         }
     }
 
-    data class TimeOfTraining(val maxTime: Long, val minTime: Long, val averageExtraTime: Long, val averageTime: Long)
+    data class TimeOfTraining(val maxTime: Long, val minTime: Long, val averageExtraTime: Long, val averageTime: Long, val timePerSlideError: Double)
     private fun calcMinAndMaxTime(): TimeOfTraining {
         if (trainingList != null && presData != null && trainingCount != null){
             var maxTime = 0L
@@ -329,10 +397,22 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 0L
             }
             averageTime = totalTime / trainingCount
-            return TimeOfTraining(maxTime, minTime, averageExtraTime, averageTime)
+
+            var timePerSlideError = 0.0
+            for (training in trainingList){
+                val slides = trainingSlideDBHelper?.getAllSlidesForTraining(training) ?: continue
+                var currentTimePerSlide = 0.0
+                for (page in slides) {
+                    currentTimePerSlide += page.spentTimeInSec!!
+                }
+                currentTimePerSlide /= slides.count()
+                timePerSlideError += abs(currentTimePerSlide - averageTime / slides.count())
+            }
+            timePerSlideError /= trainingList.count()
+            return TimeOfTraining(maxTime, minTime, averageExtraTime, averageTime, timePerSlideError)
         } else {
             Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.resources.getString(R.string.error_accessing_the_training_list_or_presentation_data))
-            return TimeOfTraining(0L, 0L, 0L, 0L)
+            return TimeOfTraining(0L, 0L, 0L, 0L, 0.0)
         }
     }
 
