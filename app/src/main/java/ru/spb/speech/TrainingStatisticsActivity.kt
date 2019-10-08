@@ -44,8 +44,7 @@ var speed_statistics: Int? = null
 
 const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
 
-//private const val REFERENCE_WORD_FREQUENCY = 72.9
-//private const val FREQUENCY_MARGINAL_DEVIATION = 28.6
+
 
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
@@ -68,8 +67,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
     private var averageTimePerSlide: Double = 0.0
     private var currentPresentationTimePerSlide: Long = 0
-    //private var perfectAverageTimePerSlide: Double = 58.8
-    //private var middleTimeError: Double = 30.8
+
 
     private var recommendationString: String = ""
     private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
