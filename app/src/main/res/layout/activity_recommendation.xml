@@ -76,6 +76,7 @@
             android:text="@string/word_frequency_recommendation"
             android:textSize="15sp" />
         <TextView
+            android:visibility="gone"
             android:id="@+id/slidesFrequency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,6 +90,8 @@
             android:textSize="15sp" />
 
         <TextView
+                        android:visibility="gone"
+
             android:id="@+id/slidesFrequencyRecommendation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
