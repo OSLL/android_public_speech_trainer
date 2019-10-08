@@ -44,8 +44,7 @@ var speed_statistics: Int? = null
 
 const val ACTIVITY_TRAINING_STATISTIC_NAME = ".TrainingStatisticActivity"
 
-private const val REFERENCE_WORD_FREQUENCY = 72.9
-private const val FREQUENCY_MARGINAL_DEVIATION = 28.6
+
 
 @Suppress("DEPRECATION")
 class TrainingStatisticsActivity : AppCompatActivity() {
@@ -67,8 +66,8 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private val activityRequestCode = 101
 
     private var averageTimePerSlide: Double = 0.0
-    private var perfectAverageTimePerSlide: Double = 58.8
-    private var middleTimeError: Double = 30.8
+    private var currentPresentationTimePerSlide: Long = 0
+
 
     private var recommendationString: String = ""
     private val speechDataBase by lazy { SpeechDataBase.getInstance(this)!! }
@@ -131,10 +130,11 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         }
 
         averageTimePerSlide = currentTrainingTime.toDouble()/trainingSlidesList.size
+        currentPresentationTimePerSlide = trainingStatisticsData?.averageTime!! / trainingSlidesList.size
         var numbersOfSlidesWithError = ""
 
-        if (abs(averageTimePerSlide - perfectAverageTimePerSlide) > middleTimeError){
-            if (averageTimePerSlide > perfectAverageTimePerSlide){
+        if (abs(averageTimePerSlide - currentPresentationTimePerSlide) > trainingStatisticsData?.timePerSlideError!!){
+            if (averageTimePerSlide > currentPresentationTimePerSlide){
                 recommendationString += getString(R.string.recommendation_speed_with_error, "понизить")
             }
             else{
@@ -145,7 +145,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             for (slide in trainingSlidesList) {
                 currentTrainingTime += slide.spentTimeInSec!!
                 indexOfSlide++
-                if (abs((slide.spentTimeInSec!! - averageTimePerSlide)) > middleTimeError)
+                if (abs((slide.spentTimeInSec!! - averageTimePerSlide)) > trainingStatisticsData?.timePerSlideError!!)
                     if (slide.spentTimeInSec!! - averageTimePerSlide > 0){
                         slidesWithUpError.add(indexOfSlide)
                     }
@@ -329,18 +329,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             averageFrequency += freq
         }
         averageFrequency /= trainingStatisticsData!!.slides
-        if(averageFrequency < REFERENCE_WORD_FREQUENCY - FREQUENCY_MARGINAL_DEVIATION) {
+        if(averageFrequency < trainingStatisticsData?.averageWordFrequency!! - trainingStatisticsData?.averageFrequencyWordDeviation!!) {
             return getString(R.string.increase_the_pace_of_speech_recommendation)
-        } else if (averageFrequency > REFERENCE_WORD_FREQUENCY + FREQUENCY_MARGINAL_DEVIATION) {
+        } else if (averageFrequency > trainingStatisticsData?.averageWordFrequency!! + trainingStatisticsData?.averageFrequencyWordDeviation!!) {
             return getString(R.string.lower_the_pace_of_speech_recommendation)
         } else {
             val aboveAverage = mutableListOf<Int>()
             val belowAverage = mutableListOf<Int>()
             for (freq in 0 until arrayOfFrequency.count()){
-                if(freq < REFERENCE_WORD_FREQUENCY - FREQUENCY_MARGINAL_DEVIATION){
+                if(freq < trainingStatisticsData?.averageWordFrequency!! - trainingStatisticsData?.averageFrequencyWordDeviation!!){
                     belowAverage.add(freq+1)
                 }
-                if(freq > REFERENCE_WORD_FREQUENCY + FREQUENCY_MARGINAL_DEVIATION) {
+                if(freq > trainingStatisticsData?.averageWordFrequency!! + trainingStatisticsData?.averageFrequencyWordDeviation!!) {
                     aboveAverage.add(freq+1)
                 }
             }
