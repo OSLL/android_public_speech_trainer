@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.provider.MediaStore
-import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
@@ -16,8 +15,6 @@ import android.view.View
 import android.widget.Toast
 import ru.spb.speech.database.helpers.TrainingSlideDBHelper
 import ru.spb.speech.TrainingHistoryActivity.Companion.launchedFromHistoryActivityFlag
-import ru.spb.speech.appSupport.PdfToBitmap
-import ru.spb.speech.appSupport.ProgressHelper
 import ru.spb.speech.vocabulary.TextHelper
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.PresentationData
@@ -30,10 +27,8 @@ import kotlinx.android.synthetic.main.activity_training_statistics.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import ru.spb.speech.appSupport.showStatisticsFragments
 import ru.spb.speech.fragments.statistic_fragments.AudioStatisticsFragment
 import ru.spb.speech.fragments.statistic_fragments.SpeedStatisticsFragment
-import ru.spb.speech.appSupport.TrainingStatisticsData
 import ru.spb.speech.fragments.statistic_fragments.TimeOnEachSlideFragment
 import java.io.*
 import java.text.BreakIterator
@@ -41,6 +36,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.math.abs
+import ru.spb.speech.appSupport.*
+
 
 var url = ""
 var speed_statistics: Int? = null
@@ -182,19 +179,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             val intent = Intent(this, RecommendationActivity::class.java)
             intent.putExtra(getString(R.string.recommendation_key), recommendationString)
             intent.putExtra(getString(R.string.frequency_recommendation_key), frequencyRecommendationMessage)
+            intent.putExtra(getString(R.string.parasites_recommendation_key), sendParasitesWordRecommendation())
 
             startActivity(intent)
         }
 
         question.setOnClickListener {
-            val dialog = BottomSheetDialog(this)
-            val bottomSheet = layoutInflater.inflate(R.layout.evaluation_information_sheet, null)
-
-            //bottomSheet.closeTheQuestion.setOnClickListener { dialog.dismiss() }
-
-            dialog.setContentView(bottomSheet)
-            dialog.show()
-
+            val fragment = MyBottomSheetFragment().newInstance()
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.root_view_training_statistics, fragment)
+                    .commit()
+            root_view_training_statistics.setBackgroundColor(resources.getColor(R.color.bottomSheetShadow))
         }
 
         share1.setOnClickListener {
@@ -295,6 +291,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         x_exercise_time_factor.append(" ${((trainingStatisticsData?.xExerciseTimeFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
+        p_pause_time_factor.append(" ${((trainingStatisticsData?.pTimeOfPauseFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
 
         var countOfParasites = ((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)
         if(trainingStatisticsData!!.countOfParasites == 0L){
@@ -311,6 +308,18 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         speed_statistics = trainingStatisticsData?.curWordCount
         sharedPreferences.edit().putInt(getString(R.string.num_of_words_spoken), trainingStatisticsData!!.curWordCount).putInt(getString(R.string.total_words_count), trainingStatisticsData!!.allWords).apply()
+    }
+
+    private fun sendParasitesWordRecommendation(): String {
+        return if (!trainingStatisticsData?.listOfParasites.isNullOrEmpty()){
+            var recommendationString = getString(R.string.parasites_word_recommendation)
+            for (word in trainingStatisticsData?.listOfParasites!!) {
+                recommendationString += "\n$word"
+            }
+            recommendationString
+        } else {
+            ""
+        }
     }
 
     private fun sendFrequencyWordRecommendation(): String{

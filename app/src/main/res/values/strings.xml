@@ -288,6 +288,7 @@
     <string name="hello_presentation_name">hello_presentation</string>
     <string name="hello_presentation_file">hello_presentation.pdf</string>
     <string name="recommendation_activity_label">Рекомендации к выступлению</string>
+    <string name="pause_time_title">Доля пауз:</string>
     <string name="word_frequency">Частота слов</string>
     <string name="word_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
 
@@ -346,6 +347,8 @@
     <string-array name="multi_select_list_preference_default_value" />
     <string name="test_folder_mode">Режим тестовой папки</string>
     <string name="deb_test_folder_inst">deb_test_folder_instance</string>
+    <string name="parasites_word_recommendation">В речи замечены слова-паразиты. Несмотря на то, что некоторые из них могут служить в качестве логических связок, их чрезмерное использование не рекомендуется.\nСписок распознанных слов-паразитов: \n</string>
+    <string name="parasites_recommendation_key">parasites_recommendation_key</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>

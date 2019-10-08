@@ -12,6 +12,7 @@ import kotlin.math.sqrt
 import ru.spb.speech.ACTIVITY_TRAINING_STATISTIC_NAME
 import ru.spb.speech.APST_TAG
 import ru.spb.speech.R
+import kotlin.math.pow
 
 class TrainingStatisticsData (myContext: Context, presentationData: PresentationData?, trainingData: TrainingData?) {
 
@@ -34,6 +35,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     var xExerciseTimeFactor = calculateX(presData?.timeLimit!!.toFloat())
     var ySpeechSpeedFactor = calculateY(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
     var zTimeOnSlidesFactor = calculateZ(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
+    var pTimeOfPauseFactor = calculateP()
 
     //--------------------Текущая тренировка:---------------------//
 
@@ -62,6 +64,19 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 return -1
             }
             return curTrTime
+        }
+    //Суммарная длительность пауз:
+    val currentTrainingPauseTime: Double
+        get() {
+            var curTrPauseTime = 0.0
+            if (trainingSlidesList != null) {
+                for (slide in trainingSlidesList)
+                    curTrPauseTime += slide.silencePercentage!! * 10
+            } else {
+                Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
+                return -1.0
+            }
+            return curTrPauseTime
         }
     //Проработано слайдов / всего слайдов:
     val curSlides: Int?
@@ -107,6 +122,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //Количество слов-паразитов
     private val countingParasitesHelper = CountingNumberOfWordsParasites()
     val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
+    val listOfParasites = countingParasitesHelper.listOfParasiticWords(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
     //Частота слов по слайдам в виде массива:
     val wordFrequencyPerSlide: Array<Float>
         get(){
@@ -321,7 +337,7 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     }
 
     private fun calcOfTheTrainingGrade() : Float{
-        return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor)/context.resources.getDimension(R.dimen.number_of_factors))
+        return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor+pTimeOfPauseFactor)/context.resources.getDimension(R.dimen.number_of_factors))
     }
 
     private fun calculateX(x0ReportTimeLimit: Float) : Float{
@@ -359,7 +375,11 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
 
         dySpeechVelDispersion /= speedList.size
 
-        return context.resources.getDimension(R.dimen.unit_float)/(sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
+        if (speedList.size != 0) {
+            return context.resources.getDimension(R.dimen.unit_float) / (sqrt(dySpeechVelDispersion) + context.resources.getDimension(R.dimen.unit_float))
+        }
+        else return 0F
+
     }
 
     private fun calculateZ(slideInTraining: MutableList<TrainingSlideData>?) : Float{
@@ -381,11 +401,26 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         var dzTimeDispersionOnSlides = context.resources.getDimension(R.dimen.zero_float)
 
         for (i in timeList){
-            dzTimeDispersionOnSlides += Math.pow((i - curAverTime).toDouble(), context.resources.getDimension(R.dimen.quadrant_degree_float).toDouble()).toFloat()
+            dzTimeDispersionOnSlides += (i - curAverTime).toDouble().pow(context.resources.getDimension(R.dimen.quadrant_degree_float).toDouble()).toFloat()
         }
 
         dzTimeDispersionOnSlides /= timeList.size
         return context.resources.getDimension(R.dimen.unit_float)/(sqrt(dzTimeDispersionOnSlides) + context.resources.getDimension(R.dimen.unit_float))
+    }
+
+    private fun calculateP() : Float {
+        val percentageOfPauses = currentTrainingPauseTime/currentTrainingTime
+        return if(percentageOfPauses <= context.resources.getDimension(R.dimen.half_float)) {
+            context.resources.getDimension(R.dimen.unit_float)
+        } else {
+            val pauseAssessment = (context.resources.getDimension(R.dimen.unit_float) -
+                    (percentageOfPauses - context.resources.getDimension(R.dimen.half_float))*
+                    context.resources.getDimension(R.dimen.deuce_float)).toFloat()
+            return if(pauseAssessment < context.resources.getDimension(R.dimen.zero_float))
+                context.resources.getDimension(R.dimen.zero_float)
+            else
+                pauseAssessment
+        }
     }
 
 }
@@ -399,6 +434,16 @@ class CountingNumberOfWordsParasites {
             finalCount += countWords(recText, word)
         }
         return finalCount
+    }
+
+    fun listOfParasiticWords(allRecognizedText: String, arrayWhereFind: Array<String>) : ArrayList<String> {
+        var parasiticWordsList = ArrayList<String>()
+        val recText = allRecognizedText.toLowerCase()
+        for (word in arrayWhereFind) {
+            if (word in recText)
+                parasiticWordsList.add(word)
+        }
+        return parasiticWordsList
     }
 
     private fun countWords(searchString: String, stringWeAreLookingFor: String): Long {

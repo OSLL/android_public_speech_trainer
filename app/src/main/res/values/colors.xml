@@ -8,6 +8,9 @@
     <color name="activityBackground">#e6e6e6</color>
     <color name="indicator_unselected">#4D000000</color>
     <color name="black_trans80">#33000000</color>
+    <color name="colorBlack">#000000</color>
+    <color name="bottomSheetShadow">#4D000000</color>
+    <color name="whiteColor">#FFFFFF</color>
 
     <!-- Time on each slide -->
     <color name="timeOncEachSlideChartColor">#8cb8ff</color>
