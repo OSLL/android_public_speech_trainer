@@ -73,6 +73,8 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
         }
 
         if (sharedPref.getBoolean(getString(R.string.first_run), true)) {
+            val toAct = Intent(this, WizardIntroActivity::class.java)
+            startActivity(toAct)
 
             AddHelloPresentation(this).addPres()
 
@@ -212,7 +214,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                 OPEN_FOLDER_REQ_CODE -> {
                     val selectedFile = data?.data
                     Log.d(RunningTraining.LOG, data?.data?.toString())
-                    testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!))
+                    testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!)!!)
                 }
             }
         }

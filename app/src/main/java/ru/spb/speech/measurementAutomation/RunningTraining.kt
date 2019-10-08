@@ -41,9 +41,9 @@ class RunningTraining {
 
         for(singleFile in files){
             Log.d(LOG, "file: $singleFile")
-            if(singleFile.name.endsWith(".pdf")){
-                addPres(singleFile.name, singleFile.uri.toString())
-            } else if (singleFile.name.endsWith(".txt")) {
+            if(singleFile.name?.endsWith(".pdf")!!){
+                addPres(singleFile.name!!, singleFile.uri.toString())
+            } else if (singleFile.name?.endsWith(".txt")!!) {
                 try {
                     val stream = context.contentResolver.openInputStream(singleFile.uri)
 

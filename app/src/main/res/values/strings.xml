@@ -88,74 +88,37 @@
     <string name="pref_default_display_name">John Smith</string>
 
     <string name="pref_title_add_friends_to_messages">Желательный темп речи</string>
-    <string-array name="pref_example_list_titles">
-        <item>Медленный</item>
-        <item>Оптимальный</item>
-        <item>Быстрый</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_title_sync_frequency">Sync frequency</string>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
-    <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Уведомления</string>
     <string name="pref_header_deb_mode">Режим отладки</string>
     <string name="pref_title_new_message_notifications">Напоминание о тренировках</string>
-    <string name="pref_title_ringtone">Рингтон</string>
-    <string name="pref_ringtone_silent">Silent</string>
-    <string name="pref_title_vibrate">Вибрация</string>
-    <string name="notification_channel_name">Напоминания о тренировках</string>
-    <string name="message_enable_notifications">Необходимо включить уведомления в настройках</string>
 
+    <string name="pref_title_ringtone">Рингтон</string>
+
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Вибрация</string>
+
+    <string name="notification_channel_name">Напоминания о тренировках</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="message_enable_notifications">Необходимо включить уведомления в настройках</string>
     <string name="notifications_title">Вы давно не тренировались</string>
     <string name="notifications_text">Нажмите, чтобы перейти к тренировкам</string>
-
     <string name="words_count">Количество слов в минуту</string>
     <string name="slide_number">Номер слайда</string>
     <string name="name_of_presentation">Название презентации</string>
     <string name="min_per_sec">min:sec</string>
     <string name="training_completed">Тренировка завершена</string>
+
     <string name="training_statistics">Статистика тренировки</string>
     <string name="return_training">Повторить тренировку</string>
+
     <string name="message_no_presentation_name">Пожалуйста, введите имя презентации</string>
     <string name="DEBUG_SLIDES">debug_slides</string>
     <string name="audio_recording">audio recording</string>
@@ -163,8 +126,6 @@
     <string name="speech_speed">Комфортная скорость речи, слов в минуту</string>
     <string name="pref_default_speed">120</string>
     <string name="maximum_mark_for_training">(100)</string>
-
-    <!-- Strings related to speech recording and analysis -->
     <string name="start_recording">Начать тренировку</string>
     <string name="stop_recording">Закончить тренировку</string>
     <string name="voice_analysis_instructions">После нажатия кнопки \"Начать тренировку\" подождите,
@@ -177,6 +138,8 @@
     <string name="voice_analysis">Анализ речи</string>
     <string name="video_instruction">Видеоинструкция</string>
     <string name="feedback">Обратная связь</string>
+
+    <!-- Strings related to speech recording and analysis -->
     <string name="countdown_volume_levels">Уровни громкости при обратном отсчёте</string>
     <string name="maximal">Максимальный</string>
     <string name="minimal">Минимальный</string>
@@ -206,25 +169,22 @@
     <string name="overly_quiet_speech">Вы говорите слишком тихо.</string>
     <string name="good_volume">Вы достаточно громко говорите; отлично!</string>
     <string name="good_speech">Вы делаете достаточное количество пауз; отлично!</string>
-
     <string name="CURRENT_PRESENTATION_ID">current_presentation_id</string>
     <string name="NEW_PRESENTATION_URI">new_presentation_uri</string>
     <string name="CHANGE_FILE_FLAG">change_file_flag</string>
     <string name="CURRENT_TRAINING_ID">current_training_id</string>
-
-    <!-- For Change Presentation -->
     <string name="changePresentationFlag">change_presentation_flag</string>
     <string name="further">Далее</string>
     <string name="save">Сохранить</string>
+
     <string name="change_presentation_task">"Редактировать презентацию "</string>
     <string name="change">"Редактировать"</string>
     <string name="no">"Нет"</string>
     <string name="remove">"Удалить"</string>
+
+    <!-- For Change Presentation -->
     <string name="leave">"Оставить"</string>
     <string name="request_for_remove_presentation">"Вы действительно хотите удалить презентацию "</string>
-
-
-    <!-- Example settings for Shared Picture -->
     <string name="name_of_pres">Название презентации: </string>
     <string name="cur_training_title">Текущая тренировка: </string>
     <string name="date_and_time_to_start_training">Дата и время начала: </string>
@@ -232,13 +192,15 @@
     <string name="worked_out_a_slide">Проработано слайдов / всего слайдов: </string>
     <string name="time_limit_training">Ограничение времени на доклад: </string>
     <string name="num_of_words_spoken">Слов сказано: </string>
+
+
+    <!-- Example settings for Shared Picture -->
     <string name="training_duration">Длительность тренировки: </string>
     <string name="earnings_of_training">Оценка за тренировку: </string>
     <string name="exercise_time_factor">Попадание в регламент: </string>
     <string name="speech_speed_factor">Темп речи: </string>
     <string name="time_on_slides_factor">Время на слайдах: </string>
     <string name="share_of_pause">Доля пауз</string>
-
     <string name="training_statistic_title">Статистика тренировок: </string>
     <string name="date_of_first_training">Дата первой тренировки: </string>
     <string name="training_completeness">Тренировок полных / всего: </string>
@@ -246,47 +208,48 @@
     <string name="mean_deviation_from_the_limit">Среднее отклонение от ограничения: </string>
     <string name="max_training_time">Максимальное время тренировки: </string>
     <string name="min_training_time">Минимальное время тренировки: </string>
+
     <string name="average_time">Среднее время тренировки: </string>
     <string name="total_words_count">Сказано слов всего: </string>
     <string name="average_earning_1">Средняя / минимальная</string>
     <string name="average_earning_2">/ максимальная оценка: </string>
     <string name="scores">баллов</string>
-
     <string name="training_statistics_directory">training_statistics</string>
     <string name="training_files_directory">training_files</string>
     <string name="error_creating_text_file">Ошибка в создании текстового файла</string>
     <string name="successful_export_statistics">Статистика успешно сохранена в дирректорию</string>
     <string name="error_export_statistics">Ошибка при экспорте статистики</string>
-
     <string name="count_of_training">Вы тренировались</string>
     <string name="result_of_training">Результат тренировки:</string>
+
     <string name="record_of_training">--- Ваш результат на 100% далек от рекордного</string>
     <string name="stat_training_time">Статистика времени тренировок:</string>
     <string name="pie_chart_tittle">Наиболее популярные слова</string>
-
     <string name="error_accessing_the_cur_training_data">Ошибка в получении доступа к данным текущей тренировки</string>
     <string name="error_accessing_the_training_list">Ошибка в получении доступа к списку тренировок</string>
+
     <string name="error_accessing_training_slides">Ошибка в получении доступа слайдам тренировки</string>
     <string name="error_accessing_the_training_list_or_presentation_data">Ошибка в получении доступа к списку тренировок или presentationData</string>
-
-    <!-- Example settings for Tests -->
     <string name="test_time">00:30</string>
     <string name="pause">Пауза</string>
     <string name="continue_">Продолжить</string>
-    <string name="setNumber_function_information">Set the passed number into the NumberPicker</string>
 
+    <string name="setNumber_function_information">Set the passed number into the NumberPicker</string>
     <string name="you_dont_end_training">Вы не завершили данную тренировку.</string>
     <string name="continue_training">Продолжить тренировку</string>
     <string name="go_to_statistics">Перейти к статистике</string>
-    <string name="training_not_end">Тренировка не окончена !</string>
 
+    <!-- Example settings for Tests -->
+    <string name="training_not_end">Тренировка не окончена !</string>
     <string name="launchedFromHistoryActivityFlag">launched_from_history_activity_flag</string>
     <string name="slideDurationInSeconds">Длительность пауз/слайда (секунды)</string>
     <string name="slideDurationInSeconds_max1080">Длительность паузы/слайда\n(секунды)</string>
+
     <string name="presentationEditing">Редактирование презентации</string>
     <string name="isPresentationChangedFlag">isPresentationChanges</string>
     <string name="presentationPosition">presentationPosition</string>
     <string name="about">О программе</string>
+
     <string name="app_name">Тренажер Публичных Выступлений</string>
     <string name="version">Версия</string>
     <string name="developers">Разработчики:</string>
@@ -319,8 +282,7 @@
     <string name="pref_title_statistics_collection">Сбор статистики тренировок</string>
     <string name="try_again">Попробуйте снова</string>
     <string name="more_sign"><![CDATA[>]]></string>
-    <string name="percent_of_training"> %</string>
-
+    <string name="percent_of_training">% от тренировки</string>
     <string name="training_path">Записи тренировок</string>
     <string name="app_creation_date">2018-8-02</string>
     <string name="hello_presentation_name">hello_presentation</string>
@@ -329,6 +291,7 @@
     <string name="pause_time_title">Доля пауз:</string>
     <string name="word_frequency">Частота слов</string>
     <string name="word_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
+
     <string name="increase_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте повысить темп речи.</string>
     <string name="lower_the_pace_of_speech_recommendation">Частота слов Вашей презентации существенно отличается от рекомендуемой. Попробуйте понизить темп речи.</string>
     <string name="no_frequency_recommendation">delete_frequency_recommendation</string>
@@ -337,6 +300,51 @@
     <string name="frequency_title_two">При этом, частота слов на слайдах</string>
     <string name="lover_frequency_title">существенно ниже среднего значение. Рекомендуется повысить темп речи на указанных слайдах.</string>
     <string name="frequency_recommendation_key">frequencyRecommendation</string>
+    <string name="wizard_intro_message_1">Добро пожаловать в Тренажер публичных выступлений</string>
+    <string name="wizard_intro_message_2">Для того, чтобы начать пользоваться приложением, добавьте собственную презентацию в формате pdа</string>
+    <string name="wizard_intro_message_3">Затем, для начала тренировки, выберите добавленную презентацию из списка</string>
+    <string name="wizard_intro_message_4">Учитесь! Исследуйте! Совершенствуйте свою речь!</string>
+    <string name="wizard_intro_message_5">Если Вы здесь впервые, настоятельно рекомендуем пройти тестовую тренировку</string>
+    <string name="skip_wizard_intro_title">Пропустить</string>
+    <string name="test_training_title">Тестовая\nтренировка</string>
+    <string name="finish_wizard_intro">Закончить</string>
+    <string-array name="pref_example_list_titles">
+        <item>Медленный</item>
+        <item>Оптимальный</item>
+        <item>Быстрый</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="multi_select_list_preference_default_value" />
     <string name="test_folder_mode">Режим тестовой папки</string>
     <string name="deb_test_folder_inst">deb_test_folder_instance</string>
     <string name="parasites_word_recommendation">В речи замечены слова-паразиты. Несмотря на то, что некоторые из них могут служить в качестве логических связок, их чрезмерное использование не рекомендуется.\nСписок распознанных слов-паразитов: \n</string>

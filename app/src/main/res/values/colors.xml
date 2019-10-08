@@ -6,6 +6,8 @@
     <color name="black_35_alpha">#59000000</color>
     <color name="black_15_alpha">#39000000</color>
     <color name="activityBackground">#e6e6e6</color>
+    <color name="indicator_unselected">#4D000000</color>
+    <color name="black_trans80">#33000000</color>
     <color name="colorBlack">#000000</color>
     <color name="bottomSheetShadow">#4D000000</color>
     <color name="whiteColor">#FFFFFF</color>
@@ -15,4 +17,10 @@
     <color name="inTheAverageRange">#64dd17</color>
     <color name="fasterThanAverageRange">#d50000</color>
     <color name="slowerThanAverageRange">#ffff00</color>
+
+    <color name="purple">#AE9C27B0</color>
+    <color name="orange">#FF9800</color>
+    <color name="green">#4CAF50</color>
+    <color name="blue">#2196F3</color>
+    <color name="red">#D3E91E8E</color>
 </resources>
