@@ -37,8 +37,9 @@ class MyBottomSheetFragment: BottomSheetDialogFragment() {
 
         rollDownSheet = view?.findViewById(R.id.roll_up_sheet)
         rollDownSheet?.setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()?.
-                    remove(activity?.supportFragmentManager?.findFragmentById(R.id.root_view_training_statistics))?.commit()
+            activity?.supportFragmentManager?.findFragmentById(R.id.root_view_training_statistics)?.let { it1 ->
+                activity?.supportFragmentManager?.beginTransaction()?.remove(it1)?.commit()
+            }
             activity?.root_view_training_statistics?.setBackgroundColor(resources.getColor(R.color.whiteColor))
         }
 
