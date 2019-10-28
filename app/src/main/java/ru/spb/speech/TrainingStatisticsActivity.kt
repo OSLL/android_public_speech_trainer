@@ -180,6 +180,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
             intent.putExtra(getString(R.string.recommendation_key), recommendationString)
             intent.putExtra(getString(R.string.frequency_recommendation_key), frequencyRecommendationMessage)
             intent.putExtra(getString(R.string.parasites_recommendation_key), sendParasitesWordRecommendation())
+            intent.putExtra(getString(R.string.training_time_recommendation_key), sendAllPresTimeRecommendation())
 
             startActivity(intent)
         }
@@ -320,6 +321,16 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         } else {
             ""
         }
+    }
+
+    private fun sendAllPresTimeRecommendation(): String {
+        var recommendationString = getString(R.string.training_time_recommendation_start)
+        recommendationString += when {
+            trainingStatisticsData?.currentTrainingTime!! > presentationData?.timeLimit!! + presentationData?.timeLimit!!*0.3 -> " " + getString(R.string.training_time_recommendation_finish_1)
+            trainingStatisticsData?.currentTrainingTime!! < presentationData?.timeLimit!! - presentationData?.timeLimit!!*0.3 -> " " + getString(R.string.training_time_recommendation_finish_2)
+            else -> return ""
+        }
+        return recommendationString
     }
 
     private fun sendFrequencyWordRecommendation(): String{

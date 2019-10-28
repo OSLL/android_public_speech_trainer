@@ -32,6 +32,14 @@ class RecommendationActivity : AppCompatActivity() {
             scumWordsRecommendation.text = parasitesRecommendation
         }
 
+        val presTimeRecommendation = bundle.getString(getString(R.string.training_time_recommendation_key))
+        if (presTimeRecommendation == "") {
+            trainingTimeLabel.visibility = View.GONE
+            trainingTimeRecommendation.visibility = View.GONE
+        } else {
+            trainingTimeRecommendation.text = presTimeRecommendation
+        }
+
         backToStatistics.setOnClickListener {
             finish()
         }
