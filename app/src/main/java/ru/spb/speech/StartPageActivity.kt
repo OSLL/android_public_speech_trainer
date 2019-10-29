@@ -25,9 +25,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_start_page.*
 import ru.spb.speech.appSupport.*
 import ru.spb.speech.measurementAutomation.RunningTraining
-import ru.spb.speech.views.PresentationStartpageItemRow
 import java.io.File
-import java.lang.RuntimeException
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 // который запускается в виде тестовой звуковой дорожки.
@@ -85,7 +83,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                         .putBoolean(getString(R.string.useStatistics), true)
                         .apply()
             }
-            builder.setNegativeButton(getString(R.string.no_thnx)) { dialogInterface, i ->
+            builder.setNegativeButton(getString(R.string.no_thnx)) { dialogInterface, _ ->
                 sharedPref.edit()
                         .putBoolean(getString(R.string.useStatistics), false)
                         .apply()
@@ -196,7 +194,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        testFolderRunner?.onActivityResult(requestCode, resultCode, data)
+        testFolderRunner?.onActivityResult(requestCode, resultCode)
 
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {

@@ -41,9 +41,6 @@ class AddHelloPresentation (val context: Context) {
             return
         }
 
-        val presentationUri = presentationData?.stringUri
-
-
         pdfReader = PdfToBitmap(presentationData!!, context)
         presentationData?.pageCount = pdfReader.getPageCount()
         presentationData?.name = context.getString(R.string.hello_presentation_name)
