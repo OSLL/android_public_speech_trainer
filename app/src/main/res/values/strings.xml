@@ -349,6 +349,12 @@
     <string name="deb_test_folder_inst">deb_test_folder_instance</string>
     <string name="parasites_word_recommendation">В речи замечены слова-паразиты. Несмотря на то, что некоторые из них могут служить в качестве логических связок, их чрезмерное использование не рекомендуется.\nСписок распознанных слов-паразитов: \n</string>
     <string name="parasites_recommendation_key">parasites_recommendation_key</string>
+    <string name="training_time_recommendation_key">training_time_recommendation_key</string>
+    <string name="training_time_label">Время тренировки</string>
+    <string name="training_time_recommendation">Рекоммендации по времени доклада - заглушка</string>
+    <string name="training_time_recommendation_start">Время вашей презентации существенно отклоняется от указанного лимита. Постарайтесь</string>
+    <string name="training_time_recommendation_finish_1"> уменьшить время выступления.</string>
+    <string name="training_time_recommendation_finish_2"> увеличить время выступления.</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>
