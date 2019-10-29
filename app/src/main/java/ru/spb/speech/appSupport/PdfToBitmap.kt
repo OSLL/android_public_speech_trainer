@@ -125,7 +125,6 @@ class PdfToBitmap {
         val height = currentPage?.height
         if (width != null && height != null) {
             val defW = 397f
-            val defH = 298f
 
             val coeff = height.toFloat() / width.toFloat()
 

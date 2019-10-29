@@ -207,8 +207,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_debug_mode)
             setHasOptionsMenu(true)
-
-            val pref = findPreference("deb_mode")
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -131,7 +131,6 @@ class TrainingStatisticsActivity : AppCompatActivity() {
 
         averageTimePerSlide = currentTrainingTime.toDouble()/trainingSlidesList.size
         currentPresentationTimePerSlide = trainingStatisticsData?.averageTime!! / trainingSlidesList.size
-        var numbersOfSlidesWithError = ""
 
         if (abs(averageTimePerSlide - currentPresentationTimePerSlide) > trainingStatisticsData?.timePerSlideError!!){
             if (averageTimePerSlide > currentPresentationTimePerSlide){

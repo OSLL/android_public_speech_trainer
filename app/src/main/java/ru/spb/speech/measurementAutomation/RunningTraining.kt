@@ -1,7 +1,6 @@
 package ru.spb.speech.measurementAutomation
 
 import android.app.Activity
-import android.content.Intent
 import android.preference.PreferenceManager
 import android.support.v4.provider.DocumentFile
 import android.util.Log
@@ -74,7 +73,7 @@ class RunningTraining {
         }, requestCode)
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun onActivityResult(requestCode: Int, resultCode: Int) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode >= (presentationList?.size?:0)-1) {
                 setTestAudioMode(false)

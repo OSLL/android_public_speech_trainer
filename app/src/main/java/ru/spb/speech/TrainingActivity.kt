@@ -204,12 +204,6 @@ class TrainingActivity : AppCompatActivity() {
 
                     curSlide.text = "${nIndex + 2}/${presentationData?.pageCount}"
 
-                    val min = time_left.text.toString().substring(0, time_left.text.indexOf("m") - 1)
-                    val sec = time_left.text.toString().substring(
-                            time_left.text.indexOf(":") + 2,
-                            time_left.text.indexOf("s") - 1
-                    )
-
                     tsd.spentTimeInSec = timeOfSlide
 
                     tsd.knownWords = curText
