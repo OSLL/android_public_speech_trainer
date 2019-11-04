@@ -32,11 +32,17 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //Название презентации:
     val presName = presentationData?.name
 
+    //Количество слов-паразитов
+    private val countingParasitesHelper = CountingNumberOfWordsParasites()
+    val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
+    val listOfParasites = countingParasitesHelper.listOfParasiticWords(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
+
     //Критерии оценивания тренировки:
     var xExerciseTimeFactor = calculateX(presData?.timeLimit!!.toFloat())
     var ySpeechSpeedFactor = calculateY(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
     var zTimeOnSlidesFactor = calculateZ(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
     var pTimeOfPauseFactor = calculateP()
+    var uParasitesFactor = calculateU()
 
     //--------------------Текущая тренировка:---------------------//
 
@@ -119,11 +125,6 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 -1f
             }
         }
-
-    //Количество слов-паразитов
-    private val countingParasitesHelper = CountingNumberOfWordsParasites()
-    val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
-    val listOfParasites = countingParasitesHelper.listOfParasiticWords(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
     //Частота слов по слайдам в виде массива:
     val wordFrequencyPerSlide: Array<Float>
         get(){
@@ -417,7 +418,8 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     }
 
     private fun calcOfTheTrainingGrade() : Float{
-        return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor+pTimeOfPauseFactor)/context.resources.getDimension(R.dimen.number_of_factors))
+        return (context.resources.getInteger(R.integer.transfer_to_interest)*(xExerciseTimeFactor+ySpeechSpeedFactor+zTimeOnSlidesFactor+pTimeOfPauseFactor)/context.resources.getDimension(R.dimen.number_of_factors) +
+                context.resources.getInteger(R.integer.transfer_to_interest)/context.resources.getDimension(R.dimen.number_of_factors)/(uParasitesFactor))
     }
 
     private fun calculateX(x0ReportTimeLimit: Float) : Float{
@@ -501,6 +503,10 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
             else
                 pauseAssessment
         }
+    }
+
+    private fun calculateU(): Float {
+        return (countOfParasites + 1).toFloat()
     }
 
 }

@@ -437,6 +437,8 @@ class TrainingActivity : AppCompatActivity() {
             trainingData?.exerciseTimeFactorMarkX = (trainingStatisticsData.xExerciseTimeFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
             trainingData?.speechSpeedFactorMarkY = (trainingStatisticsData.ySpeechSpeedFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
             trainingData?.timeOnSlidesFactorMarkZ = (trainingStatisticsData.zTimeOnSlidesFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.timeOnSlidesFactorMarkP = (trainingStatisticsData.pTimeOfPauseFactor * this.resources.getInteger(R.integer.transfer_to_interest)/this.resources.getDimension(R.dimen.number_of_factors)).format(1).replace(",", ".")
+            trainingData?.timeOnSlidesFactorMarkU = (resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)/(trainingStatisticsData.uParasitesFactor)).format(1).replace(",", ".")
             trainingData?.trainingGrade = trainingStatisticsData.trainingGrade.format(resources.getInteger(R.integer.num_of_dec_in_the_training_score)).replace(",", ".")
 
             trainingData?.allRecognizedText = allRecognizedText

@@ -271,11 +271,12 @@
     <string name="pdfErrorMsg">File not in PDF format.\nPlease choose another.</string>
     <string name="audio_analysis">Анализ аудио</string>
     <string name="closeRatingInformation">Ок</string>
-    <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом четырёх критериев: </string>
+    <string name="assessment_for_training_title">Оценка за тренировку вычислиется с учетом пяти критериев: </string>
     <string name="regulations_description">Проверка успешности попадания в условия временного ограничения.\n\n\t\tdx - модуль разницы между временем тренировки и ограничением на доклад.\n\t\tx0 - ограничение на доклад. </string>
     <string name="pace_description">Скорость речи на каждом из слайдов.\n\n\t\tdy - дисперсия скорости речи на слайдах.</string>
     <string name="time_description">Длительность тренировки по слайдам.\n\n\t\tdz - дисперсия времени на слайдах.</string>
     <string name="pause_description">Доля пауз по слайдам. Учитывается при вычислении оценки, если длительность пауз больше половины тернировки.\n\n\t\tdp - доля пауз в процентах</string>
+    <string name="parasites_description">Чем больше слов паразитов в речи, тем меньше оценка за данный критерий.\n\n\t\tdu - количество слов паразитов.\n\t\t20 - максимальный балл за критерий</string>
     <string name="final_assessment_value">Финальным значение оценки является среднее арифметическое перечисленных критериев: \n</string>
     <string name="first_run">first run</string>
     <string name="pref_description_statistics_collection">Статистика неоходима в научных целях</string>
@@ -289,6 +290,7 @@
     <string name="hello_presentation_file">hello_presentation.pdf</string>
     <string name="recommendation_activity_label">Рекомендации к выступлению</string>
     <string name="pause_time_title">Доля пауз:</string>
+    <string name="parasites_title">Отсутствие слов паразитов:</string>
     <string name="word_frequency">Частота слов</string>
     <string name="word_frequency_recommendation">Рекомендации по частоте слов - заглушка</string>
 
@@ -355,6 +357,7 @@
     <string name="training_time_recommendation_start">Время вашей презентации существенно отклоняется от указанного лимита. Постарайтесь</string>
     <string name="training_time_recommendation_finish_1"> уменьшить время выступления.</string>
     <string name="training_time_recommendation_finish_2"> увеличить время выступления.</string>
+    <string name="parasites_factor_title">Отсутствие слов паразитов:</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>
