@@ -347,7 +347,9 @@
     <string-array name="multi_select_list_preference_default_value" />
     <string name="test_folder_mode">Режим тестовой папки</string>
     <string name="deb_test_folder_inst">deb_test_folder_instance</string>
-    <string name="parasites_word_recommendation">В речи замечены слова-паразиты. Несмотря на то, что некоторые из них могут служить в качестве логических связок, их чрезмерное использование не рекомендуется.\nСписок распознанных слов-паразитов: \n</string>
+    <string name="parasites_word_recommendation">В речи замечены слова-паразиты. Несмотря на то, что некоторые из них могут служить в качестве логических связок, их чрезмерное использование не рекомендуется.\n\n</string>
+    <string name="parasites_word_recommendation2">На следующих слайдах присутствие слов-паразитов заметно больше всего:</string>
+    <string name="parasites_word_recommendation3">Список распознанных слов-паразитов: \n</string>
     <string name="parasites_recommendation_key">parasites_recommendation_key</string>
     <string name="training_time_recommendation_key">training_time_recommendation_key</string>
     <string name="training_time_label">Время тренировки</string>
