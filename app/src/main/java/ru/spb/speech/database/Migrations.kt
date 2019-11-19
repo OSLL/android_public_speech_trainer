@@ -21,3 +21,10 @@ val MIGRATION_2_3 = object: Migration(2, 3) {
         database.execSQL("ALTER TABLE TrainingData ADD COLUMN timeOnSlidesFactorMarkZ STRING DEFAULT NULL")
     }
 }
+
+val MIGRATION_3_4 = object: Migration(3, 4) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE TrainingData ADD COLUMN timeOnSlidesFactorMarkP STRING DEFAULT NULL")
+        database.execSQL("ALTER TABLE TrainingData ADD COLUMN timeOnSlidesFactorMarkU STRING DEFAULT NULL")
+    }
+}
