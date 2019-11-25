@@ -292,6 +292,7 @@ class TrainingStatisticsActivity : AppCompatActivity() {
         y_speech_speed_factor.append(" ${((trainingStatisticsData?.ySpeechSpeedFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         z_time_on_slides_factor.append(" ${((trainingStatisticsData?.zTimeOnSlidesFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
         p_pause_time_factor.append(" ${((trainingStatisticsData?.pTimeOfPauseFactor)!! * resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)).format(1)}")
+        u_parasites_factor.append(" ${(resources.getInteger(R.integer.transfer_to_interest)/resources.getDimension(R.dimen.number_of_factors)/(trainingStatisticsData?.uParasitesFactor)!!).format(1)}")
 
         var countOfParasites = ((trainingStatisticsData!!.countOfParasites.toFloat() / trainingStatisticsData!!.curWordCount.toFloat())*resources.getInteger(R.integer.transfer_to_interest)).format(0)
         if(trainingStatisticsData!!.countOfParasites == 0L){
