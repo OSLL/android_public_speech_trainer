@@ -314,6 +314,19 @@ class TrainingStatisticsActivity : AppCompatActivity() {
     private fun sendParasitesWordRecommendation(): String {
         return if (!trainingStatisticsData?.listOfParasites.isNullOrEmpty()){
             var recommendationString = getString(R.string.parasites_word_recommendation)
+            val parasitesSlideArray = trainingStatisticsData?.arrayWithNumberOfParasitesSlides
+            if (parasitesSlideArray?.isNotEmpty()!!) {
+                recommendationString += getString(R.string.parasites_word_recommendation2) + " "
+                for (slide in 0 until parasitesSlideArray.size) {
+                    recommendationString += " ${parasitesSlideArray[slide]}"
+                    recommendationString += if (slide != parasitesSlideArray.size - 1) {
+                        ", "
+                    } else {
+                        "\n\n"
+                    }
+                }
+            }
+            recommendationString += getString(R.string.parasites_word_recommendation3)
             for (word in trainingStatisticsData?.listOfParasites!!) {
                 recommendationString += "\n$word"
             }

@@ -32,11 +32,6 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
     //Название презентации:
     val presName = presentationData?.name
 
-    //Количество слов-паразитов
-    private val countingParasitesHelper = CountingNumberOfWordsParasites()
-    val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
-    val listOfParasites = countingParasitesHelper.listOfParasiticWords(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
-
     //Критерии оценивания тренировки:
     var xExerciseTimeFactor = calculateX(presData?.timeLimit!!.toFloat())
     var ySpeechSpeedFactor = calculateY(trainingSlideDBHelper?.getAllSlidesForTraining(trainData!!))
@@ -125,6 +120,13 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
                 -1f
             }
         }
+
+    //Количество слов-паразитов
+    private val countingParasitesHelper = CountingNumberOfWordsParasites()
+    val countOfParasites = countingParasitesHelper.counting(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
+    val listOfParasites = countingParasitesHelper.listOfParasiticWords(trainData!!.allRecognizedText, context.resources.getStringArray(R.array.verbalGarbage))
+    val arrayWithNumberOfParasitesSlides = arrayWithParasitesSlides()
+
     //Частота слов по слайдам в виде массива:
     val wordFrequencyPerSlide: Array<Float>
         get(){
@@ -365,6 +367,34 @@ class TrainingStatisticsData (myContext: Context, presentationData: Presentation
         }
     }
 
+    private fun arrayWithParasitesSlides(): Array<Int> {
+        if(trainingSlidesList != null){
+            val finalMassOParasitesSlides = ArrayList<Int>()
+            for (slide in 0 until trainingSlidesList.count()){
+                val tempWords = trainingSlidesList[slide].knownWords?.split(" ")
+                var curParasitesCount = 0
+                if (tempWords != null) {
+                    for (i in tempWords){
+                        if (i != ""){
+                            for (word in context.resources.getStringArray(R.array.verbalGarbage)) {
+                                if (i in word) {
+                                    curParasitesCount += 1
+                                }
+                            }
+                        }
+                    }
+                    if (curParasitesCount > 10 ) {
+                        finalMassOParasitesSlides.add(slide+1)
+                    }
+                }
+            }
+            return finalMassOParasitesSlides.toTypedArray()
+        } else {
+            Log.d(APST_TAG + ACTIVITY_TRAINING_STATISTIC_NAME, context.getString(R.string.error_accessing_the_training_list))
+            return emptyArray()
+        }
+    }
+
     data class TimeOfTraining(val maxTime: Long, val minTime: Long, val averageExtraTime: Long, val averageTime: Long, val timePerSlideError: Double)
     private fun calcMinAndMaxTime(): TimeOfTraining {
         if (trainingList != null && presData != null && trainingCount != null){
@@ -523,7 +553,7 @@ class CountingNumberOfWordsParasites {
     }
 
     fun listOfParasiticWords(allRecognizedText: String, arrayWhereFind: Array<String>) : ArrayList<String> {
-        var parasiticWordsList = ArrayList<String>()
+        val parasiticWordsList = ArrayList<String>()
         val recText = allRecognizedText.toLowerCase()
         for (word in arrayWhereFind) {
             if (word in recText)
