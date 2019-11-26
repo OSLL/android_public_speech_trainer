@@ -12,12 +12,14 @@ import android.media.MediaPlayer
 import android.os.*
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_training.*
 import kotlinx.coroutines.*
@@ -90,9 +92,10 @@ class TrainingActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    private var audioAnalyzer: AudioAnalyzer? = null
+    var audioAnalyzer: AudioAnalyzer? = null
     private val audioAnalyzerController = MutableLiveData<AudioAnalyzer.AudioAnalyzerState>()
-            .apply { value = AudioAnalyzer.AudioAnalyzerState.START_RECORD }
+
+    var countdownDialogFragment: CountdownDialogFragment? = null
 
     companion object {
         private const val TEST_FOLDER_INST_FLAG = "test_folder_inst_flag"
@@ -114,11 +117,11 @@ class TrainingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_training)
         GlobalScope.launch {
             audioAnalyzer = AudioAnalyzer.getInstance(this@TrainingActivity, audioAnalyzerController)
+            initCountdown()
         }
 
-        isTestFolderInst = intent.getBooleanExtra(TEST_FOLDER_INST_FLAG, false)
 
-        progressHelper = ProgressHelper(this, training_activity_root_view, listOf())
+        isTestFolderInst = intent.getBooleanExtra(TEST_FOLDER_INST_FLAG, false)
 
         presentationDataDao = SpeechDataBase.getInstance(this)?.PresentationDataDao()
         val presId = intent.getIntExtra(getString(R.string.CURRENT_PRESENTATION_ID),-1)
@@ -151,15 +154,14 @@ class TrainingActivity : AppCompatActivity() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         isAudio = sharedPreferences.getBoolean(getString(R.string.deb_speech_audio_key), false)
 
-        addPermission()
-
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        mIntent = Intent(this@TrainingActivity,SpeechRecognitionService::class.java)
-
-        startRecognizingService()
-
         initFireBaseHelper()
 
+        curSlide.text = "1/${presentationData?.pageCount}"
+
+        addPermission()
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        mIntent = Intent(this@TrainingActivity,SpeechRecognitionService::class.java)
+        //startRecognizingService()
         if(!isAudio!!) {
             muteSound() // mute для того, чтобы не было слышно звуков speech recognizer
         } else {
@@ -177,8 +179,11 @@ class TrainingActivity : AppCompatActivity() {
             pause_button_training_activity.isEnabled = false
             pause_button_training_activity.alpha = 0.3f
         }
+//        mainTimer = timer(time * 1000, 1000)
+//        mainTimer?.start()
 
-        curSlide.text = "1/${presentationData?.pageCount}"
+        progressHelper = ProgressHelper(this, training_activity_root_view, listOf())
+
         next.setOnClickListener {
             audioAnalyzerController.value = AudioAnalyzer.AudioAnalyzerState.NEXT_SLIDE
             next.isEnabled = false
@@ -333,8 +338,41 @@ class TrainingActivity : AppCompatActivity() {
                 pause_button_training_activity.alpha = 1f
             }, 2000)
         }
+    }
+
+    fun timer(millisInFuture: Long,
+                      countDownInterval: Long,
+                      textView: TextView): CountDownTimer {
+        return object: CountDownTimer(millisInFuture, countDownInterval) {
+            override fun onTick(millisUntilFinished: Long) {
+                textView.text = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
+            }
+
+            override fun onFinish() {
+                initTraining()
+                countdownDialogFragment?.continueRecording = false
+                countdownDialogFragment?.dismiss()
+            }
+        }
+    }
+
+    fun initTraining(){
+        audioAnalyzerController.apply { value = AudioAnalyzer.AudioAnalyzerState.START_RECORD }
+        startRecognizingService()
         mainTimer = timer(time * 1000, 1000)
         mainTimer?.start()
+    }
+
+
+    private fun initCountdown() {
+        countdownDialogFragment = CountdownDialogFragment()
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        transaction
+                .add(android.R.id.content, countdownDialogFragment!!)
+                .addToBackStack(null)
+                .commit()
     }
 
     private  fun muteSound(){

@@ -1,14 +1,19 @@
 package ru.spb.speech.appSupport
 
 import android.app.Activity
+import android.app.Dialog
 import android.arch.lifecycle.MutableLiveData
+import android.content.Intent
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.os.Environment
-import android.os.Parcelable
-import android.os.Process
+import android.os.*
+import android.support.v4.app.DialogFragment
+import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import android.view.*
+import android.widget.TextView
 import kotlinx.android.parcel.Parcelize
 import ru.spb.speech.*
 import java.io.*
@@ -23,6 +28,7 @@ import kotlin.math.log10
 
 const val AUDIO_RECORDING = "APST.ANALYSIS_ACTIVITY"
 const val RECORDING_FOLDER = "public_speech_trainer/recordings" // temporary name?
+const val POST_COUNTDOWN_ACTION = "ru.spb.speech.ACTION_POST_COUNTDOWN"
 const val SAMPLING_RATE = 44100
 
 class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<AudioAnalyzerState>? = null) {
@@ -117,6 +123,43 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
         return if (amplitude > 0) 10 * log10(amplitude) else 0.0
     }
 
+    fun recordCountdownAudio(continueCondition: () -> Boolean) {
+        thread {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
+
+            countdownRecord.startRecording()
+            Log.i(AUDIO_RECORDING, "started countdown audio recording")
+
+            while (continueCondition.invoke()) {
+                val shortsRead = countdownRecord.read(audioBuffer, 0, audioBuffer.size)
+                countdownVolumesList.add(calculateVolume(shortsRead))
+            }
+
+            countdownVolumesList.sort()
+
+            val postCountdownIntent = Intent()
+            postCountdownIntent.action = POST_COUNTDOWN_ACTION
+            sendBroadcastIntent(postCountdownIntent)
+
+            countdownRecord.stop()
+            countdownRecord.release()
+
+            val volumeLevels = getVolumeLevels(countdownVolumesList)
+            Log.d(AUDIO_RECORDING, "silence min level: ${volumeLevels.first}")
+            Log.d(AUDIO_RECORDING, "silence max level: ${volumeLevels.second}")
+            Log.d(AUDIO_RECORDING, "silence average level: ${volumeLevels.third}")
+
+            Log.i(AUDIO_RECORDING, "finished countdown audio recording")
+        }
+    }
+
+    private fun sendBroadcastIntent(intent: Intent) {
+        val context = activity.applicationContext
+        if (context != null) {
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+        }
+    }
+
     private fun startRecordSpeechAudio() {
         thread {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
@@ -135,7 +178,8 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
 
             var slideNumber = 1
 
-            silenceLevel = 50.0
+            silenceLevel = getAudioVolumeLevel(getAverageCountdownVolumeLevel(),
+                    getMaximalCountdownVolumeLevel())
 
             while (this.continueCondition) {
                 val shortsRead = speechRecord.read(audioBuffer, 0, audioBuffer.size)
@@ -386,6 +430,60 @@ fun List<SlideInfo>.toAllStatisticsInfo(): SlideInfo {
             silencePercentage,
             pauseAverageLength/ count,
             longPausesAmount)
+}
+
+class CountdownDialogFragment : DialogFragment() {
+    var continueRecording = true
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        return dialog
+    }
+
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.countdown_dialog, container, false)
+
+        // disabling the back button during the countdown
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.setOnKeyListener { _, i, keyEvent ->
+            if (keyEvent.action == KeyEvent.ACTION_DOWN) {
+                if (i == KeyEvent.KEYCODE_BACK) {
+                    return@setOnKeyListener true
+                }
+            }
+            return@setOnKeyListener false
+        }
+
+        val activity = activity as? TrainingActivity
+                ?: return null
+        val audioAnalyzer = activity.audioAnalyzer
+        audioAnalyzer?.recordCountdownAudio { continueRecording }
+
+        val countdownTextView = view.findViewById<TextView>(R.id.countdown_text_view)
+        activity.timer(5000, 1000, countdownTextView).start()
+        return view
+    }
+
+    private fun timer(millisInFuture: Long,
+                      countDownInterval: Long,
+                      textView: TextView): CountDownTimer {
+        return object: CountDownTimer(millisInFuture, countDownInterval) {
+            override fun onTick(millisUntilFinished: Long) {
+                textView.text = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
+            }
+
+            override fun onFinish() {
+                continueRecording = false
+                dismiss()
+            }
+        }
+    }
 }
 
 fun formatTime(timeInMillis: Long): String {
