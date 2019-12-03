@@ -360,6 +360,7 @@
     <string name="training_time_recommendation_finish_1"> уменьшить время выступления.</string>
     <string name="training_time_recommendation_finish_2"> увеличить время выступления.</string>
     <string name="parasites_factor_title">Отсутствие слов паразитов:</string>
+    <string name="silence_warning">Калибровка уровня шума в помещении,\n сохраняйте тишину</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>
