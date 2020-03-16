@@ -9,6 +9,7 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -31,8 +32,8 @@ const val SAMPLING_RATE = 44100
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val REQUEST_CODE_SIGN_IN = 0
-        val REQUEST_CODE_CREATOR = 2
+        const val REQUEST_CODE_SIGN_IN = 0
+        const val REQUEST_CODE_CREATOR = 2
     }
 
     private var audioRecord: AudioRecord
@@ -40,10 +41,10 @@ class MainActivity : AppCompatActivity() {
     private var byteArrayOutputStream = ByteArrayOutputStream()
 
     private var isRecording = false
+    private var isRegistered = false
 
-    private var mGoogleSignInClient: GoogleSignInClient? = null
-    private var mDriveClient: DriveClient? = null
-    private var mDriveResourceClient: DriveResourceClient? = null
+    private lateinit var mDriveClient: DriveClient
+    private lateinit var mDriveResourceClient: DriveResourceClient
 
     private val TAG = "mytag"
 
@@ -82,8 +83,8 @@ class MainActivity : AppCompatActivity() {
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(Drive.SCOPE_FILE)
                 .build()
-        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
-        startActivityForResult(mGoogleSignInClient?.getSignInIntent(), REQUEST_CODE_SIGN_IN)
+        val mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
+        startActivityForResult(mGoogleSignInClient.signInIntent, REQUEST_CODE_SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -91,10 +92,12 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             REQUEST_CODE_SIGN_IN -> {
                 Log.i(TAG, "Sign in request code")
-                if (resultCode == Activity.RESULT_OK) {
+                val signedInAccount = GoogleSignIn.getLastSignedInAccount(this)
+                if (resultCode == Activity.RESULT_OK && signedInAccount != null) {
                     Log.i(TAG, "Signed in successfully.")
-                    mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this)!!)
-                    mDriveResourceClient = Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this)!!)
+                    mDriveClient = Drive.getDriveClient(this, signedInAccount)
+                    mDriveResourceClient = Drive.getDriveResourceClient(this, signedInAccount)
+                    isRegistered = true
                 }
             }
             REQUEST_CODE_CREATOR -> {
@@ -119,12 +122,15 @@ class MainActivity : AppCompatActivity() {
                 byteArrayOutputStream.write(bytes)
             }
 
-            saveToDrive(byteArrayOutputStream)
+            if (isRegistered)
+                saveToDrive(byteArrayOutputStream)
+            else
+                Toast.makeText(this, "Not logged in", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun saveToDrive(byteArrayOutputStream: ByteArrayOutputStream) {
-        mDriveResourceClient!!
+        mDriveResourceClient
                 .createContents()
                 .continueWithTask { task ->
                     val os = task.result!!.outputStream
@@ -148,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                                     .setInitialDriveContents(task.result!!)
                                     .build()
 
-                    mDriveClient!!
+                    mDriveClient
                             .newCreateFileActivityIntentSender(createFileActivityOptions)
                             .continueWith { task ->
                                 startIntentSenderForResult(task.result, REQUEST_CODE_CREATOR, null, 0, 0, 0)
