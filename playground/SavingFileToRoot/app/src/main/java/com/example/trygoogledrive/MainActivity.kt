@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val REQUEST_CODE_SIGN_IN = 0
-        val REQUEST_CODE_OPEN_DOCUMENT = 1
-        val REQUEST_CODE_PERMISSION_INTERNET = 3
     }
 
     private var audioRecord: AudioRecord
@@ -81,11 +79,6 @@ class MainActivity : AppCompatActivity() {
         stop.setOnClickListener {
             isRecording = false
         }
-
-        set.setOnClickListener {
-            requestSignIn()
-        }
-
 
     }
 
@@ -168,19 +161,6 @@ class MainActivity : AppCompatActivity() {
             driveService.files().update(resultFile.id, metadata, mediaContent).execute()
 
             Log.d(TAG, "File saved")
-        }
-    }
-
-    private fun openFilePicker() {
-        if (mDriveService != null) {
-            Log.d(TAG, "Opening file picker.")
-
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "text/plain"
-
-            // The result of the SAF Intent is handled in onActivityResult.
-            startActivityForResult(intent, REQUEST_CODE_OPEN_DOCUMENT)
         }
     }
 }
