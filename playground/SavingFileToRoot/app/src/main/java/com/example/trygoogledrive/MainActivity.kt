@@ -1,16 +1,13 @@
 package com.example.trygoogledrive
 
-import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
-import androidx.core.app.ActivityCompat
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -39,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val REQUEST_CODE_SIGN_IN = 0
+
+        var folderToSave: String = "root"
     }
 
     private var audioRecord: AudioRecord
@@ -80,6 +79,9 @@ class MainActivity : AppCompatActivity() {
             isRecording = false
         }
 
+        set.setOnClickListener {
+            openFolderPicker()
+        }
     }
 
     private fun startRecording() {
@@ -161,6 +163,14 @@ class MainActivity : AppCompatActivity() {
             driveService.files().update(resultFile.id, metadata, mediaContent).execute()
 
             Log.d(TAG, "File saved")
+        }
+    }
+
+    private fun openFolderPicker() {
+        val driveService = mDriveService
+        if (driveService != null) {
+            var dial = FolderPickerDialog(driveService)
+            dial.show(supportFragmentManager, "dial")
         }
     }
 }
