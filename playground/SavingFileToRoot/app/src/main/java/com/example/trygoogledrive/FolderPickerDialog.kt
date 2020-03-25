@@ -18,7 +18,6 @@ import kotlin.collections.ArrayList
 
 class FolderPickerDialog (val driveServise: Drive) : DialogFragment() {
 
-    private var updateChildren = false
     private val TAG = "mytag"
 
     private var folderId: String = "root"
@@ -40,7 +39,7 @@ class FolderPickerDialog (val driveServise: Drive) : DialogFragment() {
 
             current_folder_text.text = "Мой диск"
 
-            Log.d(TAG, "Start getting children thread")
+            Log.d(TAG, "Start getting children")
             var result: FileList? = null
             try {
                 result = driveServise.files().list()
@@ -49,20 +48,18 @@ class FolderPickerDialog (val driveServise: Drive) : DialogFragment() {
                         .execute()
             } catch (e: Exception) {
                 Log.e(TAG, "Error while requesting from drive", e)
-                updateChildren = true
+//                dismiss()
             }
 
             Log.d(TAG, "Got answer from drive")
 
             if (result == null) {
                 Log.d(TAG, "Got null answer")
-                updateChildren = true
             } else {
 
                 for (file in result.files) {
                     arrayOfChildren.add(file.id)
                 }
-                updateChildren = true
                 Log.d(TAG, "Update children array")
             }
 
