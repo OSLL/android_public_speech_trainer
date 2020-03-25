@@ -37,14 +37,14 @@
         android:text="Стоп"
         />
 
-    <Button
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/set"
-        android:text="Выбор"
+        android:id="@+id/fileId_editText"
         app:layout_constraintBottom_toTopOf="@id/hw"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:hint="Введите id папки google-диска"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

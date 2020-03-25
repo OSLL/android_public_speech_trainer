@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val REQUEST_CODE_SIGN_IN = 0
 
-        var folderToSave: String = "root"
+//        var folderToSave: String = "root"
     }
 
     private var audioRecord: AudioRecord
@@ -52,14 +52,14 @@ class MainActivity : AppCompatActivity() {
 
     init {
         var bufferSize = AudioRecord.getMinBufferSize(
-                SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
+            SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
             bufferSize = SAMPLING_RATE * 2
         }
 
         audioRecord = AudioRecord(
-                MediaRecorder.AudioSource.MIC, SAMPLING_RATE,
-                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize)
+            MediaRecorder.AudioSource.MIC, SAMPLING_RATE,
+            AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize)
 
         audioBuffer = ShortArray(bufferSize)
     }
@@ -77,10 +77,6 @@ class MainActivity : AppCompatActivity() {
 
         stop.setOnClickListener {
             isRecording = false
-        }
-
-        set.setOnClickListener {
-            openFolderPicker()
         }
     }
 
@@ -108,9 +104,9 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Requesting sign-in")
 
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestScopes(Scope(DriveScopes.DRIVE_FILE))
-                .build()
+            .requestEmail()
+            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+            .build()
         val client = GoogleSignIn.getClient(this, signInOptions)
 
         // The result of the sign-in Intent is handled in onActivityResult.
@@ -122,22 +118,22 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             REQUEST_CODE_SIGN_IN -> {
                 GoogleSignIn.getSignedInAccountFromIntent(data)
-                        .addOnSuccessListener { googleAccount ->
-                            Log.d(TAG, "Signed in as " + googleAccount.email!!)
+                    .addOnSuccessListener { googleAccount ->
+                        Log.d(TAG, "Signed in as " + googleAccount.email!!)
 
-                            val credential = usingOAuth2(
-                                    this, Collections.singleton(DriveScopes.DRIVE_FILE))
-                            credential.setSelectedAccount(googleAccount.account)
-                            val googleDriveService = Drive.Builder(
-                                    AndroidHttp.newCompatibleTransport(),
-                                    GsonFactory(),
-                                    credential)
-                                    .setApplicationName("Drive API Migration")
-                                    .build()
+                        val credential = usingOAuth2(
+                            this, Collections.singleton(DriveScopes.DRIVE_FILE))
+                        credential.setSelectedAccount(googleAccount.account)
+                        val googleDriveService = Drive.Builder(
+                            AndroidHttp.newCompatibleTransport(),
+                            GsonFactory(),
+                            credential)
+                            .setApplicationName("Drive API Migration")
+                            .build()
 
-                            mDriveService = googleDriveService
-                        }
-                        .addOnFailureListener { exception -> Log.e(TAG, "Unable to sign in.", exception) }
+                        mDriveService = googleDriveService
+                    }
+                    .addOnFailureListener { exception -> Log.e(TAG, "Unable to sign in.", exception) }
             }
         }
     }
@@ -147,9 +143,9 @@ class MainActivity : AppCompatActivity() {
             val driveService = (mDriveService as Drive)
 
             var metadata = File()
-                    .setParents(Collections.singletonList("root"))
-                    .setMimeType("audio/vnd.wave")
-                    .setName("My Recording.wav")
+                .setParents(Collections.singletonList(fileId_editText.text.toString()))
+                .setMimeType("audio/vnd.wave")
+                .setName("My Recording.wav")
 
             val resultFile = driveService.files().create(metadata).execute()
             if (resultFile == null) {
@@ -166,11 +162,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openFolderPicker() {
-        val driveService = mDriveService
-        if (driveService != null) {
-            var dial = FolderPickerDialog(driveService)
-            dial.show(supportFragmentManager, "dial")
-        }
-    }
+//    private fun openFolderPicker() {
+//        val driveService = mDriveService
+//        if (driveService != null) {
+//            var dial = FolderPickerDialog(driveService)
+//            dial.show(supportFragmentManager, "dial")
+//        }
+//    }
 }

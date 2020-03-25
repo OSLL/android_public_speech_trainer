@@ -1,3 +1,6 @@
+/*
+Dialog that tries to choose drive folder by hierarchy
+
 package com.example.trygoogledrive
 
 import android.os.Bundle
@@ -75,3 +78,5 @@ class FolderPickerDialog (val driveServise: Drive) : DialogFragment() {
 
     }
 }
+*/
+
