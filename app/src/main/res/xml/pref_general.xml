@@ -47,5 +47,12 @@
         android:singleLine="true"
         android:title="@string/speech_speed" />
 
+    <EditTextPreference
+        android:defaultValue="root"
+        android:inputType="text"
+        android:key="drive_folder_key"
+        android:title="@string/drive_folder_to_save" />
+
+
 
 </PreferenceScreen>
