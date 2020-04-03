@@ -42,7 +42,7 @@ const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 
 const val SHARED_PREFERENCES_FILE_NAME = "ru.spb.speech.prefs"
 
-const val DRIVE_TAG = "GOOGLE_DRIVE_TAG"
+const val DRIVE_TAG = "DRIVE.TRAINING_ACTIVITY"
 
 class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     companion object {
