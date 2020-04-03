@@ -103,7 +103,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference("example_list"))
             bindPreferenceSummaryToValue(findPreference(getString(R.string.speed_key)))
             bindPreferenceSummaryToValue(findPreference("statistics_collection"))
-            bindPreferenceSummaryToValue(findPreference("drive_folder_key"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
