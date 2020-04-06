@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.*
 import android.widget.TextView
+import android.widget.Toast
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.services.drive.Drive
 import kotlinx.android.parcel.Parcelize
@@ -404,7 +405,11 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
             val parentId = PreferenceManager
                     .getDefaultSharedPreferences(activity)
                     .getString("drive_folder_key", "root")
-                    .toString()
+            if (parentId == null) {
+                Log.e(DRIVE_TAG, "Error while getting folder id from preferences")
+                Toast.makeText(activity, "Ошибка при получении ID папки Google-диска из настроек",
+                        Toast.LENGTH_SHORT).show()
+            }
 
             var metadata = com.google.api.services.drive.model.File()
                     .setParents(Collections.singletonList(parentId))
