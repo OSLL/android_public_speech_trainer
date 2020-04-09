@@ -30,6 +30,7 @@ class GoogleDriveHelper {
     }
 
     var driveService: Drive? = null
+    var accountName = "Unnamed"
 
     fun requestSignIn(activity: Activity) {
         Log.d(DRIVE_TAG, "Requesting sign-in")
@@ -51,7 +52,15 @@ class GoogleDriveHelper {
     fun heldSignInResult(activity: Activity, data: Intent?) {
         GoogleSignIn.getSignedInAccountFromIntent(data)
                 .addOnSuccessListener { googleAccount ->
-                    Log.d(DRIVE_TAG, "Signed in as " + googleAccount.email!!)
+                    val name = googleAccount.displayName
+                    if (name != null)
+                        accountName = name
+                    else {
+                        accountName = "Unnamed"
+                        Log.e(DRIVE_TAG, "Failed getting google account name")
+                    }
+
+                    Log.d(DRIVE_TAG, "Signed in as $name")
 
                     val credential = GoogleAccountCredential.usingOAuth2(
                             activity, Collections.singleton(DriveScopes.DRIVE_FILE))
