@@ -15,6 +15,7 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -102,10 +103,13 @@ class GoogleDriveHelper {
                         Toast.LENGTH_SHORT).show()
             }
 
+            val fileName = "$accountName " +
+                    SimpleDateFormat.getDateTimeInstance().format(Date()) + ".wav"
+
             var metadata = com.google.api.services.drive.model.File()
                     .setParents(Collections.singletonList(parentId))
                     .setMimeType("audio/vnd.wave")
-                    .setName("My Recording.wav")
+                    .setName(fileName)
 
             val resultFile = driveService.files().create(metadata).execute()
             if (resultFile == null) {
@@ -115,7 +119,7 @@ class GoogleDriveHelper {
                 return
             }
 
-            metadata = com.google.api.services.drive.model.File().setName("My Recording.wav")
+            metadata = com.google.api.services.drive.model.File().setName(fileName)
 
             val mediaContent = ByteArrayContent.fromString("audio/vnd.wave", byteArrayOutputStream.toString())
             driveService.files().update(resultFile.id, metadata, mediaContent).execute()
