@@ -104,7 +104,7 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
 
         val driveFolderId = PreferenceManager
                 .getDefaultSharedPreferences(this)
-                .getString("drive_folder_key", "")
+                .getString(getString(R.string.drive_folder_key), "")
         if (driveFolderId != null && driveFolderId != "")
             GoogleDriveHelper.getInstance().requestSignIn(this)
     }

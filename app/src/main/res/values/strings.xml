@@ -362,6 +362,7 @@
     <string name="parasites_factor_title">Отсутствие слов паразитов:</string>
     <string name="silence_warning">Калибровка уровня шума в помещении,\n сохраняйте тишину</string>
     <string name="drive_folder_to_save">Папка для сохранения на Google-диск</string>
+    <string name="drive_folder_key">drive_folder_key</string>
     <string-array name="prepositionsAndConjunctions">
         <item>а именно</item>
         <item>а не то</item>

@@ -14,6 +14,7 @@ import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
+import ru.spb.speech.R
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -96,7 +97,7 @@ class GoogleDriveHelper {
 
             val parentId = PreferenceManager
                     .getDefaultSharedPreferences(activity)
-                    .getString("drive_folder_key", "root")
+                    .getString(activity.getString(R.string.drive_folder_key), "root")
             if (parentId == null) {
                 Log.e(DRIVE_TAG, "Error while getting folder id from preferences")
                 Toast.makeText(activity, "Ошибка при получении ID папки Google-диска из настроек",

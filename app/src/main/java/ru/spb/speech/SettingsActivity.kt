@@ -316,7 +316,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                                 .getString(preference.key, ""))
             }
 
-            if (preference.key == "drive_folder_key") {
+            if (preference.key == preference.context.getString(R.string.drive_folder_key)) {
 
             }
         }
