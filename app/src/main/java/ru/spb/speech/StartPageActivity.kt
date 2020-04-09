@@ -18,14 +18,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.Scope
-import com.google.api.client.extensions.android.http.AndroidHttp
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.Drive
-import com.google.api.services.drive.DriveScopes
 import ru.spb.speech.database.interfaces.PresentationDataDao
 import ru.spb.speech.database.SpeechDataBase
 import com.xwray.groupie.GroupAdapter
@@ -34,7 +26,6 @@ import kotlinx.android.synthetic.main.activity_start_page.*
 import ru.spb.speech.appSupport.*
 import ru.spb.speech.measurementAutomation.RunningTraining
 import java.io.File
-import java.util.*
 import kotlin.collections.ArrayList
 
 const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
@@ -42,17 +33,11 @@ const val debugSpeechAudio = R.raw.assembler // Путь к файлу в raw,
 
 const val SHARED_PREFERENCES_FILE_NAME = "ru.spb.speech.prefs"
 
-const val DRIVE_TAG = "GOOGLE_DRIVE_TAG"
-
 class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
     companion object {
         private const val testPresentationFolderFlag = false
 
         private const val OPEN_FOLDER_REQ_CODE = 133
-
-        private const val REQUEST_CODE_SIGN_IN = 0
-
-        var driveService: Drive? = null
     }
     private var testFolderRunner: RunningTraining? = null
 
@@ -117,24 +102,11 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
             startActivity(intent)
         }
 
-        requestSignIn()
-    }
-
-    private fun requestSignIn() {
-        Log.d(DRIVE_TAG, "Requesting sign-in")
-
-        if (driveService == null) {
-            val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestEmail()
-                    .requestScopes(Scope(DriveScopes.DRIVE_FILE))
-                    .build()
-            val client = GoogleSignIn.getClient(this, signInOptions)
-
-            // The result of the sign-in Intent is handled in onActivityResult.
-            startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
-        } else {
-            Log.d(DRIVE_TAG, "Already signed in")
-        }
+        val driveFolderId = PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getString("drive_folder_key", "")
+        if (driveFolderId != null && driveFolderId != "")
+            GoogleDriveHelper.getInstance().requestSignIn(this)
     }
 
     override fun onStart() {
@@ -250,26 +222,8 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                     testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!)!!)
                 }
 
-                REQUEST_CODE_SIGN_IN -> {
-                    GoogleSignIn.getSignedInAccountFromIntent(data)
-                            .addOnSuccessListener { googleAccount ->
-                                Log.d(DRIVE_TAG, "Signed in as " + googleAccount.email!!)
-
-                                val credential = GoogleAccountCredential.usingOAuth2(
-                                        this, Collections.singleton(DriveScopes.DRIVE_FILE))
-                                credential.setSelectedAccount(googleAccount.account)
-                                val googleDriveService = Drive.Builder(
-                                        AndroidHttp.newCompatibleTransport(),
-                                        GsonFactory(),
-                                        credential)
-                                        .setApplicationName("Drive API Migration")
-                                        .build()
-
-                                driveService = googleDriveService
-                            }
-                            .addOnFailureListener { exception ->
-                                Log.e(DRIVE_TAG, "Unable to sign in.", exception)
-                            }
+                GoogleDriveHelper.REQUEST_CODE_SIGN_IN -> {
+                    GoogleDriveHelper.getInstance().heldSignInResult(this, data)
                 }
             }
         }

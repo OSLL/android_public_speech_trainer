@@ -8,16 +8,12 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.*
-import android.preference.PreferenceManager
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.*
 import android.widget.TextView
-import android.widget.Toast
-import com.google.api.client.http.ByteArrayContent
-import com.google.api.services.drive.Drive
 import kotlinx.android.parcel.Parcelize
 import ru.spb.speech.*
 import java.io.*
@@ -260,7 +256,7 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
 
             logStatistics()
             saveFile(byteArrayOutputStream)
-            saveFileToDrive(byteArrayOutputStream)
+            GoogleDriveHelper.getInstance().saveFileToDrive(activity, byteArrayOutputStream)
         }
     }
 
@@ -395,39 +391,6 @@ class AudioAnalyzer(private val activity: Activity, controller: MutableLiveData<
             Log.i(AUDIO_RECORDING, "audio file name: ${audioFile.name}")
         } catch (e: IOException) {
             Log.e("error", "unable to create audio file for recording")
-        }
-    }
-
-    private fun saveFileToDrive(byteArrayOutputStream: ByteArrayOutputStream) {
-        if (StartPageActivity.driveService != null) {
-            val driveService = (StartPageActivity.driveService as Drive)
-
-            val parentId = PreferenceManager
-                    .getDefaultSharedPreferences(activity)
-                    .getString("drive_folder_key", "root")
-            if (parentId == null) {
-                Log.e(DRIVE_TAG, "Error while getting folder id from preferences")
-                Toast.makeText(activity, "Ошибка при получении ID папки Google-диска из настроек",
-                        Toast.LENGTH_SHORT).show()
-            }
-
-            var metadata = com.google.api.services.drive.model.File()
-                    .setParents(Collections.singletonList(parentId))
-                    .setMimeType("audio/vnd.wave")
-                    .setName("My Recording.wav")
-
-            val resultFile = driveService.files().create(metadata).execute()
-            if (resultFile == null) {
-                Log.e(DRIVE_TAG, "Null result when creating file")
-                return
-            }
-
-            metadata = com.google.api.services.drive.model.File().setName("My Recording.wav")
-
-            val mediaContent = ByteArrayContent.fromString("audio/vnd.wave", byteArrayOutputStream.toString())
-            driveService.files().update(resultFile.id, metadata, mediaContent).execute()
-
-            Log.d(DRIVE_TAG, "File saved")
         }
     }
 

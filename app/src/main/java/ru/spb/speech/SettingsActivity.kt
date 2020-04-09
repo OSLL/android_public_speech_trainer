@@ -316,6 +316,11 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                                 .getString(preference.key, ""))
             }
 
+            if (preference.key == "drive_folder_key") {
+
+            }
         }
     }
+
+
 }
