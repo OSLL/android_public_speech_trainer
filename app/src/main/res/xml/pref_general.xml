@@ -50,7 +50,7 @@
     <EditTextPreference
         android:defaultValue="root"
         android:inputType="text"
-        android:key="drive_folder_key"
+        android:key="@string/drive_folder_key"
         android:title="@string/drive_folder_to_save" />
 
 
