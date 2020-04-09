@@ -42,7 +42,7 @@ class GoogleDriveHelper {
                     .build()
             val client = GoogleSignIn.getClient(activity, signInOptions)
 
-            // The result of the sign-in Intent is handled in onActivityResult.
+            Log.d(DRIVE_TAG, "Starting activity for result")
             activity.startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
         } else {
             Log.d(DRIVE_TAG, "Already signed in")
@@ -52,15 +52,22 @@ class GoogleDriveHelper {
     fun heldSignInResult(activity: Activity, data: Intent?) {
         GoogleSignIn.getSignedInAccountFromIntent(data)
                 .addOnSuccessListener { googleAccount ->
+                    Log.d(DRIVE_TAG, "Logged in successfully")
+
                     val name = googleAccount.displayName
                     if (name != null)
                         accountName = name
                     else {
                         accountName = "Unnamed"
                         Log.e(DRIVE_TAG, "Failed getting google account name")
+                        Toast.makeText(activity,
+                                "Ошибка при получении имени из Google-аккаунта",
+                                Toast.LENGTH_SHORT).show()
                     }
 
                     Log.d(DRIVE_TAG, "Signed in as $name")
+                    Toast.makeText(activity, "Вы вошли в Google как $name", Toast.LENGTH_SHORT)
+                            .show()
 
                     val credential = GoogleAccountCredential.usingOAuth2(
                             activity, Collections.singleton(DriveScopes.DRIVE_FILE))
@@ -73,9 +80,12 @@ class GoogleDriveHelper {
                             .build()
 
                     driveService = googleDriveService
+                    Log.d(DRIVE_TAG, "Drive service is ready")
                 }
                 .addOnFailureListener { exception ->
                     Log.e(DRIVE_TAG, "Unable to sign in.", exception)
+                    Toast.makeText(activity, "Ошибка при входе в Google-аккаунт",
+                            Toast.LENGTH_SHORT).show()
                 }
     }
 
@@ -100,6 +110,8 @@ class GoogleDriveHelper {
             val resultFile = driveService.files().create(metadata).execute()
             if (resultFile == null) {
                 Log.e(DRIVE_TAG, "Null result when creating file")
+                Toast.makeText(activity, "Ошибка при создании файла на Google-диске",
+                        Toast.LENGTH_SHORT).show()
                 return
             }
 
