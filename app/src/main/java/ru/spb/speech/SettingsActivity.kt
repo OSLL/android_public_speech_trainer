@@ -2,6 +2,7 @@ package ru.spb.speech
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -17,6 +18,7 @@ import android.preference.*
 import android.text.TextUtils
 import android.util.Log
 import android.view.MenuItem
+import ru.spb.speech.appSupport.GoogleDriveHelper
 import ru.spb.speech.notifications.AlarmBootReceiver
 import ru.spb.speech.notifications.AlarmReceiver
 import ru.spb.speech.notifications.NotificationsHelper
@@ -52,6 +54,12 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == android.R.id.home) {
+            val driveFolderId = PreferenceManager
+                    .getDefaultSharedPreferences(this)
+                    .getString(getString(R.string.drive_folder_key), "")
+            if (driveFolderId != null && driveFolderId != "")
+                GoogleDriveHelper.getInstance().requestSignIn(this)
+
             onBackPressed()
             return true
         }
@@ -220,6 +228,18 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                GoogleDriveHelper.REQUEST_CODE_SIGN_IN -> {
+                    GoogleDriveHelper.getInstance().heldSignInResult(this, data)
+                }
+            }
+        }
+    }
+
     companion object {
 
         /**
@@ -314,10 +334,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                         PreferenceManager
                                 .getDefaultSharedPreferences(preference.context)
                                 .getString(preference.key, ""))
-            }
-
-            if (preference.key == preference.context.getString(R.string.drive_folder_key)) {
-
             }
         }
     }
