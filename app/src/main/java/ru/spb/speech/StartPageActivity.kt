@@ -221,12 +221,11 @@ class StartPageActivity : AppCompatActivity(), UpdateAdapterListener {
                     Log.d(RunningTraining.LOG, data?.data?.toString())
                     testFolderRunner?.startTrainings(DocumentFile.fromTreeUri(this, selectedFile!!)!!)
                 }
-
-                GoogleDriveHelper.REQUEST_CODE_SIGN_IN -> {
-                    GoogleDriveHelper.getInstance().heldSignInResult(this, data)
-                }
             }
         }
+
+        if (requestCode == GoogleDriveHelper.REQUEST_CODE_SIGN_IN)
+            GoogleDriveHelper.getInstance().heldSignInResult(this, data)
     }
 
     override fun onAdapterUpdate() {
